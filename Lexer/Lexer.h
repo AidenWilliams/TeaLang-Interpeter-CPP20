@@ -2,8 +2,11 @@
 // Created by aiden on 26/04/2021.
 //
 
+
 #ifndef TEALANG_COMPILER_CPP20_LEXER_H
 #define TEALANG_COMPILER_CPP20_LEXER_H
+
+#include <string>
 
 namespace lexer {
 
@@ -18,6 +21,20 @@ namespace lexer {
     };
 
     class Lexer {
+    public:
+//        explicit Lexer(){
+//            epsilon = -1;
+//
+//
+//
+//        };
+
+
+    private:
+        int epsilon;
+        unsigned int len_states = 7;
+        const bool is_final[7];
+
 
     };
 }
