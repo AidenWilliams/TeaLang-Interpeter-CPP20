@@ -41,12 +41,11 @@ namespace lexer {
         COLON,
         END,
         ERROR
-    }
+    };
 
     class Token {
 
     public:
-
 
     private:
     };
