@@ -8,7 +8,40 @@
 #include <string>
 
 namespace lexer {
-    enum TOKEN {};
+    enum TOKEN {
+        INT,
+        REAL,
+        ADDITIVE_OP,
+        MULTIPLICATIVE_OP,
+        RELATIONAL_OP,
+        EQUALS,
+        VAR,
+        SET,
+        DEF,
+        RETURN,
+        IF,
+        ELSE,
+        WHILE,
+        PRINT,
+        INT_TYPE,
+        REAL_TYPE,
+        BOOL_TYPE,
+        STRING_TYPE,
+        BOOL,
+        NOT,
+        IDENTIFIER,
+        COMMENT,
+        STRING,
+        LEFT_CURLY,
+        RIGHT_CURLY,
+        LEFT_BRACKET,
+        RIGHT_BRACKET,
+        COMMA,
+        SEMICOLON,
+        COLON,
+        END,
+        ERROR
+    }
 
     class Token {
 
