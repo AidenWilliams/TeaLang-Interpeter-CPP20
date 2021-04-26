@@ -11,29 +11,34 @@
 namespace lexer {
 
     enum TRANSITION_TYPE {
-        OTHER           =   0,
-        DIGIT           =   1,
-        LETTER          =   2,
-        PLUS            =   3,
-        EQUALS          =   4,
-        NEWLINE         =   5,
-        ENDOFFILE       =   6,
+        DIGIT = 0,
+        PERIOD = 1,
+        ADDITIVE_OP = 2,
+        ASTERISK = 3,
+        EXCL_MARK = 4,
+        ORDER_REL = 5,
+        EQUALS = 6,
+        UNDERSCORE = 7,
+        FORWARDSLASH = 8,
+        BACKSLASH = 9,
+        QUOTATION_MARK = 10,
+        PUNCTUATION = 11,
+        NEWLINE = 12,
+        END = 13,
+        LETTER = 14,
+        PRINTABLE = 15,
+        OTHER = 16
     };
 
     class Lexer {
     public:
-//        explicit Lexer(){
-//            epsilon = -1;
-//
-//
-//
-//        };
+        explicit Lexer();
 
 
     private:
-        int epsilon;
-        unsigned int len_states = 7;
-        const bool is_final[7];
+
+
+
 
 
     };
