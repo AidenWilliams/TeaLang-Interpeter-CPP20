@@ -1,6 +1,8 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    int x = 2/1;
+    std::cout << x << std::endl;
     return 0;
 }
+//
