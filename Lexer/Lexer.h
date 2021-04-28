@@ -51,25 +51,25 @@ namespace lexer {
     class Lexer {
 
     private:
-
-        std::vector<std::vector<TRANSITION_TYPE>> transition_table = {
-            /* LETTER           */ {},
-            /* DIGIT            */ {},
-            /* PRINTABLE        */ {},
-            /* FULLSTOP         */ {},
-            /* UNDERSCORE       */ {},
-            /* ASTERISK         */ {},
-            /* PLUS             */ {},
-            /* RELATIONAL       */ {},
-            /* MINUS            */ {},
-            /* FORWARD_SLASH    */ {},
-            /* BACK_SLASH       */ {},
-            /* PUNCTUATION      */ {},
-            /* QUOTATION_MARK   */ {},
-            /* NEWLINE          */ {},
-            /* EQUALS           */ {},
-            /* EXCLAMATION      */ {},
-            /* END              */ {},
+        std::vector<unsigned int> final_states = {1, 3, 6, 8, 9, 11, 14, 15, 16, 17, 18, 19, 23, 24};
+        std::vector<std::vector<unsigned int>> transition_table = {
+            /* LETTER           */ {1}, //, 2, 10, 11, 12, 13 leave printable
+            /* DIGIT            */ {1, 6, 8},
+            /* PRINTABLE        */ {2, 10, 11, 12, 13},
+            /* FULLSTOP         */ {7},
+            /* UNDERSCORE       */ {1},
+            /* ASTERISK         */ {18},
+            /* PLUS             */ {19},
+            /* RELATIONAL       */ {21},
+            /* MINUS            */ {17},
+            /* FORWARD_SLASH    */ {9, 10, 14},
+            /* BACK_SLASH       */ {4},
+            /* PUNCTUATION      */ {16},
+            /* QUOTATION_MARK   */ {2, 3, 5},
+            /* NEWLINE          */ {11, 12, 13},
+            /* EQUALS           */ {23, 24},
+            /* EXCLAMATION      */ {21},
+            /* END              */ {15},
             /* INVALID          */ {}
             };
     };
