@@ -1,8 +1,9 @@
 #include <iostream>
+#include "Lexer/Lexer.h"
+
 
 int main() {
-    int x = 2/1;
-    std::cout << x << std::endl;
+    char x = 'c';
+    std::cout << lexer::isLetter(x) << std::endl;
     return 0;
 }
-//

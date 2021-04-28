@@ -7,6 +7,8 @@
 
 #include <string>
 #include <vector>
+#include <regex>
+#include <iostream>
 
 namespace lexer {
 
@@ -46,7 +48,24 @@ namespace lexer {
         END             = 16,
         INVALID         = 17
     };
+    extern std::regex letter;
+    extern std::regex digit;
+    extern std::regex printable;
 
+    bool isLetter(char c);
+    bool isDigit(char c);
+    bool isPrintable(char c);
+    bool isFullstop(char c);
+    bool isUnderscore(char c);
+    bool isAsterisk(char c);
+    bool isPlus(char c);
+    bool isRelational(char c);
+    bool isForwardSlash(char c);
+    bool isBackSlash(char c);
+    bool isPunctuation(char c);
+    bool isQuatiationMark(char c);
+    bool isNewline(char c);
+    bool isExclamation(char c);
 
     class Lexer {
 
