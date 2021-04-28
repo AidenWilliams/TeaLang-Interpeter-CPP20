@@ -1,3 +1,6 @@
+#pragma clang diagnostic push
+// ignores warning for declaring regex variables below
+#pragma ide diagnostic ignored "cert-err58-cpp"
 //
 // Created by Aiden Williams on 25/04/2021.
 //
@@ -68,3 +71,4 @@ bool lexer::isNewline(char c){
 bool lexer::isExclamation(char c){
     return c == '!';
 }
+#pragma clang diagnostic pop
