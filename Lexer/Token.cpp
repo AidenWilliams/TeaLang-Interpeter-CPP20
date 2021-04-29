@@ -7,6 +7,7 @@
 #include "Token.h"
 
 std::regex lexer::identifier("^[a-zA-Z_]*[a-zA-Z0-9_]*$");
+std::regex lexer::string(R"(\"(\\.|[^"\\])*\")");
 std::regex lexer::intLiteral("^[0-9]*$");
 std::regex lexer::floatLiteral("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
 std::regex lexer::singleLineComment(R"(^\/\/[^\n\r]+(?:[\n\r]|\*\))$)");
@@ -81,7 +82,7 @@ bool lexer::isWhile(const std::string& s){
 }
 
 bool lexer::isString(const std::string& s){
-    return s == "string";
+    return (std::regex_match(s, string));
 }
 
 bool lexer::isInt(const std::string& s) {

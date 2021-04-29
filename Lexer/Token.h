@@ -112,6 +112,7 @@ namespace lexer {
     };
 
     extern std::regex identifier;
+    extern std::regex string;
     extern std::regex intLiteral;
     extern std::regex floatLiteral;
     extern std::regex singleLineComment;
