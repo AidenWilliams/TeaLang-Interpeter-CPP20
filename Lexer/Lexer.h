@@ -48,6 +48,7 @@ namespace lexer {
         END             = 16,
         INVALID         = 17
     };
+
     extern std::regex letter;
     extern std::regex digit;
     extern std::regex printable;
@@ -70,9 +71,9 @@ namespace lexer {
     class Lexer {
 
     private:
-        std::vector<unsigned int> final_states = {1, 3, 6, 8, 9, 11, 14, 15, 16, 17, 18, 19, 23, 24};
+        std::vector<unsigned int> final_states = {1, 3, 6, 8, 9, 11, 14, 15, 16, 17, 18, 19, 21, 23, 24};
         std::vector<std::vector<unsigned int>> transition_table = {
-            /* LETTER           */ {1}, //, 2, 10, 11, 12, 13 leave printable
+            /* LETTER           */ {1},
             /* DIGIT            */ {1, 6, 8},
             /* PRINTABLE        */ {2, 10, 11, 12, 13},
             /* FULLSTOP         */ {7},
