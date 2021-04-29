@@ -1,9 +1,10 @@
 #include <iostream>
 #include "Lexer/Lexer.h"
+#include "Lexer/Token.h"
 
 
 int main() {
-    char x = 'c';
-    std::cout << lexer::isLetter(x) << std::endl;
+    std::string x = "Monkey";
+    std::cout << lexer::isIdentifier(x) << std::endl;
     return 0;
 }

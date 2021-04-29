@@ -9,10 +9,10 @@
 
 
 std::regex lexer::letter("[A-Za-z]");
-std::regex digit("[0-9]");
-std::regex printable("[\\x20-\\x7E]");
+std::regex lexer::digit("[0-9]");
+std::regex lexer::printable("[\\x20-\\x7E]");
 
-bool lexer::isLetter(const char c){
+bool lexer::isLetter(char c){
     std::string _c;
     _c.push_back(c);
     return (std::regex_match(_c, letter));

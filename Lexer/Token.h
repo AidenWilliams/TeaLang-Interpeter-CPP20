@@ -5,109 +5,154 @@
 #ifndef TEALANG_COMPILER_CPP20_TOKEN_H
 #define TEALANG_COMPILER_CPP20_TOKEN_H
 
+#include <string>
+#include <regex>
 
 namespace lexer {
     // Defined according to pdf and state
     enum TOKEN_TYPE {
         // State 1
         // float
-        FLOAT_TYPE          =  0,
+        TOK_FLOAT_TYPE          =  0,
         // int
-        INT_TYPE            =  1,
+        TOK_INT_TYPE            =  1,
         // bool
-        BOOL_TYPE           =  2,
+        TOK_BOOL_TYPE           =  2,
         //  string
-        STRING_TYPE         =  3,
+        TOK_STRING_TYPE         =  3,
         // true
-        TRUE                =  4,
+        TOK_TRUE                =  4,
         // false
-        FALSE               =  5,
+        TOK_FALSE               =  5,
         // variable1 | _name
-        IDENTIFIER          =  6,
+        TOK_IDENTIFIER          =  6,
         // and
-        AND                 =  7,
+        TOK_AND                 =  7,
         // or
-        OR                  =  8,
+        TOK_OR                  =  8,
         // not
-        NOT                 =  9,
+        TOK_NOT                 =  9,
         // let
-        LET                 =  10,
+        TOK_LET                 =  10,
         // print
-        PRINT               = 11,
+        TOK_PRINT               = 11,
         // return
-        RETURN              =  12,
+        TOK_RETURN              =  12,
         // if
-        IF                  =  13,
+        TOK_IF                  =  13,
         // else
-        ELSE                = 14,
+        TOK_ELSE                = 14,
         // for
-        FOR                 = 15,
+        TOK_FOR                 = 15,
         // while
-        WHILE               = 16,
+        TOK_WHILE               = 16,
         // State 3
         // "Printable"
-        STRING              = 17,
+        TOK_STRING              = 17,
         // State 6
         // 10, 12, 1
-        INT                 = 18,
+        TOK_INT                 = 18,
         // State 8
         // 10.12, 1.1
-        FLOAT               = 19,
+        TOK_FLOAT               = 19,
         // State 9
         // /
-        DIVIDE              = 20,
+        TOK_DIVIDE              = 20,
         // State 11
         // //
-        SINGLE_LINE_COMMENT = 21,
+        TOK_SINGLE_LINE_COMMENT = 21,
         // State 14
         // /* */
-        MULTI_LINE_COMMENT  = 22,
+        TOK_MULTI_LINE_COMMENT  = 22,
         // State 15
         // EOF
-        END                 = 23,
+        TOK_END                 = 23,
         // State 16
         // '{' | '}' | '(' | ')' | ',' | ':' | ';'
         // {
-        OPENING_CURLY       = 24,
+        TOK_OPENING_CURLY       = 24,
         // }
-        CLOSING_CURLY       = 25,
+        TOK_CLOSING_CURLY       = 25,
         // (
-        OPENING_CURVY       = 26,
+        TOK_OPENING_CURVY       = 26,
         // )
-        CLOSING_CURVY       = 27,
+        TOK_CLOSING_CURVY       = 27,
         // ,
-        COMMA               = 28,
+        TOK_COMMA               = 28,
         // :
-        COLON               = 29,
+        TOK_COLON               = 29,
         // ;
-        SEMICOLON           = 30,
+        TOK_SEMICOLON           = 30,
         // State 17
         // -
-        MINUS               = 31,
+        TOK_MINUS               = 31,
         // State 18
         // *
-        ASTERISK            = 31,
+        TOK_ASTERISK            = 31,
         // State 19
         // +
-        PLUS                = 32,
+        TOK_PLUS                = 32,
         // State 21
         // >
-        MORE_THAN           = 33,
+        TOK_MORE_THAN           = 33,
         // <
-        LESS_THAN           = 34,
+        TOK_LESS_THAN           = 34,
         // State 23
         // =
-        EQUALS              = 35,
+        TOK_EQUALS              = 35,
         // State 24
         // >=
-        MORE_THAN_EQUAL_TO  = 36,
+        TOK_MORE_THAN_EQUAL_TO  = 36,
         // <=
-        LESS_THAN_EQUAL_TO  = 37,
+        TOK_LESS_THAN_EQUAL_TO  = 37,
         // !=
-        NOT_EQAUL_TO        = 38,
+        TOK_NOT_EQAUL_TO        = 38,
         // ==
-        EQAUL_TO            = 39,
+        TOK_EQAUL_TO            = 39,
     };
+
+    extern std::regex identifier;
+
+    bool isFloatType(const std::string& s);
+    bool isIntType(const std::string& s);
+    bool isBoolType(const std::string& s);
+    bool isStringType(const std::string& s);
+    bool isTrue(const std::string& s);
+    bool isFalse(const std::string& s);
+    bool isIdentifier(const std::string& s);
+    bool isAnd(const std::string& s);
+    bool isOr(const std::string& s);
+    bool isNot(const std::string& s);
+    bool isLet(const std::string& s);
+    bool isPrint(const std::string& s);
+    bool isReturn(const std::string& s);
+    bool isIf(const std::string& s);
+    bool isElse(const std::string& s);
+    bool isFor(const std::string& s);
+    bool isWhile(const std::string& s);
+    bool isString(const std::string& s);
+    bool isInt(const std::string& s);
+    bool isFloat(const std::string& s);
+    bool isDivide(const std::string& s);
+    bool isSingleLineComment(const std::string& s);
+    bool isMultiLineComment(const std::string& s);
+    bool isEnd(const std::string& s);
+    bool isOpeningCurly(const std::string& s);
+    bool isClosingCurly(const std::string& s);
+    bool isOpeningCurvy(const std::string& s);
+    bool isClosingCurvy(const std::string& s);
+    bool isComma(const std::string& s);
+    bool isColon(const std::string& s);
+    bool isSemiColon(const std::string& s);
+    bool isMinus(const std::string& s);
+    bool isAsterisk(const std::string& s);
+    bool isPlus(const std::string& s);
+    bool isMoreThan(const std::string& s);
+    bool isLessThan(const std::string& s);
+    bool isMoreThanEqualTo(const std::string& s);
+    bool isLessThanEqualTo(const std::string& s);
+    bool isNotEqualTo(const std::string& s);
+    bool isEqualTo(const std::string& s);
 
     class Token {
 
