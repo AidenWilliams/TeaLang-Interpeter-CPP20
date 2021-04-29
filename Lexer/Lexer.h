@@ -68,6 +68,7 @@ namespace lexer {
     bool isExclamation(char c);
 
     class Lexer {
+    public:
 
     private:
         std::vector<unsigned int> final_states = {1, 3, 6, 8, 9, 11, 14, 15, 16, 17, 18, 19, 21, 23, 24};

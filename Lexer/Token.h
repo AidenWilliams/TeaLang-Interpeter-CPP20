@@ -109,6 +109,9 @@ namespace lexer {
         TOK_NOT_EQAUL_TO        = 38,
         // ==
         TOK_EQAUL_TO            = 39,
+        // Invalid
+        // Invalid
+        TOK_INVALID             = 40,
     };
 
     extern std::regex identifier;
@@ -154,13 +157,19 @@ namespace lexer {
     bool isPlus(const std::string& s);
     bool isMoreThan(const std::string& s);
     bool isLessThan(const std::string& s);
+    bool isEquals(const std::string& s);
     bool isMoreThanEqualTo(const std::string& s);
     bool isLessThanEqualTo(const std::string& s);
     bool isNotEqualTo(const std::string& s);
     bool isEqualTo(const std::string& s);
 
     class Token {
+    public:
+        Token(std::string s);
+        TOKEN_TYPE type;
+        std::string value;
 
+        TOKEN_TYPE determineTokenType(std::string&);
     };
 }
 
