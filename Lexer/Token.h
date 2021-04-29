@@ -112,6 +112,10 @@ namespace lexer {
     };
 
     extern std::regex identifier;
+    extern std::regex intLiteral;
+    extern std::regex floatLiteral;
+    extern std::regex singleLineComment;
+    extern std::regex multiLineComment;
 
     bool isFloatType(const std::string& s);
     bool isIntType(const std::string& s);

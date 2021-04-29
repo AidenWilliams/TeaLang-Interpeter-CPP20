@@ -4,7 +4,8 @@
 
 
 int main() {
-    std::string x = "Monkey";
-    std::cout << lexer::isIdentifier(x) << std::endl;
+    std::string x = "12345";
+    std::cout << lexer::isInt(x) << std::endl;
+
     return 0;
 }
