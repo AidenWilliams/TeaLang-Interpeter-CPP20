@@ -259,6 +259,7 @@ lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s){
     // Not Equal To
     if (isNotEqualTo(s)) return TOK_NOT_EQAUL_TO;
     // Equal To
+    if (isEqualTo(s)) return TOK_EQAUL_TO;
     return TOK_INVALID;
 }
 
