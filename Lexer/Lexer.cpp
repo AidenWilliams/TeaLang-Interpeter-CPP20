@@ -48,6 +48,10 @@ bool lexer::isRelational(char c){
     return c == '<' || c ==  '>';
 }
 
+bool lexer::isMinus(char c){
+    return c == '-';
+}
+
 bool lexer::isForwardSlash(char c){
     return c == '/';
 }
@@ -67,10 +71,17 @@ bool lexer::isNewline(char c){
     return c == '\n';
 }
 
+bool lexer::isEquals(char c) {
+    return c == '=';
+}
+
 bool lexer::isExclamation(char c){
     return c == '!';
 }
 
+bool lexer::isSpace(char c){
+    return c == ' ';
+}
 
 lexer::Lexer::Lexer() = default;
 
@@ -86,17 +97,27 @@ lexer::TRANSITION_TYPE lexer::Lexer::determineTransitionType(char c){
     if (isAsterisk(c)) return ASTERISK;
     if (isPlus(c)) return PLUS;
     if (isRelational(c)) return RELATIONAL;
+    if (isMinus(c)) return MINUS;
     if (isForwardSlash(c)) return FORWARD_SLASH;
     if (isBackSlash(c)) return BACK_SLASH;
     if (isPunctuation(c)) return PUNCTUATION;
     if (isQuatiationMark(c)) return QUOTATION_MARK;
-    if (isNewline(c)) return QUOTATION_MARK;
-    if (isExclamation(c)) return QUOTATION_MARK;
+    if (isNewline(c)) return NEWLINE;
+    if (isEquals(c)) return EQUALS;
+    if (isExclamation(c)) return EXCLAMATION;
+    if (isExclamation(c)) return SPACE;
+    return INVALID;
 }
 
 std::vector<lexer::TOKEN_TYPE> lexer::Lexer::extraxtLexemes(const std::string &text) {
-    for (auto c : line){
+    std::vector<TOKEN_TYPE> ret;
+    std::string value;
+    for (auto c : text){
+        value += c;
+        switch (determineTransitionType(c)) {
 
+
+        }
     }
 }
 

@@ -47,7 +47,8 @@ namespace lexer {
         // '!'
         EXCLAMATION     = 15,
         END             = 16,
-        INVALID         = 17
+        INVALID         = 17,
+        SPACE         = 18
     };
 
     extern std::regex letter;
@@ -62,12 +63,15 @@ namespace lexer {
     bool isAsterisk(char c);
     bool isPlus(char c);
     bool isRelational(char c);
+    bool isMinus(char c);
     bool isForwardSlash(char c);
     bool isBackSlash(char c);
     bool isPunctuation(char c);
     bool isQuatiationMark(char c);
     bool isNewline(char c);
+    bool isEquals(char c);
     bool isExclamation(char c);
+    bool isSpace(char c);
 
     class Lexer {
     public:
@@ -78,7 +82,7 @@ namespace lexer {
         std::vector<TOKEN_TYPE> extraxtLexemes(const std::string& text);
 
     private:
-        std::vector<unsigned int> final_states = {1, 3, 6, 8, 9, 11, 14, 15, 16, 17, 18, 19, 21, 23, 24};
+        std::vector<unsigned int> final_states = {1, 3, 6, 8, 9, 11, 14, 15, 16, 17, 18, 19, 21, 23, 24, 25};
         std::vector<std::vector<unsigned int>> transition_table = {
             /* LETTER           */ {1},
             /* DIGIT            */ {1, 6, 8},
@@ -97,7 +101,8 @@ namespace lexer {
             /* EQUALS           */ {23, 24},
             /* EXCLAMATION      */ {21},
             /* END              */ {15},
-            /* INVALID          */ {}
+            /* INVALID          */ {},
+            /* INVALID          */ {25}
             };
     };
 };
