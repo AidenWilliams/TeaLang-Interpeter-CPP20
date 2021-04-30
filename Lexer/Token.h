@@ -163,13 +163,30 @@ namespace lexer {
     bool isNotEqualTo(const std::string& s);
     bool isEqualTo(const std::string& s);
 
+    TOKEN_TYPE fromState1(const std::string& s);
+    TOKEN_TYPE fromState3(const std::string& s);
+    TOKEN_TYPE fromState6(const std::string& s);
+    TOKEN_TYPE fromState8(const std::string& s);
+    TOKEN_TYPE fromState9(const std::string& s);
+    TOKEN_TYPE fromState11(const std::string& s);
+    TOKEN_TYPE fromState14(const std::string& s);
+    TOKEN_TYPE fromState15(const std::string& s);
+    TOKEN_TYPE fromState16(const std::string& s);
+    TOKEN_TYPE fromState17(const std::string& s);
+    TOKEN_TYPE fromState18(const std::string& s);
+    TOKEN_TYPE fromState19(const std::string& s);
+    TOKEN_TYPE fromState21(const std::string& s);
+    TOKEN_TYPE fromState23(const std::string& s);
+    TOKEN_TYPE fromState24(const std::string& s);
+
     class Token {
     public:
-        Token(std::string s);
+        Token(std::string s, unsigned int state);
+        ~Token();
         TOKEN_TYPE type;
         std::string value;
 
-        TOKEN_TYPE determineTokenType(std::string&);
+        static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     };
 }
 

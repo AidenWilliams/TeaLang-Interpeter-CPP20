@@ -177,14 +177,7 @@ bool lexer::isEqualTo(const std::string& s){
     return s == "==";
 }
 
-lexer::Token::Token(std::string s) :
-        type(determineTokenType(s)),
-        value(s)
-{}
-
-
-lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s){
-    // State 1
+lexer::TOKEN_TYPE lexer::fromState1(const std::string& s){
     // Keywords
     if (isFloatType(s)) return TOK_FLOAT_TYPE;
     if (isIntType(s)) return TOK_INT_TYPE;
@@ -204,28 +197,51 @@ lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s){
     if (isWhile(s)) return TOK_WHILE;
     // Identifier
     if (isIdentifier(s)) return TOK_IDENTIFIER;
-    // State 3
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState3(const std::string& s){
     // String
     if (isString(s)) return TOK_STRING;
-    // State 6
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState6(const std::string& s){
     // Integer
     if (isInt(s)) return TOK_INT;
-    // State 8
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState8(const std::string& s){
     // Float
     if (isFloat(s)) return TOK_FLOAT;
-    // State 9
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState9(const std::string& s){
     // Divide
     if (isDivide(s)) return TOK_DIVIDE;
-    // State 11
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState11(const std::string& s){
     // Single Line Comment
     if (isSingleLineComment(s)) return TOK_SINGLE_LINE_COMMENT;
-    // State 14
+    return TOK_INVALID;
+}
+lexer::TOKEN_TYPE lexer::fromState14(const std::string& s){
     // Multi Line Comment
     if (isMultiLineComment(s)) return TOK_MULTI_LINE_COMMENT;
-    // State 15
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState15(const std::string& s){
     // EOF
     if (isEnd(s)) return TOK_END;
-    // State 16
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState16(const std::string& s){
     // Punctuation
     if (isOpeningCurly(s)) return TOK_OPENING_CURLY;
     if (isClosingCurly(s)) return TOK_CLOSING_CURLY;
@@ -234,24 +250,42 @@ lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s){
     if (isComma(s)) return TOK_COMMA;
     if (isColon(s)) return TOK_COLON;
     if (isSemiColon(s)) return TOK_SEMICOLON;
-    // State 17
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState17(const std::string& s){
     // Minus
     if (isMinus(s)) return TOK_MINUS;
-    // State 18
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState18(const std::string& s){
     // Asterisk
     if (isAsterisk(s)) return TOK_ASTERISK;
-    // State 19
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState19(const std::string& s){
     // Plus
     if (isPlus(s)) return TOK_PLUS;
-    // State 21
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState21(const std::string& s){
     // More Than
     if (isMoreThan(s)) return TOK_MORE_THAN;
     // Less Than
     if (isLessThan(s)) return TOK_LESS_THAN;
-    // State 23
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState23(const std::string& s){
     // Equals
     if (isEquals(s)) return TOK_EQUALS;
-    // State 24
+    return TOK_INVALID;
+}
+
+lexer::TOKEN_TYPE lexer::fromState24(const std::string& s){
     // More Than or Equal To
     if (isMoreThanEqualTo(s)) return TOK_MORE_THAN_EQUAL_TO;
     // Less Than or Equal To
@@ -261,6 +295,50 @@ lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s){
     // Equal To
     if (isEqualTo(s)) return TOK_EQAUL_TO;
     return TOK_INVALID;
+}
+
+lexer::Token::Token(std::string s, unsigned int state) :
+        type(determineTokenType(s, state)),
+        value(s)
+{}
+
+lexer::Token::~Token() = default;
+
+lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
+    switch (state) {
+        case 1:
+            return fromState1(s);
+        case 3:
+            return fromState3(s);
+        case 6:
+            return fromState6(s);
+        case 8:
+            return fromState8(s);
+        case 9:
+            return fromState9(s);
+        case 11:
+            return fromState11(s);
+        case 14:
+            return fromState14(s);
+        case 15:
+            return fromState15(s);
+        case 16:
+            return fromState16(s);
+        case 17:
+            return fromState17(s);
+        case 18:
+            return fromState18(s);
+        case 19:
+            return fromState19(s);
+        case 21:
+            return fromState21(s);
+        case 23:
+            return fromState23(s);
+        case 24:
+            return fromState24(s);
+        default:
+            return TOK_INVALID;
+    }
 }
 
 

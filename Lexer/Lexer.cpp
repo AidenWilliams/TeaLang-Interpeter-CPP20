@@ -7,7 +7,6 @@
 
 #include "Lexer.h"
 
-
 std::regex lexer::letter("[A-Za-z]");
 std::regex lexer::digit("[0-9]");
 std::regex lexer::printable("[\\x20-\\x7E]");
@@ -71,4 +70,34 @@ bool lexer::isNewline(char c){
 bool lexer::isExclamation(char c){
     return c == '!';
 }
+
+
+lexer::Lexer::Lexer() = default;
+
+lexer::Lexer::~Lexer() = default;
+
+
+lexer::TRANSITION_TYPE lexer::Lexer::determineTransitionType(char c){
+    if (isLetter(c)) return LETTER;
+    if (isDigit(c)) return DIGIT;
+    if (isPrintable(c)) return PRINTABLE;
+    if (isFullstop(c)) return FULLSTOP;
+    if (isUnderscore(c)) return UNDERSCORE;
+    if (isAsterisk(c)) return ASTERISK;
+    if (isPlus(c)) return PLUS;
+    if (isRelational(c)) return RELATIONAL;
+    if (isForwardSlash(c)) return FORWARD_SLASH;
+    if (isBackSlash(c)) return BACK_SLASH;
+    if (isPunctuation(c)) return PUNCTUATION;
+    if (isQuatiationMark(c)) return QUOTATION_MARK;
+    if (isNewline(c)) return QUOTATION_MARK;
+    if (isExclamation(c)) return QUOTATION_MARK;
+}
+
+std::vector<lexer::TOKEN_TYPE> lexer::Lexer::extraxtLexemes(const std::string &text) {
+    for (auto c : line){
+
+    }
+}
+
 #pragma clang diagnostic pop
