@@ -92,7 +92,7 @@ lexer::Lexer::Lexer() = default;
 lexer::Lexer::~Lexer() = default;
 
 
-lexer::TRANSITION_TYPE lexer::Lexer::determineTransitionType(char c){
+lexer::TRANSITION_TYPE lexer::determineTransitionType(char c){
     if (isLetter(c)) return LETTER;
     if (isDigit(c)) return DIGIT;
     if (isFullstop(c)) return FULLSTOP;
@@ -114,6 +114,171 @@ lexer::TRANSITION_TYPE lexer::Lexer::determineTransitionType(char c){
     return INVALID;
 }
 
+unsigned int lexer::delta(unsigned int fromState, char c){
+    unsigned int current_state;
+    switch (lexer::determineTransitionType(c)) {
+        case LETTER:
+            (fromState == 0 || fromState == 1)
+            ? current_state = 1 : current_state = 24;
+            break;
+        case DIGIT:
+            if (fromState == 1){
+                current_state = 1;
+            }else if (fromState == 0 || fromState == 6){
+                current_state = 6;
+            }else if (fromState == 7 || fromState == 8){
+                current_state = 8;
+            }else{
+                current_state = 24;
+            }
+            break;
+        case PRINTABLE:
+            if (fromState == 2 || fromState == 4 || fromState == 5){
+                if(!isBackSlash(c) and !isQuatiationMark(c)){
+                    current_state = 2;
+                }else{
+                    current_state = 24;
+                }
+            }else if (fromState == 10){
+                current_state = 11;
+            }else if (fromState == 12){
+                if(!isAsterisk(c)){
+                    current_state = 12;
+                }else{
+                    current_state = 24;
+                }
+            }else if (fromState == 13){
+                if(!isAsterisk(c) and !isForwardSlash(c)){
+                    current_state = 12;
+                }else{
+                    current_state = 24;
+                }
+            }else{
+                current_state = 24;
+            }
+            break;
+        case FULLSTOP:
+            (fromState == 6)
+            ? current_state = 7 : current_state = 24;
+            break;
+        case UNDERSCORE:
+            (fromState == 0 || fromState == 1)
+            ? current_state = 1 : current_state = 24;
+            break;
+        case ASTERISK:
+            if (fromState == 0){
+                current_state = 18;
+            }else if (fromState == 9){
+                current_state = 12;
+            }else if (fromState == 12){
+                current_state = 13;
+            }else{
+                current_state = 24;
+            }
+            break;
+        case PLUS:
+            (fromState == 0)
+            ? current_state = 19 : current_state = 24;
+            break;
+        case RELATIONAL:
+            (fromState == 0)
+            ? current_state = 21 : current_state = 24;
+            break;
+        case MINUS:
+            (fromState == 0)
+            ? current_state = 17 : current_state = 24;
+            break;
+        case FORWARD_SLASH:
+            if (fromState == 0){
+                current_state = 9;
+            }else if (fromState == 9){
+                current_state = 10;
+            }else if (fromState == 13){
+                current_state = 14;
+            }else{
+                current_state = 24;
+            }
+            break;
+        case BACK_SLASH:
+            (fromState == 2 || fromState == 4 || fromState == 5)
+            ?    current_state = 4 : current_state = 24;
+            break;
+        case PUNCTUATION:
+            (fromState == 0)
+            ?    current_state = 16 : current_state = 24;
+            break;
+        case QUOTATION_MARK:
+            if (fromState == 0){
+                current_state = 2;
+            }else if (fromState == 2 || fromState == 5){
+                current_state = 3;
+            }else if (fromState == 4){
+                current_state = 5;
+            }else{
+                current_state = 24;
+            }
+            break;
+        case NEWLINE:
+            if (fromState == 10){
+                current_state = 11;
+            }else if (fromState == 12){
+                current_state = 12;
+            }else if (fromState == 13){
+                current_state = 13;
+            }else{
+                current_state = 24;
+            }
+            break;
+        case EQUALS:
+            if (fromState == 0){
+                current_state = 22;
+            }else if (fromState == 22 || fromState == 21 || fromState == 20){
+                current_state = 23;
+            }else{
+                current_state = 24;
+            }
+            break;
+        case EXCLAMATION:
+            (fromState == 0)
+            ?    current_state = 20 : current_state = 24;
+            break;
+        case END:
+            current_state = 15;
+            break;
+        case SPACE:
+        case INVALID:
+            current_state = 24;
+    }
+
+    //check for printable again
+    if (current_state == 24){
+        if (fromState == 2 || fromState == 4 || fromState == 5){
+            if(!isBackSlash(c) and !isQuatiationMark(c)){
+                current_state = 2;
+            }else{
+                current_state = 24;
+            }
+        }else if (fromState == 10){
+            current_state = 11;
+        }else if (fromState == 12){
+            if(!isAsterisk(c)){
+                current_state = 12;
+            }else{
+                current_state = 24;
+            }
+        }else if (fromState == 13){
+            if(!isAsterisk(c) and !isForwardSlash(c)){
+                current_state = 12;
+            }else{
+                current_state = 24;
+            }
+        }else{
+            current_state = 24;
+        }
+    }
+    return current_state;
+}
+
 std::vector<lexer::TOKEN_TYPE> lexer::Lexer::extraxtLexemes(const std::string &text) {
     std::vector<TOKEN_TYPE> ret;
     std::string value;
@@ -123,122 +288,7 @@ std::vector<lexer::TOKEN_TYPE> lexer::Lexer::extraxtLexemes(const std::string &t
         value += c;
         previous_state = current_state;
 
-        switch (determineTransitionType(c)) {
-            case LETTER:
-                (previous_state == 0 || previous_state == 1)
-                ? current_state = 1 : current_state = 26;
-                break;
-            case DIGIT:
-                if (previous_state == 1){
-                    current_state = 1;
-                }else if (previous_state == 0 || previous_state == 6){
-                    current_state = 6;
-                }else if (previous_state == 7 || previous_state == 8){
-                    current_state = 8;
-                }else{
-                    current_state = 26;
-                }
-                break;
-            case PRINTABLE:
-                if (previous_state == 2 || previous_state == 4 || previous_state == 5){
-                    if(!isBackSlash(c) and !isQuatiationMark(c)){
-                        current_state = 2;
-                    }else{
-                        current_state = 26;
-                    }
-                }else if (previous_state == 10){
-                    current_state = 11;
-                }else if (previous_state == 13){
-                    if(!isAsterisk(c)){
-                        current_state = 13;
-                    }else{
-                        current_state = 26;
-                    }
-                }else if (previous_state == 14){
-                    if(!isAsterisk(c) and !isForwardSlash(c)){
-                        current_state = 13;
-                    }else{
-                        current_state = 26;
-                    }
-                }else{
-                    current_state = 26;
-                }
-                break;
-            case FULLSTOP:
-                (previous_state == 6)
-                ? current_state = 7 : current_state = 26;
-                break;
-            case UNDERSCORE:
-                (previous_state == 0 || previous_state == 1)
-                ? current_state = 1 : current_state = 26;
-                break;
-            case ASTERISK:
-                if (previous_state == 0){
-                    current_state = 19;
-                }else if (previous_state == 9){
-                    current_state = 13;
-                }else if (previous_state == 13){
-                    current_state = 14;
-                }else if (previous_state == 14){
-                    current_state = 14;
-                }else{
-                    current_state = 26;
-                }
-                break;
-            case PLUS:
-                (previous_state == 0)
-                ? current_state = 20 : current_state = 26;
-                break;
-            case RELATIONAL:
-                (previous_state == 0)
-                ? current_state = 22 : current_state = 26;
-                break;
-            case MINUS:
-                (previous_state == 0)
-                ? current_state = 18 : current_state = 26;
-                break;
-            case FORWARD_SLASH:
-                if (previous_state == 0){
-                    current_state = 9;
-                }else if (previous_state == 9){
-                    current_state = 10;
-                }else if (previous_state == 14){
-                    current_state = 15;
-                }else{
-                    current_state = 26;
-                }
-                break;
-            case BACK_SLASH:
-                (previous_state == 2 || previous_state == 4 || previous_state == 5)
-                ?    current_state = 4 :     current_state = 26;
-                break;
-            case PUNCTUATION:
-                (previous_state == 0)
-                ?    current_state = 17 :     current_state = 26;
-                break;
-            case QUOTATION_MARK:
-                if (previous_state == 0){
-                    current_state = 2;
-                }else if (previous_state == 2){
-                    current_state = 3;
-                }else if (previous_state == 4){
-                    current_state = 5;
-                }else if (previous_state == 5){
-                    current_state = 3;
-                }else{
-                    current_state = 26;
-                }
-                break;
-            case NEWLINE:
-            case EQUALS:
-            case EXCLAMATION:
-            case SPACE:
-            case END:
-                break;
-            case INVALID:
-                break;
-        }
-
+        current_state = delta(previous_state, c);
     }
 }
 

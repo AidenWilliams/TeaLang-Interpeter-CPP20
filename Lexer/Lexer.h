@@ -77,12 +77,14 @@ namespace lexer {
 
     bool isSpaceState(unsigned int state);
 
+    static TRANSITION_TYPE determineTransitionType(char c);
+    unsigned int delta(unsigned int fromState, char c);
+
     class Lexer {
     public:
         Lexer();
         ~Lexer();
 
-        static TRANSITION_TYPE determineTransitionType(char c);
         std::vector<TOKEN_TYPE> extraxtLexemes(const std::string& text);
 
     private:
