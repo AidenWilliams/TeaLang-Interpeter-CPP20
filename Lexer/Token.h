@@ -176,17 +176,18 @@ namespace lexer {
     TOKEN_TYPE fromState18(const std::string& s);
     TOKEN_TYPE fromState19(const std::string& s);
     TOKEN_TYPE fromState21(const std::string& s);
+    TOKEN_TYPE fromState22(const std::string& s);
     TOKEN_TYPE fromState23(const std::string& s);
-    TOKEN_TYPE fromState24(const std::string& s);
 
     class Token {
+    private:
+        static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     public:
         Token(std::string s, unsigned int state);
         ~Token();
         TOKEN_TYPE type;
         std::string value;
 
-        static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     };
 }
 

@@ -279,13 +279,13 @@ lexer::TOKEN_TYPE lexer::fromState21(const std::string& s){
     return TOK_INVALID;
 }
 
-lexer::TOKEN_TYPE lexer::fromState23(const std::string& s){
+lexer::TOKEN_TYPE lexer::fromState22(const std::string& s){
     // Equals
     if (isEquals(s)) return TOK_EQUALS;
     return TOK_INVALID;
 }
 
-lexer::TOKEN_TYPE lexer::fromState24(const std::string& s){
+lexer::TOKEN_TYPE lexer::fromState23(const std::string& s){
     // More Than or Equal To
     if (isMoreThanEqualTo(s)) return TOK_MORE_THAN_EQUAL_TO;
     // Less Than or Equal To
@@ -303,6 +303,7 @@ lexer::Token::Token(std::string s, unsigned int state) :
 {}
 
 lexer::Token::~Token() = default;
+
 
 lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
     switch (state) {
@@ -332,10 +333,10 @@ lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int 
             return fromState19(s);
         case 21:
             return fromState21(s);
+        case 22:
+            return fromState22(s);
         case 23:
             return fromState23(s);
-        case 24:
-            return fromState24(s);
         default:
             return TOK_INVALID;
     }

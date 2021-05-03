@@ -85,7 +85,7 @@ namespace lexer {
         Lexer();
         ~Lexer();
 
-        std::vector<TOKEN_TYPE> extraxtLexemes(const std::string& text);
+        std::vector<Token> extraxtLexemes(const std::string& text);
 
     private:
     };

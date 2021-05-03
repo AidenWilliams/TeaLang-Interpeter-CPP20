@@ -140,7 +140,7 @@ unsigned int lexer::delta(unsigned int fromState, char c){
                     current_state = 24;
                 }
             }else if (fromState == 10){
-                current_state = 11;
+                current_state = 10;
             }else if (fromState == 12){
                 if(!isAsterisk(c)){
                     current_state = 12;
@@ -259,7 +259,7 @@ unsigned int lexer::delta(unsigned int fromState, char c){
                 current_state = 24;
             }
         }else if (fromState == 10){
-            current_state = 11;
+            current_state = 10;
         }else if (fromState == 12){
             if(!isAsterisk(c)){
                 current_state = 12;
@@ -279,17 +279,30 @@ unsigned int lexer::delta(unsigned int fromState, char c){
     return current_state;
 }
 
-std::vector<lexer::TOKEN_TYPE> lexer::Lexer::extraxtLexemes(const std::string &text) {
-    std::vector<TOKEN_TYPE> ret;
+std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) {
+    std::vector<Token> ret;
     std::string value;
     unsigned int previous_state, current_state = 0;
-    bool not_printable;
+
     for (auto c : text){
-        value += c;
         previous_state = current_state;
 
         current_state = delta(previous_state, c);
+
+        if (current_state == 24){
+            Token t(value, previous_state);
+            ret.emplace_back(t);
+            //reset
+            current_state = 0;
+            value = "";
+        }else{
+            value += c;
+        }
+
+
     }
+
+    return ret;
 }
 
 #pragma clang diagnostic pop

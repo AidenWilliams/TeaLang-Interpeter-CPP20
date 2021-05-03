@@ -4,16 +4,12 @@
 
 
 int main() {
-    std::string x = "\"12345 \nasdasd";
-    unsigned int previous_state = 2, current_state = 0;
-    bool check_printable = false;
-    check_printable != (previous_state == 0 || previous_state == 1) ? current_state = 1 : current_state = current_state;
-    std::cout << current_state << std::endl;
-    std::cout << check_printable << std::endl;
-
+    std::string x = "//this is a comment\n";
+    lexer::Lexer lex;
+    std::vector<lexer::Token> y = lex.extraxtLexemes(x);
+    std::cout << "value: type" << std::endl;
+    for (const auto& z: y){
+        std::cout << z.value << " : " << z.type << std::endl;
+    }
     return 0;
 }
-
-/*
-
- */
