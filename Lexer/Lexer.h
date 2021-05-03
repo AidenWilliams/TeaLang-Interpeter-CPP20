@@ -75,8 +75,6 @@ namespace lexer {
     bool isExclamation(char c);
     bool isSpace(char c);
 
-    bool isSpaceState(unsigned int state);
-
     static TRANSITION_TYPE determineTransitionType(char c);
     unsigned int delta(unsigned int fromState, char c);
 

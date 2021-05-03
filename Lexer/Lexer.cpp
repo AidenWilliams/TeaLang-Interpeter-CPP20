@@ -83,10 +83,6 @@ bool lexer::isSpace(char c){
     return c == ' ';
 }
 
-bool lexer::isSpaceState(unsigned int state) {
-    return state == 2 || state == 10 || state ==  11 || state ==  12 || state ==  13;
-}
-
 lexer::TRANSITION_TYPE lexer::determineTransitionType(char c){
     if (isLetter(c)) return LETTER;
     if (isDigit(c)) return DIGIT;
