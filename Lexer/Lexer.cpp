@@ -288,17 +288,15 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
         previous_state = current_state;
 
         current_state = delta(previous_state, c);
-        // states that do not need a space to end
-        if (current_state == 24 || current_state == 11){
-            if (current_state == 11){
-                previous_state = current_state;
-                value += c;
-            }
+
+        if (current_state == 24){
             Token t(value, previous_state);
             ret.emplace_back(t);
             //reset
-            current_state = 0;
+            current_state = delta(0, c);
             value = "";
+            if (current_state == 24) current_state = 0;
+            else value += c;
         }else{
             value += c;
         }
