@@ -81,13 +81,15 @@ namespace lexer {
     unsigned int delta(unsigned int fromState, char c);
 
     class Lexer {
+    private:
+        std::vector<Token> tokens;
     public:
         Lexer();
+        Lexer(const std::string& text);
         ~Lexer();
 
         std::vector<Token> extraxtLexemes(const std::string& text);
-
-    private:
+        //TODO: Errors
     };
 };
 

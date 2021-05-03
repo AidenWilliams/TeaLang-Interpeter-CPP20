@@ -87,11 +87,6 @@ bool lexer::isSpaceState(unsigned int state) {
     return state == 2 || state == 10 || state ==  11 || state ==  12 || state ==  13;
 }
 
-lexer::Lexer::Lexer() = default;
-
-lexer::Lexer::~Lexer() = default;
-
-
 lexer::TRANSITION_TYPE lexer::determineTransitionType(char c){
     if (isLetter(c)) return LETTER;
     if (isDigit(c)) return DIGIT;
@@ -279,6 +274,14 @@ unsigned int lexer::delta(unsigned int fromState, char c){
     return current_state;
 }
 
+lexer::Lexer::Lexer() = default;
+
+lexer::Lexer::~Lexer() = default;
+
+lexer::Lexer::Lexer(const std::string &text) :
+        tokens(extraxtLexemes(text))
+{}
+
 std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) {
     std::vector<Token> ret;
     std::string value;
@@ -305,6 +308,7 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
     Token t(value, current_state);
     ret.emplace_back(t);
 
+    tokens = ret;
     return ret;
 }
 
