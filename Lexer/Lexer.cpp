@@ -278,14 +278,11 @@ lexer::Lexer::Lexer() = default;
 
 lexer::Lexer::~Lexer() = default;
 
-lexer::Lexer::Lexer(const std::string &text) :
-        tokens(extraxtLexemes(text))
-{}
-
 std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) {
     std::vector<Token> ret;
     std::string value;
     unsigned int previous_state, current_state = 0;
+    unsigned int lineNumber = 1;
 
     for (auto c : text){
         previous_state = current_state;
@@ -293,7 +290,10 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
         current_state = delta(previous_state, c);
 
         if (current_state == 24){
-            Token t(value, previous_state);
+
+            if(!finalStates[previous_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
+
+            Token t(value, previous_state, lineNumber);
             ret.emplace_back(t);
             //reset
             current_state = delta(0, c);
@@ -303,9 +303,12 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
         }else{
             value += c;
         }
+
+        if(isNewline(c)) lineNumber++;
     }
     // end
-    Token t(value, current_state);
+    if(!finalStates[previous_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
+    Token t(value, current_state, lineNumber);
     ret.emplace_back(t);
 
     tokens = ret;

@@ -9,7 +9,7 @@
 #include <vector>
 #include <regex>
 #include <fstream>
-#include <tuple>
+#include <stdexcept>
 #include "Token.h"
 
 
@@ -81,15 +81,18 @@ namespace lexer {
     unsigned int delta(unsigned int fromState, char c);
 
     class Lexer {
-    private:
-        std::vector<Token> tokens;
     public:
+        std::vector<Token> tokens;
+        std::vector<bool> finalStates = {
+                                            false, true, false, true, false, false, true, false, true, true, false, true,
+                                            false, false, true, true, true, true, true, true, false, true, true, true,
+                                            true
+                                        };
         Lexer();
-        Lexer(const std::string& text);
         ~Lexer();
 
         std::vector<Token> extraxtLexemes(const std::string& text);
-        //TODO: Errors
+
     };
 };
 
