@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Lexer/Lexer.h"
-#include "Lexer/Token.h"
+#include "Parser/Lexer/Lexer.h"
+#include "Parser/Lexer/Token.h"
 
 
 int main() {
