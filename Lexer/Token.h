@@ -184,7 +184,12 @@ namespace lexer {
         unsigned int lineNumber;
         static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     public:
-        Token(std::string s, unsigned int state, unsigned int lineNumber);
+        Token(std::string s, unsigned int state, unsigned int lineNumber) :
+                type(determineTokenType(s, state)),
+                value(s),
+                lineNumber(lineNumber)
+        {};
+
         ~Token() = default;
         TOKEN_TYPE type;
         std::string value;

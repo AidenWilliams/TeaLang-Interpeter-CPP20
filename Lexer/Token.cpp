@@ -297,13 +297,6 @@ lexer::TOKEN_TYPE lexer::fromState23(const std::string& s){
     return TOK_INVALID;
 }
 
-lexer::Token::Token(std::string s, unsigned int state, unsigned int lineNumber) :
-        type(determineTokenType(s, state)),
-        value(s),
-        lineNumber(lineNumber)
-{}
-
-
 lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
     switch (state) {
         case 1:
