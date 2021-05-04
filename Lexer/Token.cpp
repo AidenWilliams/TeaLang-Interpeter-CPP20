@@ -303,8 +303,6 @@ lexer::Token::Token(std::string s, unsigned int state, unsigned int lineNumber) 
         lineNumber(lineNumber)
 {}
 
-lexer::Token::~Token() = default;
-
 
 lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
     switch (state) {

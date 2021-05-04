@@ -270,10 +270,6 @@ unsigned int lexer::delta(unsigned int fromState, char c){
     return current_state;
 }
 
-lexer::Lexer::Lexer() = default;
-
-lexer::Lexer::~Lexer() = default;
-
 std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) {
     std::vector<Token> ret;
     std::string value;

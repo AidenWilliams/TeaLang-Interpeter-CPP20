@@ -11,6 +11,30 @@
 #include "../Visitor/Visitor.h"
 
 namespace parser {
+    // Types
+    enum TYPE {FLOAT, INT, BOOL, STRING};
+
+    // Abstract Nodes
+    class ASTNode {
+    public:
+        ASTNode() = default;
+        ~ASTNode() = default;
+        virtual void accept(visitor::Visitor*) = 0;
+    };
+
+    class ASTStatementNode : public ASTNode {
+    public:
+        ASTStatementNode() = default;
+        ~ASTStatementNode() = default;
+        void accept(visitor::Visitor*) override = 0;
+    };
+
+    class ASTExprNode : public ASTNode {
+    public:
+        ASTExprNode() = default;
+        ~ASTExprNode() = default;
+        void accept(visitor::Visitor*) override = 0;
+    };
 
 }
 

@@ -85,8 +85,8 @@ namespace lexer {
                                             false, false, true, true, true, true, true, true, false, true, true, true,
                                             true
                                         };
-        Lexer();
-        ~Lexer();
+        Lexer() = default;
+        ~Lexer() = default;
 
         std::vector<Token> extraxtLexemes(const std::string& text);
 
