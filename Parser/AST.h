@@ -6,9 +6,12 @@
 #define TEALANG_COMPILER_CPP20_AST_H
 
 
-class AST {
+#include <string>
+#include <vector>
+#include "../Visitor/Visitor.h"
 
-};
+namespace parser {
 
+}
 
 #endif //TEALANG_COMPILER_CPP20_AST_H
