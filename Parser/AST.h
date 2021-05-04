@@ -36,6 +36,16 @@ namespace parser {
         void accept(visitor::Visitor*) override = 0;
     };
 
+    template <typename T>
+    class ASTLiteralNode : public ASTExprNode {
+    public:
+        ASTLiteralNode(T val, unsigned int lineNumber) : val(val), lineNumber(lineNumber) {};
+        ~ASTLiteralNode() = default;
+        T val;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
 }
 
 #endif //TEALANG_COMPILER_CPP20_AST_H
