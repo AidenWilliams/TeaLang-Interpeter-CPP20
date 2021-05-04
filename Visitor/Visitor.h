@@ -18,11 +18,11 @@ namespace parser {
     class ASTDeclarationNode;
     class ASTPrintNode;
     class ASTReturnNode;
+    class ASTBlockNode;
     class ASTIfNode;
     class ASTForNode;
     class ASTWhileNode;
     class ASTFunctionDeclerationNode;
-    class ASTBlockNode;
     class ASTProgramNode;
 
 }
@@ -44,11 +44,11 @@ namespace visitor {
         virtual void visit(parser::ASTDeclarationNode*) = 0;
         virtual void visit(parser::ASTPrintNode*) = 0;
         virtual void visit(parser::ASTReturnNode*) = 0;
+        virtual void visit(parser::ASTBlockNode*) = 0;
         virtual void visit(parser::ASTIfNode*) = 0;
         virtual void visit(parser::ASTForNode*) = 0;
         virtual void visit(parser::ASTWhileNode*) = 0;
         virtual void visit(parser::ASTFunctionDeclerationNode*) = 0;
-        virtual void visit(parser::ASTBlockNode*) = 0;
         virtual void visit(parser::ASTProgramNode*) = 0;
     };
 
