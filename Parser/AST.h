@@ -28,7 +28,7 @@ namespace parser {
         ~ASTStatementNode() = default;
         void accept(visitor::Visitor*) override = 0;
     };
-
+    // Expression Nodes
     class ASTExprNode : public ASTNode {
     public:
         ASTExprNode() = default;
@@ -51,7 +51,7 @@ namespace parser {
 
     class ASTBinaryExprNode : public ASTExprNode {
     public:
-        ASTBinaryExprNode(std::string op, ASTExprNode* left, ASTExprNode* right, unsigned int lineNumber):
+        ASTBinaryExprNode(std::string op, ASTExprNode* left, ASTExprNode* right, unsigned int lineNumber) :
                 op(std::move(op)),
                 left(left),
                 right(right),
@@ -65,6 +65,43 @@ namespace parser {
         void accept(visitor::Visitor*) override;
     };
 
+    class ASTIdentifierNode : public ASTExprNode {
+    public:
+        explicit ASTIdentifierNode(std::string identifier, unsigned int lineNumber) :
+                identifier(identifier),
+                lineNumber(lineNumber)
+                {};
+        std::string identifier;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTUnaryExprNode : public ASTExprNode {
+    public:
+        ASTUnaryExprNode(std::string op, ASTExprNode* expr, unsigned int lineNumber) :
+                op(std::move(op)),
+                expr(expr),
+                lineNumber(lineNumber)
+        {};
+        std::string op;
+        ASTExprNode *expr;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTFunctionCallNode : public ASTExprNode {
+    public:
+        ASTFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                parameters(std::move(parameters)),
+                lineNumber(lineNumber)
+                {};
+        std::string identifier;
+        std::vector<ASTExprNode*> parameters;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+}
 
 }
 
