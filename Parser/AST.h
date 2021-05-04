@@ -39,12 +39,32 @@ namespace parser {
     template <typename T>
     class ASTLiteralNode : public ASTExprNode {
     public:
-        ASTLiteralNode(T val, unsigned int lineNumber) : val(val), lineNumber(lineNumber) {};
+        ASTLiteralNode(T val, unsigned int lineNumber) :
+            val(val),
+            lineNumber(lineNumber)
+            {};
         ~ASTLiteralNode() = default;
         T val;
         unsigned int lineNumber;
         void accept(visitor::Visitor*) override;
     };
+
+    class ASTBinaryExprNode : public ASTExprNode {
+    public:
+        ASTBinaryExprNode(std::string op, ASTExprNode* left, ASTExprNode* right, unsigned int lineNumber):
+                op(std::move(op)),
+                left(left),
+                right(right),
+                lineNumber(lineNumber)
+                {};
+        ~ASTBinaryExprNode() = default;;
+        std::string op;
+        ASTExprNode *left;
+        ASTExprNode *right;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
 
 }
 
