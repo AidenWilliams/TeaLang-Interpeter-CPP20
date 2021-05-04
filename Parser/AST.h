@@ -210,6 +210,34 @@ namespace parser {
         void accept(visitor::Visitor*) override;
     };
 
+    class ASTFunctionDefinitionNode : public ASTStatementNode {
+    public:
+        ASTFunctionDefinitionNode(std::string identifier, std::vector<std::pair<std::string, TYPE>> parameters,
+                                  TYPE type, ASTBlockNode* block, unsigned int lineNumber) :
+                    identifier(std::move(identifier)),
+                    parameters(std::move(parameters)),
+                    type(type),
+                    block(block),
+                    lineNumber(lineNumber)
+        {};
+
+        std::string identifier;
+        std::vector<std::pair<std::string, TYPE>> parameters;
+        std::vector<std::string> variable_names;
+        TYPE type;
+        ASTBlockNode* block;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTProgramNode : public ASTNode {
+    public:
+        explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
+                statements(std::move(statements))
+        {};
+        std::vector<ASTStatementNode*> statements;
+        void accept(visitor::Visitor*) override;
+    };
 }
 
 
