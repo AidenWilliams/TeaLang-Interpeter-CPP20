@@ -10,9 +10,11 @@
 namespace parser {
 
     template <typename T> class ASTLiteralNode;
-    class ASTBinaryExprNode;
     class ASTIdentifierNode;
     class ASTUnaryExprNode;
+    template <typename T> class ASTFactorNode;
+    class ASTTermNode;
+    class ASTSimpleExprNode;
     class ASTFunctionCallNode;
     class ASTAssignmentNode;
     class ASTDeclarationNode;
@@ -36,7 +38,9 @@ namespace visitor {
         virtual void visit(parser::ASTLiteralNode<int>*) = 0;
         virtual void visit(parser::ASTLiteralNode<bool>*) = 0;
         virtual void visit(parser::ASTLiteralNode<std::string>*) = 0;
-        virtual void visit(parser::ASTBinaryExprNode*) = 0;
+        virtual void visit(parser::ASTFactorNode*) = 0;
+        virtual void visit(parser::ASTTermNode*) = 0;
+        virtual void visit(parser::ASTSimpleExprNode*) = 0;
         virtual void visit(parser::ASTIdentifierNode*) = 0;
         virtual void visit(parser::ASTUnaryExprNode*) = 0;
         virtual void visit(parser::ASTFunctionCallNode*) = 0;

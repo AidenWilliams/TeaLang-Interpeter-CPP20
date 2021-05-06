@@ -14,10 +14,6 @@
 #include "AST.h"
 
 namespace parser {
-
-    bool isIdentifier();
-    bool isSemicolon();
-
     class Parser {
     public:
         Parser(std::vector<lexer::Token> tokens) :
@@ -33,8 +29,18 @@ namespace parser {
         std::vector<lexer::Token> tokens;
         std::vector<lexer::Token>::iterator currentToken;
         std::vector<lexer::Token>::iterator nextToken;
+
+        bool foundAssignment();
+        bool foundLiteral();
+        bool foundIdentifier();
+        bool foundMultiplicativeOp();
+        bool foundAdditiveOp();
+        bool foundRelationalOp();
+        bool foundSemicolon();
+
         // Expression Nodes
         ASTExprNode* parseExpression();
+        ASTExprNode* parseSimpleExpression();
 
         // Statement Nodes
         ASTStatementNode* parseStatement();
