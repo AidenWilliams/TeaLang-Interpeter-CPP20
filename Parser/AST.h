@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <utility>
 #include <vector>
 #include "../Visitor/Visitor.h"
 
@@ -43,13 +44,59 @@ namespace parser {
         void accept(visitor::Visitor*) override;
     };
 
+
+    class ASTActualParamNode : public ASTExprNode {
+    public:
+        ASTActualParamNode(ASTExprNode* expr, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+                expr(expr),
+                parameters(std::move(parameters)),
+                lineNumber(lineNumber)
+        {};
+        ~ASTActualParamNode() = default;
+
+        ASTExprNode* expr;
+        std::vector<ASTExprNode*> parameters;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTFunctionCallNode : public ASTExprNode {
+    public:
+        ASTFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                parameters(std::move(parameters)),
+                lineNumber(lineNumber)
+        {};
+        ~ASTFunctionCallNode() = default;
+
+        std::string identifier;
+        std::vector<ASTExprNode*> parameters;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
     class ASTIdentifierNode : public ASTExprNode {
     public:
         explicit ASTIdentifierNode(std::string identifier, unsigned int lineNumber) :
-                identifier(identifier),
+                identifier(std::move(identifier)),
                 lineNumber(lineNumber)
         {};
+        ~ASTIdentifierNode() = default;
+
         std::string identifier;
+        unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTSubExpression : public ASTExprNode {
+    public:
+        explicit ASTSubExpression(ASTExprNode* expr, unsigned int lineNumber) :
+                expr(expr),
+                lineNumber(lineNumber)
+        {};
+        ~ASTSubExpression() = default;
+
+        ASTExprNode* expr;
         unsigned int lineNumber;
         void accept(visitor::Visitor*) override;
     };
@@ -111,20 +158,6 @@ namespace parser {
         void accept(visitor::Visitor*) override;
     };
 
-    class ASTFunctionCallNode : public ASTExprNode {
-    public:
-        ASTFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
-                identifier(std::move(identifier)),
-                parameters(std::move(parameters)),
-                lineNumber(lineNumber)
-        {};
-        ~ASTFunctionCallNode() = default;
-
-        std::string identifier;
-        std::vector<ASTExprNode*> parameters;
-        unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
-    };
     // Statement Nodes
     class ASTStatementNode : public ASTNode {
     public:
