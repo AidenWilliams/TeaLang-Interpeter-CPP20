@@ -20,7 +20,7 @@ namespace parser {
     public:
         ASTNode() = default;
         ~ASTNode() = default;
-        virtual void accept(visitor::Visitor*) = 0;
+//        virtual void accept(visitor::Visitor*) = 0;
     };
 
     // Expression Nodes
@@ -28,7 +28,7 @@ namespace parser {
     public:
         ASTExprNode() = default;
         ~ASTExprNode() = default;
-        void accept(visitor::Visitor*) override = 0;
+//        void accept(visitor::Visitor*) override = 0;
     };
 
     template <typename T>
@@ -41,7 +41,7 @@ namespace parser {
         ~ASTLiteralNode() = default;
         T val;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
 
@@ -57,7 +57,7 @@ namespace parser {
         ASTExprNode* expr;
         std::vector<ASTExprNode*> parameters;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTFunctionCallNode : public ASTExprNode {
@@ -72,7 +72,7 @@ namespace parser {
         std::string identifier;
         std::vector<ASTExprNode*> parameters;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTIdentifierNode : public ASTExprNode {
@@ -85,7 +85,7 @@ namespace parser {
 
         std::string identifier;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTSubExpression : public ASTExprNode {
@@ -98,7 +98,7 @@ namespace parser {
 
         ASTExprNode* expr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTUnaryExprNode : public ASTExprNode {
@@ -111,7 +111,7 @@ namespace parser {
         std::string op;
         ASTExprNode *expr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     template <typename T>
@@ -124,7 +124,7 @@ namespace parser {
         ~ASTFactorNode() = default;
         T type;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTTermNode : public ASTExprNode {
@@ -140,7 +140,7 @@ namespace parser {
         ASTFactorNode<TYPE>* factor;
         std::vector<std::pair<std::string, ASTFactorNode<TYPE>*>> repeatExpr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTSimpleExprNode : public ASTExprNode {
@@ -155,7 +155,7 @@ namespace parser {
         ASTTermNode* term;
         std::vector<std::pair<std::string, ASTTermNode*>> repeatExpr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     // Statement Nodes
@@ -163,7 +163,7 @@ namespace parser {
     public:
         ASTStatementNode() = default;
         ~ASTStatementNode() = default;
-        void accept(visitor::Visitor*) override = 0;
+//        void accept(visitor::Visitor*) override = 0;
     };
 
     class ASTAssignmentNode : public ASTStatementNode {
@@ -178,7 +178,7 @@ namespace parser {
         std::string identifier;
         ASTExprNode *expr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTDeclarationNode : public ASTStatementNode {
@@ -195,7 +195,7 @@ namespace parser {
         std::string identifier;
         ASTExprNode *expr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTPrintNode : public ASTStatementNode {
@@ -208,7 +208,7 @@ namespace parser {
 
         ASTExprNode *expr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTReturnNode : public ASTStatementNode {
@@ -221,7 +221,7 @@ namespace parser {
 
         ASTExprNode *expr;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     // Block statement nodes
@@ -235,7 +235,7 @@ namespace parser {
 
         std::vector<ASTStatementNode*> statements;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTIfNode : public ASTStatementNode {
@@ -252,7 +252,7 @@ namespace parser {
         ASTBlockNode *if_block;
         ASTBlockNode *else_block;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTForNode : public ASTStatementNode {
@@ -271,7 +271,7 @@ namespace parser {
         ASTAssignmentNode* assignment;
         ASTBlockNode *block;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTWhileNode : public ASTStatementNode {
@@ -286,7 +286,7 @@ namespace parser {
         ASTExprNode *condition;
         ASTBlockNode *block;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
     class ASTFunctionDefinitionNode : public ASTStatementNode {
@@ -307,18 +307,19 @@ namespace parser {
         TYPE type;
         ASTBlockNode* block;
         unsigned int lineNumber;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 
+
     class ASTProgramNode : public ASTNode {
-    public:
+        public:
         explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
                 statements(std::move(statements))
         {};
         ~ASTProgramNode() = default;
 
         std::vector<ASTStatementNode*> statements;
-        void accept(visitor::Visitor*) override;
+//        void accept(visitor::Visitor*) override;
     };
 }
 

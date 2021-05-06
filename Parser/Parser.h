@@ -30,6 +30,9 @@ namespace parser {
         std::vector<lexer::Token>::iterator currentToken;
         std::vector<lexer::Token>::iterator nextToken;
 
+        bool foundFactor();
+        bool foundSimpleExpr();
+
         bool foundAssignment();
         bool foundLiteral();
         bool foundIdentifier();

@@ -4,6 +4,18 @@
 
 #include "Parser.h"
 
+bool parser::Parser::foundFactor() {
+    return  foundLiteral() ||
+            foundIdentifier();
+
+}
+
+bool parser::Parser::foundSimpleExpr() {
+    // A Simple expression first token has to be a Factor
+    return  foundFactor();
+}
+
+
 bool parser::Parser::foundAssignment() {
     return  currentToken->type == lexer::TOK_IDENTIFIER &&
             nextToken->type == lexer::TOK_EQUALS;
@@ -75,12 +87,11 @@ parser::ASTStatementNode *parser::Parser::parseStatement() {
 }
 
 parser::ASTAssignmentNode *parser::Parser::parseAssignment(const std::string& identifier) {
-    moveTokenWindow(2);
     // Get Expression
     ASTExprNode* expr = parseExpression();
     moveTokenWindow();
     //verify semicolon
-    if(currentToken->type != lexer::TOK_SEMICOLON)
+    if(!foundSemicolon())
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                  + std::to_string(currentToken->lineNumber) + ".");
 
