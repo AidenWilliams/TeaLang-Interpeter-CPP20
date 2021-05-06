@@ -4,15 +4,20 @@
 
 #include "Parser.h"
 
-bool parser::Parser::foundFactor() {
-    return  foundLiteral() ||
-            foundIdentifier();
+bool parser::Parser::verifyFoundFactor(){
+    if (foundLiteral() || foundIdentifier()){
+        moveTokenWindow();
+        return true;
+    }else if (foundFunctionCall()){
+        moveTokenWindow(2);
+        return true;
+    }else if (currentToken->type == lexer::TOK_OPENING_CURLY){
+        moveTokenWindow();
+        parseExpression();
+        if (currentToken->type == lexer::TOK_OPENING_CURLY){
 
-}
-
-bool parser::Parser::foundSimpleExpr() {
-    // A Simple expression first token has to be a Factor
-    return  foundFactor();
+        }
+    }
 }
 
 
@@ -26,6 +31,11 @@ bool parser::Parser::foundLiteral() {
             currentToken->type == lexer::TOK_FLOAT_TYPE ||
             currentToken->type == lexer::TOK_INT_TYPE ||
             currentToken->type == lexer::TOK_STRING_TYPE;
+}
+
+bool parser::Parser::foundFunctionCall() {
+    return  currentToken->type == lexer::TOK_IDENTIFIER &&
+            nextToken->type == lexer::TOK_OPENING_CURLY;
 }
 
 bool parser::Parser::foundIdentifier() {
@@ -74,7 +84,7 @@ parser::ASTProgramNode* parser::Parser::parseProgram() {
 }
 
 parser::ASTExprNode *parser::Parser::parseExpression() {
-    return nullptr;
+    if (verifyFoundFactor());
 }
 
 
@@ -87,6 +97,7 @@ parser::ASTStatementNode *parser::Parser::parseStatement() {
 }
 
 parser::ASTAssignmentNode *parser::Parser::parseAssignment(const std::string& identifier) {
+    moveTokenWindow(2);
     // Get Expression
     ASTExprNode* expr = parseExpression();
     moveTokenWindow();

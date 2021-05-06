@@ -16,8 +16,7 @@
 namespace parser {
     class Parser {
     public:
-        Parser(std::vector<lexer::Token> tokens) :
-                tokens(std::move(tokens))
+        Parser(std::vector<lexer::Token> tokens)
         {
             currentToken = tokens.begin();
             nextToken = currentToken + 1;
@@ -26,15 +25,14 @@ namespace parser {
 
     private:
         void moveTokenWindow(int step=1);
-        std::vector<lexer::Token> tokens;
         std::vector<lexer::Token>::iterator currentToken;
         std::vector<lexer::Token>::iterator nextToken;
 
-        bool foundFactor();
-        bool foundSimpleExpr();
+        bool verifyFoundFactor();
 
         bool foundAssignment();
         bool foundLiteral();
+        bool foundFunctionCall();
         bool foundIdentifier();
         bool foundMultiplicativeOp();
         bool foundAdditiveOp();
@@ -43,7 +41,6 @@ namespace parser {
 
         // Expression Nodes
         ASTExprNode* parseExpression();
-        ASTExprNode* parseSimpleExpression();
 
         // Statement Nodes
         ASTStatementNode* parseStatement();
