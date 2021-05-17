@@ -23,6 +23,7 @@ namespace parser {
         ASTProgramNode* parseProgram();
         ASTStatementNode* parseStatement();
         ASTDeclarationNode* parseDeclaration();
+        TYPE parseType(const std::string& identifier);
 
     private:
         std::vector<lexer::Token>::iterator currentToken;

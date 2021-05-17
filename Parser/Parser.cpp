@@ -83,7 +83,52 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
 
     // Get next token
     moveTokenWindow();
+    // Get type
+    try{
+        type = parseType(identifier);
+    }catch (error_t T){
+        throw std::runtime_error("Expected type for " + identifier + " after ':' on line "
+                                 + std::to_string(currentToken->lineNumber) + ".");
+    }
+
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken->type != lexer::TOK_EQUALS)
+        throw std::runtime_error("Expected assignment operator '=' for " + identifier + " on line "
+                                 + std::to_string(currentToken->lineNumber) + ".");
+
+    // Get expression after =
+    expr = parseExpression();
+
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken->type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
+                                 + std::to_string(currentToken->lineNumber) + ".");
 
     // Create ASTExpressionNode to return
     return new ASTDeclarationNode(type, identifier, expr, line_number);
+}
+
+
+parser::TYPE parser::Parser::parseType(const std::string& identifier) {
+    switch(currentToken->type){
+        case lexer::TOK_INT_TYPE:
+            return INT;
+
+        case lexer::TOK_FLOAT_TYPE:
+            return FLOAT;
+
+        case lexer::TOK_BOOL_TYPE:
+            return BOOL;
+
+        case lexer ::TOK_STRING_TYPE:
+            return STRING;
+
+        default:
+            throw std::runtime_error("Expected type for " + identifier + " on line "
+                                     + std::to_string(currentToken->lineNumber) + ".");
+    }
 }
