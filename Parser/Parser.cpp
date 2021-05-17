@@ -220,6 +220,11 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
 
         // Identifier or function call case
         case lexer::TOK_IDENTIFIER:
+            // If next token is '(' then we found a function call
+            if(nextLoc->type == lexer::TOK_OPENING_CURVY)
+                return parseFunctionCall();
+            // if not, its just an identifier
+            else return new ASTIdentifierNode(currentToken.value, lineNumber);
         // Subexpression case
         case lexer::TOK_OPENING_CURVY:
 
@@ -235,7 +240,51 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
 
 }
 
-parser::TYPE parser::Parser::parseType(const std::string& identifier) {
+parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
+    // current token is the function identifier
+    std::string identifier = currentToken.value;
+    auto *parameters = new std::vector<ASTExprNode*>;
+    unsigned int line_number = currentToken.lineNumber;
+
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_OPENING_CURVY)
+        throw std::runtime_error("Expected '(' on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+
+    // Get next token
+    moveTokenWindow();
+    // If next token is not right bracket, we have parameters
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY) {
+        parameters = parseActualParams();
+    }
+
+    // Ensure right close bracket after fetching parameters
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY)
+        throw std::runtime_error("Expected ')' on line "
+                                 + std::to_string(currentToken.lineNumber)
+                                 + " after function parameters.");
+
+    return new ASTFunctionCallNode(identifier, *parameters, line_number);
+}
+
+std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
+    auto parameters = new std::vector<ASTExprNode*>;
+
+    parameters->push_back(parseExpression());
+    moveTokenWindow();
+
+    // If there are more
+    while(currentToken.type == lexer::TOK_COMMA) {
+        parameters->push_back(parseExpression());
+        moveTokenWindow();
+    }
+
+    return parameters;
+}
+
+parser::TYPE parser::Parser::parseType(const std::string& identifier) const {
     switch(currentToken.type){
         case lexer::TOK_INT_TYPE:
             return INT;

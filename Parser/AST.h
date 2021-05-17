@@ -61,6 +61,34 @@ namespace parser {
 //        void accept(visitor::Visitor*) override;
     };
 
+    class ASTFunctionCallNode : public ASTExprNode {
+    public:
+        ASTFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                parameters(std::move(parameters)),
+                lineNumber(lineNumber)
+        {};
+        ~ASTFunctionCallNode() = default;
+
+        std::string identifier;
+        std::vector<ASTExprNode*> parameters;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTIdentifierNode : public ASTExprNode {
+    public:
+        explicit ASTIdentifierNode(std::string identifier, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                lineNumber(lineNumber)
+        {};
+        ~ASTIdentifierNode() = default;
+
+        std::string identifier;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
     // Statement Nodes
     class ASTStatementNode : public ASTNode {
     public:

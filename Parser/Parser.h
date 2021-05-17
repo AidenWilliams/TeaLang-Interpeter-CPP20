@@ -25,7 +25,10 @@ namespace parser {
         ASTExprNode* parseSimpleExpression();
         ASTExprNode* parseTerm();
         ASTExprNode* parseFactor();
-        TYPE parseType(const std::string& identifier);
+        ASTFunctionCallNode* parseFunctionCall();
+        std::vector<ASTExprNode*>* parseActualParams();
+
+        [[nodiscard]] TYPE parseType(const std::string& identifier) const;
 
     private:
         lexer::Token currentToken;
