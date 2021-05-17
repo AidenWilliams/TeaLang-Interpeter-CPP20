@@ -23,6 +23,10 @@ namespace parser {
         ASTProgramNode* parseProgram();
         ASTStatementNode* parseStatement();
         ASTDeclarationNode* parseDeclaration();
+        ASTExprNode* parseExpression();
+        ASTExprNode* parseSimpleExpression();
+        ASTExprNode* parseTerm();
+        ASTExprNode* parseFactor();
         TYPE parseType(const std::string& identifier);
 
     private:
