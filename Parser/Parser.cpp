@@ -9,3 +9,15 @@ void parser::Parser::moveTokenWindow(int step){
     currentToken += step;
     nextToken += step;
 }
+
+parser::ASTProgramNode* parser::Parser::parseProgram() {
+
+    auto statements = new std::vector<ASTNode*>;
+
+//    while(currentToken->type != lexer::TOK_){
+//        statements->push_back(parse_statement());
+//        consume_token();
+//    }
+//
+//    return new ASTProgramNode(*statements);
+}

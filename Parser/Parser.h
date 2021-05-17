@@ -20,13 +20,13 @@ namespace parser {
             currentToken = tokens.begin();
             nextToken = currentToken + 1;
         };
-//        ASTProgramNode* parseProgram();
+        ASTProgramNode* parseProgram();
 
     private:
         std::vector<lexer::Token>::iterator currentToken;
         std::vector<lexer::Token>::iterator nextToken;
 
         void moveTokenWindow(int step = 1);
-    }
+    };
 }
 #endif //TEALANG_COMPILER_CPP20_PARSER_H
