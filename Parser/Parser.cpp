@@ -5,19 +5,32 @@
 #include "Parser.h"
 
 bool parser::Parser::verifyFoundFactor(){
+    // if literal or identifier
     if (foundLiteral() || foundIdentifier()){
         moveTokenWindow();
         return true;
+    // if function call
     }else if (foundFunctionCall()){
         moveTokenWindow(2);
         return true;
-    }else if (currentToken->type == lexer::TOK_OPENING_CURLY){
+    // if sub expression
+    }else if (currentToken->type == lexer::TOK_OPENING_CURVY){
+        unsigned int lineNumber = currentToken->lineNumber;
         moveTokenWindow();
         parseExpression();
-        if (currentToken->type == lexer::TOK_OPENING_CURLY){
-
+        if(currentToken->type != lexer::TOK_CLOSING_CURVY){
+            throw std::runtime_error("Expected ')' for opening '(' on line "
+                                     + std::to_string(lineNumber) + ".");
         }
+        moveTokenWindow();
+        return true;
+        // if Unary
+    }else if (currentToken->type == lexer::TOK_NOT || currentToken->type == lexer::TOK_MINUS){
+        moveTokenWindow();
+        parseExpression();
+        return true;
     }
+    return false;
 }
 
 
