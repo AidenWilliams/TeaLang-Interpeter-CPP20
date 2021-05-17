@@ -145,6 +145,7 @@ parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
 
 parser::ASTExprNode* parser::Parser::parseTerm() {
     ASTExprNode *factor = parseFactor();
+
     unsigned int lineNumber = currentToken.lineNumber;
 
     if( currentToken.type == lexer::TOK_ASTERISK || currentToken.type == lexer::TOK_DIVIDE ||

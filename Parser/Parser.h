@@ -29,7 +29,6 @@ namespace parser {
 
     private:
         lexer::Token currentToken;
-        std::vector<lexer::Token>::iterator currentLoc;
         std::vector<lexer::Token>::iterator nextLoc;
 
         void moveTokenWindow(int step = 1);
