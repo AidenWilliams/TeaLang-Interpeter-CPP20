@@ -3,3 +3,9 @@
 //
 
 #include "Parser.h"
+
+
+void parser::Parser::moveTokenWindow(int step){
+    currentToken += step;
+    nextToken += step;
+}
