@@ -4,17 +4,21 @@
 
 #include "Parser.h"
 
+parser::Parser::Parser(std::vector<lexer::Token> tokens) {
+    currentToken = tokens.front();
+    nextLoc = tokens.begin() + 1;
+}
 
 void parser::Parser::moveTokenWindow(int step){
-    currentToken += step;
-    nextToken += step;
+    currentToken = *nextLoc;
+    nextLoc += step;
 }
 
 parser::ASTProgramNode* parser::Parser::parseProgram() {
 
     auto statements = new std::vector<ASTStatementNode*>;
 
-    while(currentToken->type != lexer::TOK_END){
+    while(currentToken.type != lexer::TOK_END){
         statements->push_back(parseStatement());
         moveTokenWindow();
     }
@@ -23,7 +27,7 @@ parser::ASTProgramNode* parser::Parser::parseProgram() {
 }
 
 parser::ASTStatementNode* parser::Parser::parseStatement() {
-    switch(currentToken->type){
+    switch(currentToken.type){
         case lexer::TOK_LET:
             return parseDeclaration();
 //        case lexer::TOK_SET:
@@ -49,33 +53,33 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
 
         default:
             throw std::runtime_error("Invalid statement starting with '" +
-                                     currentToken->value
+                                     currentToken.value
                                      + "' encountered on line " +
-                                     std::to_string(currentToken->lineNumber) + ".");
+                                     std::to_string(currentToken.lineNumber) + ".");
     }
 }
 
 parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     // Determine line number
-    unsigned int lineNumber = currentToken->lineNumber;
+    unsigned int lineNumber = currentToken.lineNumber;
 
     // Get next token
     moveTokenWindow();
     // Get identifier for new variable
 
-    if(currentToken->type != lexer::TOK_IDENTIFIER)
+    if(currentToken.type != lexer::TOK_IDENTIFIER)
         throw std::runtime_error("Expected variable name after 'let' on line "
-                                 + std::to_string(currentToken->lineNumber) + ".");
+                                 + std::to_string(currentToken.lineNumber) + ".");
 
-    std::string identifier = currentToken->value;
+    std::string identifier = currentToken.value;
 
     // Get next token
     moveTokenWindow();
 
     // Ensure proper syntax
-    if(currentToken->type != lexer::TOK_COLON)
+    if(currentToken.type != lexer::TOK_COLON)
         throw std::runtime_error("Expected ':' after " + identifier + " on line "
-                                 + std::to_string(currentToken->lineNumber) + ".");
+                                 + std::to_string(currentToken.lineNumber) + ".");
 
     // Get next token
     moveTokenWindow();
@@ -85,15 +89,15 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
         type = parseType(identifier);
     }catch (error_t T){
         throw std::runtime_error("Expected type for " + identifier + " after ':' on line "
-                                 + std::to_string(currentToken->lineNumber) + ".");
+                                 + std::to_string(currentToken.lineNumber) + ".");
     }
 
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax
-    if(currentToken->type != lexer::TOK_EQUALS)
+    if(currentToken.type != lexer::TOK_EQUALS)
         throw std::runtime_error("Expected assignment operator '=' for " + identifier + " on line "
-                                 + std::to_string(currentToken->lineNumber) + ".");
+                                 + std::to_string(currentToken.lineNumber) + ".");
 
     // Get next token
     moveTokenWindow();
@@ -103,9 +107,9 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax
-    if(currentToken->type != lexer::TOK_SEMICOLON)
+    if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
-                                 + std::to_string(currentToken->lineNumber) + ".");
+                                 + std::to_string(currentToken.lineNumber) + ".");
 
     // Create ASTExpressionNode to return
     return new ASTDeclarationNode(type, identifier, expr, lineNumber);
@@ -113,14 +117,14 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
 
 parser::ASTExprNode* parser::Parser::parseExpression() {
     ASTExprNode *simple_expr = parseSimpleExpression();
-    unsigned int lineNumber = currentToken->lineNumber;
+    unsigned int lineNumber = currentToken.lineNumber;
 
-    if( currentToken->type == lexer::TOK_LESS_THAN || currentToken->type == lexer::TOK_MORE_THAN ||
-        currentToken->type == lexer::TOK_EQAUL_TO || currentToken->type == lexer::TOK_NOT_EQAUL_TO ||
-        currentToken->type == lexer::TOK_LESS_THAN_EQUAL_TO || currentToken->type == lexer::TOK_MORE_THAN_EQUAL_TO) {
+    if( currentToken.type == lexer::TOK_LESS_THAN || currentToken.type == lexer::TOK_MORE_THAN ||
+        currentToken.type == lexer::TOK_EQAUL_TO || currentToken.type == lexer::TOK_NOT_EQAUL_TO ||
+        currentToken.type == lexer::TOK_LESS_THAN_EQUAL_TO || currentToken.type == lexer::TOK_MORE_THAN_EQUAL_TO) {
 
         moveTokenWindow();
-        return new ASTBinaryExprNode(currentToken->value, simple_expr, parseSimpleExpression(), lineNumber);
+        return new ASTBinaryExprNode(currentToken.value, simple_expr, parseSimpleExpression(), lineNumber);
     }
 
     return simple_expr;
@@ -128,12 +132,12 @@ parser::ASTExprNode* parser::Parser::parseExpression() {
 
 parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
     ASTExprNode *term = parseTerm();
-    unsigned int lineNumber = currentToken->lineNumber;
+    unsigned int lineNumber = currentToken.lineNumber;
 
-    if( currentToken->type == lexer::TOK_PLUS || currentToken->type == lexer::TOK_MINUS ||
-        currentToken->type == lexer::TOK_OR) {
+    if( currentToken.type == lexer::TOK_PLUS || currentToken.type == lexer::TOK_MINUS ||
+        currentToken.type == lexer::TOK_OR) {
         moveTokenWindow();
-        return new ASTBinaryExprNode(currentToken->value, term, parseSimpleExpression(), lineNumber);
+        return new ASTBinaryExprNode(currentToken.value, term, parseSimpleExpression(), lineNumber);
     }
 
     return term;
@@ -141,12 +145,12 @@ parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
 
 parser::ASTExprNode* parser::Parser::parseTerm() {
     ASTExprNode *factor = parseFactor();
-    unsigned int lineNumber = currentToken->lineNumber;
+    unsigned int lineNumber = currentToken.lineNumber;
 
-    if( currentToken->type == lexer::TOK_ASTERISK || currentToken->type == lexer::TOK_DIVIDE ||
-        currentToken->type == lexer::TOK_AND) {
+    if( currentToken.type == lexer::TOK_ASTERISK || currentToken.type == lexer::TOK_DIVIDE ||
+        currentToken.type == lexer::TOK_AND) {
         moveTokenWindow();
-        return new ASTBinaryExprNode(currentToken->value, factor, parseTerm(), lineNumber);
+        return new ASTBinaryExprNode(currentToken.value, factor, parseTerm(), lineNumber);
     }
 
     return factor;
@@ -154,16 +158,16 @@ parser::ASTExprNode* parser::Parser::parseTerm() {
 
 parser::ASTExprNode* parser::Parser::parseFactor() {
     // Determine line number
-    unsigned int lineNumber = currentToken->lineNumber;
+    unsigned int lineNumber = currentToken.lineNumber;
 
-    switch(currentToken->type){
+    switch(currentToken.type){
 
         // Literal Cases
         case lexer::TOK_INT_TYPE:
-            return new ASTLiteralNode<int>(std::stoi(currentToken->value), lineNumber);
+            return new ASTLiteralNode<int>(std::stoi(currentToken.value), lineNumber);
 
         case lexer::TOK_FLOAT_TYPE:
-            return new ASTLiteralNode<float>(std::stof(currentToken->value), lineNumber);
+            return new ASTLiteralNode<float>(std::stof(currentToken.value), lineNumber);
 
         case lexer::TOK_TRUE:
             return new ASTLiteralNode<bool>(true, lineNumber);
@@ -172,7 +176,7 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
 
         case lexer::TOK_STRING: {
             // Remove " character from front and end of lexeme
-            std::string str = currentToken->value.substr(1, currentToken->value.size() - 2);
+            std::string str = currentToken.value.substr(1, currentToken.value.size() - 2);
 
             // Replace \" with quote
             size_t pos = str.find("\\\"");
@@ -224,14 +228,14 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
 
         default:
             throw std::runtime_error("Expected expression on line "
-                                     + std::to_string(currentToken->lineNumber) + ".");
+                                     + std::to_string(currentToken.lineNumber) + ".");
 
     }
 
 }
 
 parser::TYPE parser::Parser::parseType(const std::string& identifier) {
-    switch(currentToken->type){
+    switch(currentToken.type){
         case lexer::TOK_INT_TYPE:
             return INT;
 
@@ -246,6 +250,6 @@ parser::TYPE parser::Parser::parseType(const std::string& identifier) {
 
         default:
             throw std::runtime_error("Expected type for " + identifier + " on line "
-                                     + std::to_string(currentToken->lineNumber) + ".");
+                                     + std::to_string(currentToken.lineNumber) + ".");
     }
 }

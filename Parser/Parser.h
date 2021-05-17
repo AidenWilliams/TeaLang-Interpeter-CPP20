@@ -16,10 +16,8 @@
 namespace parser {
     class Parser {
     public:
-        Parser(std::vector<lexer::Token> tokens) {
-            currentToken = tokens.begin();
-            nextToken = currentToken + 1;
-        };
+        explicit Parser(std::vector<lexer::Token> tokens);
+
         ASTProgramNode* parseProgram();
         ASTStatementNode* parseStatement();
         ASTDeclarationNode* parseDeclaration();
@@ -30,8 +28,9 @@ namespace parser {
         TYPE parseType(const std::string& identifier);
 
     private:
-        std::vector<lexer::Token>::iterator currentToken;
-        std::vector<lexer::Token>::iterator nextToken;
+        lexer::Token currentToken;
+        std::vector<lexer::Token>::iterator currentLoc;
+        std::vector<lexer::Token>::iterator nextLoc;
 
         void moveTokenWindow(int step = 1);
     };

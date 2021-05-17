@@ -188,6 +188,8 @@ namespace lexer {
                 value(s),
                 lineNumber(lineNumber)
         {};
+        Token(Token const &t) = default;;
+        Token() = default;;
 
         ~Token() = default;
         TOKEN_TYPE type;
