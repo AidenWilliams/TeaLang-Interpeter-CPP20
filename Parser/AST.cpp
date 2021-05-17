@@ -4,6 +4,6 @@
 
 #include "AST.h"
 
-parser::ASTProgramNode::ASTProgramNode(std::vector<ASTStatementNode *> statements) :
-    statements(std::move(statements))
-{}
+//parser::ASTProgramNode::ASTProgramNode(std::vector<ASTStatementNode *> statements) :
+//    statements(std::move(statements))
+//{}

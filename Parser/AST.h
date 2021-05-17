@@ -89,11 +89,11 @@ namespace parser {
     // Program Node
     class ASTProgramNode : public ASTNode {
     public:
-        explicit ASTProgramNode(std::vector<ASTStatementNode *> statements);
+//        explicit ASTProgramNode(std::vector<ASTStatementNode *> statements);
 
-//        explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
-//                statements(std::move(statements))
-//        {};
+        explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
+                statements(std::move(statements))
+        {};
         ~ASTProgramNode() = default;
 
         std::vector<ASTStatementNode*> statements;

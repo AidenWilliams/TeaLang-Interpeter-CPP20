@@ -21,6 +21,8 @@ namespace parser {
             nextToken = currentToken + 1;
         };
         ASTProgramNode* parseProgram();
+        ASTStatementNode* parseStatement();
+        ASTDeclarationNode* parseDeclaration();
 
     private:
         std::vector<lexer::Token>::iterator currentToken;
