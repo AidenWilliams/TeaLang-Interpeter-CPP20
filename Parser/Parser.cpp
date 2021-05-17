@@ -10,7 +10,7 @@ parser::Parser::Parser(std::vector<lexer::Token> tokens) {
 }
 
 void parser::Parser::moveTokenWindow(int step){
-    currentToken = *nextLoc;
+    currentToken = *(nextLoc + step - 1);
     nextLoc += step;
 }
 
@@ -164,10 +164,10 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
     switch(currentToken.type){
 
         // Literal Cases
-        case lexer::TOK_INT_TYPE:
+        case lexer::TOK_INT:
             return new ASTLiteralNode<int>(std::stoi(currentToken.value), lineNumber);
 
-        case lexer::TOK_FLOAT_TYPE:
+        case lexer::TOK_FLOAT:
             return new ASTLiteralNode<float>(std::stof(currentToken.value), lineNumber);
 
         case lexer::TOK_TRUE:
@@ -271,15 +271,18 @@ parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
 
 std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
     auto parameters = new std::vector<ASTExprNode*>;
-
+    // Add first param
     parameters->push_back(parseExpression());
-    moveTokenWindow();
 
-    // If there are more
-    while(currentToken.type == lexer::TOK_COMMA) {
+    // If next token is a comma there are more
+    while(nextLoc->type == lexer::TOK_COMMA) {
+        // Move current token, to token after comma
+        moveTokenWindow(2);
+        // Add this token
         parameters->push_back(parseExpression());
-        moveTokenWindow();
     }
+    // Current token is on the last param, we need to move beyond that to get the closing )
+    moveTokenWindow();
 
     return parameters;
 }
