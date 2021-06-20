@@ -124,6 +124,47 @@ namespace parser {
 //        void accept(visitor::Visitor*) override;
     };
 
+    class ASTAssignmentNode : public ASTStatementNode {
+    public:
+        ASTAssignmentNode(std::string identifier, ASTExprNode* expr, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                expr(expr),
+                lineNumber(lineNumber)
+        {};
+        ~ASTAssignmentNode() = default;
+
+        TYPE type;
+        std::string identifier;
+        ASTExprNode *expr;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTPrintStatment : public ASTStatementNode {
+    public:
+        ASTPrintStatment(ASTExprNode* expr, unsigned int lineNumber) :
+                expr(expr),
+                lineNumber(lineNumber)
+        {};
+        ~ASTPrintStatment() = default;
+
+        std::string identifier;
+        ASTExprNode *expr;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTBlockNode : public ASTStatementNode {
+    public:
+        ASTBlockNode(std::vector<ASTStatementNode*> statements, unsigned int lineNumber) :
+                statements(std::move(statements)),
+                lineNumber(lineNumber)
+        {};
+        std::vector<ASTStatementNode*> statements;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
     // Program Node
     class ASTProgramNode : public ASTNode {
     public:

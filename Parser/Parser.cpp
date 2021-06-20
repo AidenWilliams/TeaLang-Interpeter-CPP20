@@ -53,7 +53,7 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
         case lexer::TOK_FLOAT_TYPE || lexer::TOK_INT_TYPE || lexer::TOK_BOOL_TYPE || lexer::TOK_STRING_TYPE:
             return parseFunctionDeclaration();
 
-        case lexer::TOK_LEFT_CURLY:
+        case lexer::TOK_OPENING_CURLY:
             return parseBlock();
 
         default:

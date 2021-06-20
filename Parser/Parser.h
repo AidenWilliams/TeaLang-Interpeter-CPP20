@@ -21,6 +21,9 @@ namespace parser {
         ASTProgramNode* parseProgram();
         ASTStatementNode* parseStatement();
         ASTDeclarationNode* parseDeclaration();
+        ASTAssignmentNode* parseAssignment();
+        ASTPrintStatment* parsePrint();
+        ASTBlockNode* parseBlock();
         ASTExprNode* parseExpression();
         ASTExprNode* parseSimpleExpression();
         ASTExprNode* parseTerm();
