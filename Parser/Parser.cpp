@@ -87,7 +87,7 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     TYPE type;
     try{
         type = parseType(identifier);
-    }catch (errno_t T){
+    }catch (error_t T){
         throw std::runtime_error("Expected type for " + identifier + " after ':' on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     }
@@ -299,9 +299,9 @@ parser::ASTExprNode* parser::Parser::parseSubExpression() {
     // move over expression
     moveTokenWindow();
     // Ensure ')' is there
-    if(nextLoc->type != lexer::TOK_CLOSING_CURVY)
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' on line "
-                                 + std::to_string(nextLoc->lineNumber)
+                                 + std::to_string(currentToken.lineNumber)
                                  + " after expression.");
     return exprNode;
 }

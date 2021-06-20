@@ -12,10 +12,10 @@ int main() {
     std::string declaration = "let monkey : bool = (10);"; //let monkey : bool = foo(1,2,3);
     lexer::Lexer lexer;
     lexer.extraxtLexemes(declaration);
-    std::cout << "value: type" << std::endl;
-    for (const auto& z: lexer.tokens){
-        std::cout << z.value << " : " << z.type << std::endl;
-    }
+//    std::cout << "value: type" << std::endl;
+//    for (const auto& z: lexer.tokens){
+//        std::cout << z.value << " : " << z.type << std::endl;
+//    }
 
     parser::Parser parser(lexer.tokens);
     parser::ASTProgramNode* programNode = parser.parseProgram();
