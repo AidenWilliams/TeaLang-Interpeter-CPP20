@@ -234,6 +234,11 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
         // Unary expression case
         case lexer::TOK_MINUS:
         case lexer::TOK_NOT:
+            // Current token is either not or -
+            // Move over it
+            moveTokenWindow();
+            // return an ASTUnaryNode
+            return new ASTUnaryNode(parseExpression(), currentToken.lineNumber);
 
         default:
             throw std::runtime_error("Expected expression on line "

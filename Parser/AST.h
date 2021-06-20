@@ -16,7 +16,6 @@ namespace parser {
         FLOAT, INT, BOOL, STRING
     };
 
-
     // Abstract Nodes
     class ASTNode {
     public:
@@ -87,6 +86,17 @@ namespace parser {
         std::string identifier;
         unsigned int lineNumber;
 //        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTUnaryNode : public ASTExprNode {
+    public:
+        explicit ASTUnaryNode(ASTExprNode* exprNode, unsigned int lineNumber) :
+            exprNode(exprNode),
+            lineNumber(lineNumber)
+        {};
+        ~ASTUnaryNode() = default;
+        ASTExprNode* exprNode;
+        unsigned int lineNumber;
     };
 
     // Statement Nodes
