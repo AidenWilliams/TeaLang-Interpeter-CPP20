@@ -42,7 +42,7 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
             return parseIf();
 
         case lexer::TOK_FOR:
-            return parseForStatement();
+            return parseFor();
 
         case lexer::TOK_WHILE:
             return parseWhile();
@@ -50,7 +50,7 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
         case lexer::TOK_RETURN:
             return parseReturn();
 
-        case lexer::TOK_FLOAT_TYPE || lexer::TOK_INT_TYPE || lexer::TOK_BOOL_TYPE || lexer::TOK_STRING_TYPE:
+        case lexer::TOK_INT_TYPE || lexer::TOK_FLOAT_TYPE || lexer::TOK_BOOL_TYPE || lexer::TOK_STRING_TYPE:
             return parseFunctionDeclaration();
 
         case lexer::TOK_OPENING_CURLY:
@@ -61,6 +61,7 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
                                      currentToken.value
                                      + "' encountered on line " +
                                      std::to_string(currentToken.lineNumber) + ".");
+
     }
 }
 

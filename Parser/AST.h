@@ -169,7 +169,7 @@ namespace parser {
 
     class ASTIfNode : public ASTStatementNode {
     public:
-        ASTIfNode(ASTExprNode* condition, ASTBlockNode* ifBlock, unsigned int lineNumber, ASTBlockNode* elseBlock= nullptr) :
+        ASTIfNode(ASTExprNode* condition, ASTBlockNode* ifBlock, unsigned int lineNumber, ASTBlockNode* elseBlock = nullptr) :
                 condition(condition),
                 ifBlock(ifBlock),
                 elseBlock(elseBlock),
@@ -183,6 +183,26 @@ namespace parser {
         unsigned int lineNumber;
 //        void accept(visitor::Visitor*) override;
     };
+
+    class ASTForNode : public ASTStatementNode {
+    public:
+        ASTForNode(ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber, ASTDeclarationNode* counter = nullptr, ASTAssignmentNode* counterOperation = nullptr) :
+                condition(condition),
+                counter(counter),
+                counterOperation(counterOperation),
+                loopBlock(loopBlock),
+                lineNumber(lineNumber)
+        {};
+        ~ASTForNode() = default;
+
+        ASTDeclarationNode *counter;
+        ASTExprNode *condition;
+        ASTAssignmentNode *counterOperation;
+        ASTBlockNode *loopBlock;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
 
     // Program Node
     class ASTProgramNode : public ASTNode {
