@@ -5,17 +5,18 @@
 #include "Parser.h"
 
 parser::Parser::Parser(std::vector<lexer::Token> tokens) {
+    // Initialise the currentToken and pointer for the next token
     currentToken = tokens.front();
     nextLoc = tokens.begin() + 1;
 }
 
 void parser::Parser::moveTokenWindow(int step){
+    // Move window by step
     currentToken = *(nextLoc + step - 1);
     nextLoc += step;
 }
 
 parser::ASTProgramNode* parser::Parser::parseProgram() {
-
     auto statements = new std::vector<ASTStatementNode*>;
 
     while(currentToken.type != lexer::TOK_END){
@@ -30,26 +31,30 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
     switch(currentToken.type){
         case lexer::TOK_LET:
             return parseDeclaration();
-//        case lexer::TOK_SET:
-//            return parse_assignment_statement();
-//
-//        case lexer::TOK_PRINT:
-//            return parse_print_statement();
-//
-//        case lexer::TOK_IF:
-//            return parse_if_statement();
-//
-//        case lexer::TOK_WHILE:
-//            return parse_while_statement();
-//
-//        case lexer::TOK_RETURN:
-//            return parse_return_statement();
-//
-//        case lexer::TOK_DEF:
-//            return parse_function_definition();
-//
-//        case lexer::TOK_LEFT_CURLY:
-//            return parse_block();
+
+        case lexer::TOK_IDENTIFIER:
+            return parseAssignment();
+
+        case lexer::TOK_PRINT:
+            return parsePrint();
+
+        case lexer::TOK_IF:
+            return parseIf();
+
+        case lexer::TOK_FOR:
+            return parseForStatement();
+
+        case lexer::TOK_WHILE:
+            return parseWhile();
+
+        case lexer::TOK_RETURN:
+            return parseReturn();
+
+        case lexer::TOK_FLOAT_TYPE || lexer::TOK_INT_TYPE || lexer::TOK_BOOL_TYPE || lexer::TOK_STRING_TYPE:
+            return parseFunctionDeclaration();
+
+        case lexer::TOK_LEFT_CURLY:
+            return parseBlock();
 
         default:
             throw std::runtime_error("Invalid statement starting with '" +
@@ -301,6 +306,7 @@ parser::ASTExprNode* parser::Parser::parseSubExpression() {
     moveTokenWindow();
     // Now we should be able to get an expression
     ASTExprNode *exprNode = parseExpression();
+
     // move over expression
     moveTokenWindow();
     // Ensure ')' is there
