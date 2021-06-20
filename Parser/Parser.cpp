@@ -1,7 +1,7 @@
 //
 // Created by Aiden Williams on 03/05/2021.
 //
-
+#include <iostream>
 #include "Parser.h"
 
 parser::Parser::Parser(std::vector<lexer::Token> tokens) {
@@ -291,18 +291,19 @@ parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
 }
 
 parser::ASTExprNode* parser::Parser::parseSubExpression() {
+    // current token is the curvy bracket
     // move over first curvy bracket
     moveTokenWindow();
     // Now we should be able to get an expression
     ASTExprNode *exprNode = parseExpression();
-    if (nextLoc->type == lexer::TOK_CLOSING_CURLY){
-        // move over final curvy bracket
-        moveTokenWindow();
-        return exprNode;
-    }
-    else throw std::runtime_error("Expected ')' on line "
-                                  + std::to_string(nextLoc->lineNumber)
-                                  + " after function parameters.");
+    // move over expression
+    moveTokenWindow();
+    // Ensure ')' is there
+    if(nextLoc->type != lexer::TOK_CLOSING_CURVY)
+        throw std::runtime_error("Expected ')' on line "
+                                 + std::to_string(nextLoc->lineNumber)
+                                 + " after expression.");
+    return exprNode;
 }
 
 parser::TYPE parser::Parser::parseType(const std::string& identifier) const {
