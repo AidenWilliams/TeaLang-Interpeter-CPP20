@@ -160,7 +160,26 @@ namespace parser {
                 statements(std::move(statements)),
                 lineNumber(lineNumber)
         {};
+        ~ASTBlockNode() = default;
+
         std::vector<ASTStatementNode*> statements;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTIfNode : public ASTStatementNode {
+    public:
+        ASTIfNode(ASTExprNode* condition, ASTBlockNode* ifBlock, unsigned int lineNumber, ASTBlockNode* elseBlock= nullptr) :
+                condition(condition),
+                ifBlock(ifBlock),
+                elseBlock(elseBlock),
+                lineNumber(lineNumber)
+        {};
+        ~ASTIfNode() = default;
+
+        ASTExprNode *condition;
+        ASTBlockNode *ifBlock;
+        ASTBlockNode *elseBlock;
         unsigned int lineNumber;
 //        void accept(visitor::Visitor*) override;
     };
