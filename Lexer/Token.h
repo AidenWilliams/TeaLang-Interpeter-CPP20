@@ -13,33 +13,33 @@ namespace lexer {
     enum TOKEN_TYPE {
         // State 1
         // float
-        TOK_FLOAT_TYPE          =  0,
+        TOK_FLOAT_TYPE          = 0,
         // int
-        TOK_INT_TYPE            =  1,
+        TOK_INT_TYPE            = 1,
         // bool
-        TOK_BOOL_TYPE           =  2,
+        TOK_BOOL_TYPE           = 2,
         //  string
-        TOK_STRING_TYPE         =  3,
+        TOK_STRING_TYPE         = 3,
         // true
-        TOK_TRUE                =  4,
+        TOK_TRUE                = 4,
         // false
-        TOK_FALSE               =  5,
+        TOK_FALSE               = 5,
         // variable1 | _name
-        TOK_IDENTIFIER          =  6,
+        TOK_IDENTIFIER          = 6,
         // and
-        TOK_AND                 =  7,
+        TOK_AND                 = 7,
         // or
-        TOK_OR                  =  8,
+        TOK_OR                  = 8,
         // not
-        TOK_NOT                 =  9,
+        TOK_NOT                 = 9,
         // let
-        TOK_LET                 =  10,
+        TOK_LET                 = 10,
         // print
         TOK_PRINT               = 11,
         // return
-        TOK_RETURN              =  12,
+        TOK_RETURN              = 12,
         // if
-        TOK_IF                  =  13,
+        TOK_IF                  = 13,
         // else
         TOK_ELSE                = 14,
         // for
@@ -181,13 +181,20 @@ namespace lexer {
 
     class Token {
     private:
-        unsigned int lineNumber;
         static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     public:
-        Token(std::string s, unsigned int state, unsigned int lineNumber);
-        ~Token();
+        Token(std::string s, unsigned int state, unsigned int lineNumber) :
+                type(determineTokenType(s, state)),
+                value(s),
+                lineNumber(lineNumber)
+        {};
+        Token(Token const &t) = default;;
+        Token() = default;;
+
+        ~Token() = default;
         TOKEN_TYPE type;
         std::string value;
+        unsigned int lineNumber;
 
     };
 }
