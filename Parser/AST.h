@@ -186,7 +186,8 @@ namespace parser {
 
     class ASTForNode : public ASTStatementNode {
     public:
-        ASTForNode(ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber, ASTDeclarationNode* counter = nullptr, ASTAssignmentNode* counterOperation = nullptr) :
+        ASTForNode( ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber,
+                    ASTDeclarationNode* counter = nullptr, ASTAssignmentNode* counterOperation = nullptr) :
                 condition(condition),
                 counter(counter),
                 counterOperation(counterOperation),
@@ -203,6 +204,54 @@ namespace parser {
 //        void accept(visitor::Visitor*) override;
     };
 
+
+    class ASTWhileNode : public ASTStatementNode {
+    public:
+        ASTWhileNode(ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber) :
+                condition(condition),
+                loopBlock(loopBlock),
+                lineNumber(lineNumber)
+        {};
+        ~ASTWhileNode() = default;
+
+        ASTExprNode *condition;
+        ASTBlockNode *loopBlock;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTFunctionDeclarationNode : public ASTStatementNode {
+    public:
+        ASTFunctionDeclarationNode(  TYPE type, std::string identifier, std::vector<std::pair<std::string, TYPE>> parameters,
+                                    ASTBlockNode* functionBlock, unsigned int lineNumber) :
+                type(type),
+                identifier(std::move(identifier)),
+                parameters(std::move(parameters)),
+                functionBlock(functionBlock),
+                lineNumber(lineNumber)
+        {};
+        ~ASTFunctionDeclarationNode() = default;
+
+        TYPE type;
+        std::string identifier;
+        std::vector<std::pair<std::string, TYPE>> parameters;
+        ASTBlockNode* functionBlock;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
+    class ASTReturnNode : public ASTStatementNode {
+    public:
+        ASTReturnNode(ASTExprNode* expr, unsigned int lineNumber) :
+            expr(expr),
+            lineNumber(lineNumber)
+        {};
+        ~ASTReturnNode() = default;
+
+        ASTExprNode *expr;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
 
     // Program Node
     class ASTProgramNode : public ASTNode {

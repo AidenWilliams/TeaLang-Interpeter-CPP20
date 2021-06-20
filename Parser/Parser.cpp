@@ -121,6 +121,40 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     return new ASTDeclarationNode(type, identifier, expr, lineNumber);
 }
 
+
+parser::ASTAssignmentNode *parser::Parser::parseAssignment() {
+    return nullptr;
+}
+
+parser::ASTPrintStatment *parser::Parser::parsePrint() {
+    return nullptr;
+}
+
+parser::ASTBlockNode *parser::Parser::parseBlock() {
+    return nullptr;
+}
+
+parser::ASTIfNode *parser::Parser::parseIf() {
+    return nullptr;
+}
+
+parser::ASTForNode *parser::Parser::parseFor() {
+    return nullptr;
+}
+
+parser::ASTWhileNode *parser::Parser::parseWhile() {
+    return nullptr;
+}
+
+parser::ASTReturnNode *parser::Parser::parseReturn() {
+    return nullptr;
+}
+
+parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
+    return nullptr;
+}
+
+
 parser::ASTExprNode* parser::Parser::parseExpression() {
     ASTExprNode *simple_expr = parseSimpleExpression();
     unsigned int lineNumber = currentToken.lineNumber;
