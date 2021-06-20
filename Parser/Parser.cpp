@@ -87,7 +87,7 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     TYPE type;
     try{
         type = parseType(identifier);
-    }catch (error_t T){
+    }catch (errno_t T){
         throw std::runtime_error("Expected type for " + identifier + " after ':' on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     }
@@ -172,6 +172,7 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
 
         case lexer::TOK_TRUE:
             return new ASTLiteralNode<bool>(true, lineNumber);
+
         case lexer::TOK_FALSE:
             return new ASTLiteralNode<bool>(false, lineNumber);
 
@@ -225,8 +226,10 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 return parseFunctionCall();
             // if not, its just an identifier
             else return new ASTIdentifierNode(currentToken.value, lineNumber);
+
         // Subexpression case
         case lexer::TOK_OPENING_CURVY:
+            return parseSubExpression();
 
         // Unary expression case
         case lexer::TOK_MINUS:
@@ -238,6 +241,24 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
 
     }
 
+}
+
+std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
+    auto parameters = new std::vector<ASTExprNode*>;
+    // Add first param
+    parameters->push_back(parseExpression());
+
+    // If next token is a comma there are more
+    while(nextLoc->type == lexer::TOK_COMMA) {
+        // Move current token, to token after comma
+        moveTokenWindow(2);
+        // Add this token
+        parameters->push_back(parseExpression());
+    }
+    // Current token is on the last param, we need to move beyond that to get the closing )
+    moveTokenWindow();
+
+    return parameters;
 }
 
 parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
@@ -269,22 +290,19 @@ parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
     return new ASTFunctionCallNode(identifier, *parameters, line_number);
 }
 
-std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
-    auto parameters = new std::vector<ASTExprNode*>;
-    // Add first param
-    parameters->push_back(parseExpression());
-
-    // If next token is a comma there are more
-    while(nextLoc->type == lexer::TOK_COMMA) {
-        // Move current token, to token after comma
-        moveTokenWindow(2);
-        // Add this token
-        parameters->push_back(parseExpression());
-    }
-    // Current token is on the last param, we need to move beyond that to get the closing )
+parser::ASTExprNode* parser::Parser::parseSubExpression() {
+    // move over first curvy bracket
     moveTokenWindow();
-
-    return parameters;
+    // Now we should be able to get an expression
+    ASTExprNode *exprNode = parseExpression();
+    if (nextLoc->type == lexer::TOK_CLOSING_CURLY){
+        // move over final curvy bracket
+        moveTokenWindow();
+        return exprNode;
+    }
+    else throw std::runtime_error("Expected ')' on line "
+                                  + std::to_string(nextLoc->lineNumber)
+                                  + " after function parameters.");
 }
 
 parser::TYPE parser::Parser::parseType(const std::string& identifier) const {
