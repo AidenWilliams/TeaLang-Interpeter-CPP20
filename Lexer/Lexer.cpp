@@ -246,6 +246,10 @@ unsigned int lexer::delta(unsigned int fromState, char c){
             current_state = 15;
             break;
         case SPACE:
+            if (fromState == 0){
+                current_state = 0;
+                break;
+            }
         case INVALID:
             current_state = 24;
     }
@@ -301,7 +305,7 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
             if (current_state == 24) current_state = 0;
             else value += c;
         }else{
-            value += c;
+            if(!isSpace(c)) value += c;
         }
 
         if(isNewline(c)) lineNumber++;

@@ -298,7 +298,7 @@ lexer::TOKEN_TYPE lexer::fromState23(const std::string& s){
 }
 
 lexer::TOKEN_TYPE lexer::fromState25(const std::string& s){
-    // Equals
+    // Can only be Closing Curly
     if (isClosingCurly(s)) return TOK_CLOSING_CURLY;
     return TOK_INVALID;
 }

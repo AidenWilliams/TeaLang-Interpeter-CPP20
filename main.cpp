@@ -13,12 +13,15 @@ int main() {
                               "let monkey : bool = - (10);\n"
                               "}";
     std::string z = "let monkey : bool = - (10);\nx = 10;\nprint monkey;"; //let monkey : bool = foo(1,2,3);
+    std::string f = "for (int i = 0; i < 10; i++){\n"
+                    "   x = 10;\n"
+                    "}";
     lexer::Lexer lexer;
     lexer.extraxtLexemes(z);
-//    std::cout << "value: type" << std::endl;
-//    for (const auto& z: lexer.tokens){
-//        std::cout << z.value << " : " << z.type << std::endl;
-//    }
+    std::cout << "value: type" << std::endl;
+    for (const auto& i: lexer.tokens){
+        std::cout << i.value << " : " << i.type << std::endl;
+    }
 
     parser::Parser parser(lexer.tokens);
     parser::ASTProgramNode* programNode = parser.parseProgram();
