@@ -24,7 +24,7 @@ int main() {
                     "   return x + y;\n"
                     "}";
     lexer::Lexer lexer;
-    lexer.extraxtLexemes(d);
+    lexer.extraxtLexemes(r);
 //    std::cout << "value: type" << std::endl;
 //    for (const auto& i: lexer.tokens){
 //        std::cout << i.value << " : " << i.type << std::endl;

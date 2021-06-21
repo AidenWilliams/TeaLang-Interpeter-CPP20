@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Parser.h"
 //TODO: TEST EVERY CASE AND KEEP NOTE
+//TODO: FIX UNALIGNED CURRENT TOKEN (PARSE EXPRESSION)
 parser::Parser::Parser(std::vector<lexer::Token> tokens) {
     // Initialise the currentToken and pointer for the next token
     currentToken = tokens.front();
