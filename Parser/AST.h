@@ -107,6 +107,20 @@ namespace parser {
 //        void accept(visitor::Visitor*) override = 0;
     };
 
+    // Program Node
+    class ASTProgramNode : public ASTNode {
+    public:
+//        explicit ASTProgramNode(std::vector<ASTStatementNode *> statements);
+
+        explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
+                statements(std::move(statements))
+        {};
+        ~ASTProgramNode() = default;
+
+        std::vector<ASTStatementNode*> statements;
+//        void accept(visitor::Visitor*) override;
+    };
+
     class ASTDeclarationNode : public ASTStatementNode {
     public:
         ASTDeclarationNode(TYPE type, std::string identifier, ASTExprNode* expr, unsigned int lineNumber) :
@@ -133,7 +147,6 @@ namespace parser {
         {};
         ~ASTAssignmentNode() = default;
 
-        TYPE type;
         std::string identifier;
         ASTExprNode *expr;
         unsigned int lineNumber;
@@ -160,6 +173,12 @@ namespace parser {
                 statements(std::move(statements)),
                 lineNumber(lineNumber)
         {};
+
+        ASTBlockNode(const ASTProgramNode& program, unsigned int lineNumber) :
+                statements(program.statements),
+                lineNumber(lineNumber)
+        {};
+
         ~ASTBlockNode() = default;
 
         std::vector<ASTStatementNode*> statements;
@@ -250,20 +269,6 @@ namespace parser {
 
         ASTExprNode *expr;
         unsigned int lineNumber;
-//        void accept(visitor::Visitor*) override;
-    };
-
-    // Program Node
-    class ASTProgramNode : public ASTNode {
-    public:
-//        explicit ASTProgramNode(std::vector<ASTStatementNode *> statements);
-
-        explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
-                statements(std::move(statements))
-        {};
-        ~ASTProgramNode() = default;
-
-        std::vector<ASTStatementNode*> statements;
 //        void accept(visitor::Visitor*) override;
     };
 }

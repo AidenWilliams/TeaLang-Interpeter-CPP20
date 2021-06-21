@@ -169,7 +169,27 @@ parser::ASTPrintStatment *parser::Parser::parsePrint() {
 }
 
 parser::ASTBlockNode *parser::Parser::parseBlock() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is {
+    // Get next token
+    moveTokenWindow();
+    // By definition a block is a program enclosed in { }
+    ASTBlockNode block = ASTBlockNode(*parseProgram(), lineNumber);
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with closing }
+    if(currentToken.type != lexer::TOK_CLOSING_CURLY)
+        throw std::runtime_error("Expected '}' after block on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' after '}' on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+
+
 }
 
 parser::ASTIfNode *parser::Parser::parseIf() {
