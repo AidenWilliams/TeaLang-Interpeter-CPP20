@@ -250,9 +250,13 @@ parser::ASTForNode *parser::Parser::parseFor() {
     if(currentToken.type == lexer::TOK_LET){
         // get declaration
         declaration = parseDeclaration();
-        // Get next token
-        moveTokenWindow();
+    }else{
+        if(currentToken.type != lexer::TOK_SEMICOLON)
+            throw std::runtime_error("Expected ';' after 'for( ;' on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
     }
+    // Get next token
+    moveTokenWindow();
     // get condition
     ASTExprNode *condition = parseExpression();
     // Get next token
