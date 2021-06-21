@@ -19,7 +19,10 @@ void parser::Parser::moveTokenWindow(int step){
 parser::ASTProgramNode* parser::Parser::parseProgram(bool block) {
     auto statements = new std::vector<ASTStatementNode*>;
 
-    while(currentToken.type != lexer::TOK_END && (block && currentToken.type != lexer::TOK_CLOSING_CURVY)){
+    while(currentToken.type != lexer::TOK_END
+          && currentToken.type != lexer::TOK_MULTI_LINE_COMMENT
+          && currentToken.type != lexer::TOK_SINGLE_LINE_COMMENT
+          && (block && currentToken.type != lexer::TOK_CLOSING_CURVY)){
         statements->push_back(parseStatement());
         moveTokenWindow();
     }
