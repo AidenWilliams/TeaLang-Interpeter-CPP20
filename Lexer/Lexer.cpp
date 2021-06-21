@@ -303,9 +303,9 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
             current_state = delta(0, c);
             value = "";
             if (current_state == 24) current_state = 0;
-            else value += c;
+            else if(current_state != 0) value += c;
         }else{
-            if(!isSpace(c)) value += c;
+            if(current_state != 0) value += c;
         }
 
         if(isNewline(c)) lineNumber++;

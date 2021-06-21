@@ -19,11 +19,15 @@ void parser::Parser::moveTokenWindow(int step){
 parser::ASTProgramNode* parser::Parser::parseProgram(bool block) {
     auto statements = new std::vector<ASTStatementNode*>;
 
-    while(currentToken.type != lexer::TOK_END
-          && currentToken.type != lexer::TOK_MULTI_LINE_COMMENT
-          && currentToken.type != lexer::TOK_SINGLE_LINE_COMMENT
-          && (block && currentToken.type != lexer::TOK_CLOSING_CURVY)){
-        statements->push_back(parseStatement());
+    while(currentToken.type != lexer::TOK_END){
+        if (currentToken.type != lexer::TOK_SINGLE_LINE_COMMENT
+            && currentToken.type != lexer::TOK_MULTI_LINE_COMMENT
+            && (!block || currentToken.type != lexer::TOK_CLOSING_CURLY))
+            statements->push_back(parseStatement());
+
+        if (currentToken.type == lexer::TOK_END)
+            break;
+
         moveTokenWindow();
     }
 
@@ -179,18 +183,7 @@ parser::ASTBlockNode *parser::Parser::parseBlock() {
     moveTokenWindow();
     // By definition a block is a program enclosed in { }
     ASTBlockNode block = ASTBlockNode(*parseProgram(true), lineNumber);
-    // Get next token
-    moveTokenWindow();
-    // Ensure proper syntax with closing }
-    if(currentToken.type != lexer::TOK_CLOSING_CURLY)
-        throw std::runtime_error("Expected '}' after block on line "
-                                 + std::to_string(currentToken.lineNumber) + ".");
-    // Get next token
-    moveTokenWindow();
-    // Ensure proper syntax
-    if(currentToken.type != lexer::TOK_SEMICOLON)
-        throw std::runtime_error("Expected ';' after '}' on line "
-                                 + std::to_string(currentToken.lineNumber) + ".");
+    // closing } is handled by parseProgram
 
     // Create ASTBlockNode to return
     return new ASTBlockNode(block.statements, lineNumber);
@@ -224,8 +217,6 @@ parser::ASTIfNode *parser::Parser::parseIf() {
                                  + std::to_string(currentToken.lineNumber) + ".");
     // get if block
     ASTBlockNode *ifBlock = parseBlock();
-    // Get next token
-    moveTokenWindow();
     // Check for ELSE
     ASTBlockNode *elseBlock = nullptr;
     if(currentToken.type == lexer::TOK_ELSE){
@@ -303,9 +294,6 @@ parser::ASTForNode *parser::Parser::parseFor() {
                                  + std::to_string(currentToken.lineNumber) + ".");
     // get if block
     ASTBlockNode *loopBlock = parseBlock();
-    // Get next token
-    moveTokenWindow();
-
 
     // Create ASTForNode to return
     return new ASTForNode(condition, loopBlock, lineNumber, declaration, assignment);
