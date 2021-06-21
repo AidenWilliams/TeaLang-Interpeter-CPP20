@@ -238,7 +238,7 @@ parser::ASTIfNode *parser::Parser::parseIf() {
         // get else block
         elseBlock = parseBlock();
     }
-    // Create ASTBlockNode to return
+    // Create ASTIfNode to return
     return new ASTIfNode(condition, ifBlock, lineNumber,elseBlock);
 }
 
@@ -261,10 +261,10 @@ parser::ASTForNode *parser::Parser::parseFor() {
         moveTokenWindow();
         // get declaration
         declaration = parseDeclaration();
+        // Get next token
+        moveTokenWindow();
     }
 
-    // Get next token
-    moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' in for () on line "
@@ -287,8 +287,28 @@ parser::ASTForNode *parser::Parser::parseFor() {
         moveTokenWindow();
         // get declaration
         assignment = parseAssignment();
+        // Get next token
+        moveTokenWindow();
     }
 
+    // Ensure proper syntax with closing )
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY)
+        throw std::runtime_error("Expected ')' after condition on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+
+
+    // Ensure proper syntax with starting {
+    if(currentToken.type != lexer::TOK_OPENING_CURLY)
+        throw std::runtime_error("Expected '{' after ')' on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // get if block
+    ASTBlockNode *loopBlock = parseBlock();
+    // Get next token
+    moveTokenWindow();
+
+
+    // Create ASTForNode to return
+    return new ASTForNode(condition, loopBlock, lineNumber, declaration, assignment);
 }
 
 parser::ASTWhileNode *parser::Parser::parseWhile() {

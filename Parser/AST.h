@@ -202,22 +202,21 @@ namespace parser {
         unsigned int lineNumber;
 //        void accept(visitor::Visitor*) override;
     };
-
     class ASTForNode : public ASTStatementNode {
     public:
         ASTForNode( ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber,
-                    ASTDeclarationNode* counter = nullptr, ASTAssignmentNode* counterOperation = nullptr) :
+                    ASTDeclarationNode* declaration = nullptr, ASTAssignmentNode* assignment = nullptr) :
                 condition(condition),
-                counter(counter),
-                counterOperation(counterOperation),
+                declaration(declaration),
+                assignment(assignment),
                 loopBlock(loopBlock),
                 lineNumber(lineNumber)
         {};
         ~ASTForNode() = default;
 
-        ASTDeclarationNode *counter;
+        ASTDeclarationNode *declaration;
         ASTExprNode *condition;
-        ASTAssignmentNode *counterOperation;
+        ASTAssignmentNode *assignment;
         ASTBlockNode *loopBlock;
         unsigned int lineNumber;
 //        void accept(visitor::Visitor*) override;
