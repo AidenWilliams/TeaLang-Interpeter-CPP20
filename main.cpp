@@ -19,8 +19,9 @@ int main() {
     std::string w = "while (True) {\n"
                     + z +
                     "}";
+    std::string r = "return 10;";
     lexer::Lexer lexer;
-    lexer.extraxtLexemes(z);
+    lexer.extraxtLexemes(r);
     std::cout << "value: type" << std::endl;
     for (const auto& i: lexer.tokens){
         std::cout << i.value << " : " << i.type << std::endl;

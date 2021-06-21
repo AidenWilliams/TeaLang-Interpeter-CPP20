@@ -313,12 +313,27 @@ parser::ASTWhileNode *parser::Parser::parseWhile() {
                                  + std::to_string(currentToken.lineNumber) + ".");
     // get loop Block
     ASTBlockNode *loopBlock = parseBlock();
-    // Create ASTIfNode to return
+    // Create ASTWhileNode to return
     return new ASTWhileNode(condition, loopBlock, lineNumber);
 }
 
 parser::ASTReturnNode *parser::Parser::parseReturn() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is RETURN
+    // Get next token
+    moveTokenWindow();
+    // Get expression after
+    ASTExprNode* expr = parseExpression();
+
+    // Get next token
+    moveTokenWindow();
+
+    if(currentToken.type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' after expression on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Create ASTReturnNode to return
+    return new ASTReturnNode(expr, lineNumber);
 }
 
 parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
