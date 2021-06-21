@@ -83,6 +83,10 @@ bool lexer::isSpace(char c){
     return c == ' ';
 }
 
+bool lexer::isClosingCurly(char c){
+    return c == '}';
+}
+
 lexer::TRANSITION_TYPE lexer::determineTransitionType(char c){
     if (isLetter(c)) return LETTER;
     if (isDigit(c)) return DIGIT;
@@ -94,6 +98,7 @@ lexer::TRANSITION_TYPE lexer::determineTransitionType(char c){
     if (isMinus(c)) return MINUS;
     if (isForwardSlash(c)) return FORWARD_SLASH;
     if (isBackSlash(c)) return BACK_SLASH;
+    if (isClosingCurly(c)) return CLOSING_CURLY;
     if (isPunctuation(c)) return PUNCTUATION;
     if (isQuatiationMark(c)) return QUOTATION_MARK;
     if (isNewline(c)) return NEWLINE;
@@ -194,6 +199,10 @@ unsigned int lexer::delta(unsigned int fromState, char c){
             (fromState == 2 || fromState == 4 || fromState == 5)
             ?    current_state = 4 : current_state = 24;
             break;
+        case CLOSING_CURLY:
+            (fromState == 0)
+            ?    current_state = 25 : current_state = 24;
+            break;
         case PUNCTUATION:
             (fromState == 0)
             ?    current_state = 16 : current_state = 24;
@@ -240,8 +249,7 @@ unsigned int lexer::delta(unsigned int fromState, char c){
         case INVALID:
             current_state = 24;
     }
-
-    //check for printable again
+    // Check for printable again
     if (current_state == 24){
         if (fromState == 2 || fromState == 4 || fromState == 5){
             if(!isBackSlash(c) and !isQuatiationMark(c)){
@@ -299,7 +307,7 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
         if(isNewline(c)) lineNumber++;
     }
     // end
-    if(!finalStates[previous_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
+    if(!finalStates[current_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
     ret.emplace_back(Token(value, current_state, lineNumber));
     ret.emplace_back(Token("", 15, lineNumber));
     tokens = ret;

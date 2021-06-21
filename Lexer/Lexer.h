@@ -49,7 +49,8 @@ namespace lexer {
         EXCLAMATION     = 15,
         END             = 16,
         INVALID         = 17,
-        SPACE         = 18
+        SPACE         = 18,
+        CLOSING_CURLY         = 19
     };
 
     extern std::regex letter;
@@ -73,6 +74,7 @@ namespace lexer {
     bool isEquals(char c);
     bool isExclamation(char c);
     bool isSpace(char c);
+    bool isClosingCurly(char c);
 
     static TRANSITION_TYPE determineTransitionType(char c);
     unsigned int delta(unsigned int fromState, char c);
@@ -83,7 +85,7 @@ namespace lexer {
         std::vector<bool> finalStates = {
                                             false, true, false, true, false, false, true, false, true, true, false, true,
                                             false, false, true, true, true, true, true, true, false, true, true, true,
-                                            true
+                                            true, true
                                         };
         Lexer() = default;
         ~Lexer() = default;

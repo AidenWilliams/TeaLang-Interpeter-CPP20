@@ -189,11 +189,52 @@ parser::ASTBlockNode *parser::Parser::parseBlock() {
         throw std::runtime_error("Expected ';' after '}' on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
 
-
+    // Create ASTBlockNode to return
+    return new ASTBlockNode(block.statements, lineNumber);
 }
 
 parser::ASTIfNode *parser::Parser::parseIf() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is IF
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with starting (
+    if(currentToken.type != lexer::TOK_OPENING_CURVY)
+        throw std::runtime_error("Expected '(' after if on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Get condition after (
+    ASTExprNode* condition = parseExpression();
+    // Ensure proper syntax with closing )
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY)
+        throw std::runtime_error("Expected ')' after condition on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with starting {
+    if(currentToken.type != lexer::TOK_OPENING_CURLY)
+        throw std::runtime_error("Expected '{' after ')' on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // get if block
+    ASTBlockNode *ifBlock = parseBlock();
+    // Get next token
+    moveTokenWindow();
+    // Check for ELSE
+    ASTBlockNode *elseBlock = nullptr;
+    if(currentToken.type == lexer::TOK_ELSE){
+        // Get next token
+        moveTokenWindow();
+        // Ensure proper syntax with starting {
+        if(currentToken.type != lexer::TOK_OPENING_CURLY)
+            throw std::runtime_error("Expected '{' after else on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+        // get else block
+        elseBlock = parseBlock();
+    }
+    // Create ASTBlockNode to return
+    return new ASTIfNode(condition, ifBlock, lineNumber,elseBlock);
 }
 
 parser::ASTForNode *parser::Parser::parseFor() {
