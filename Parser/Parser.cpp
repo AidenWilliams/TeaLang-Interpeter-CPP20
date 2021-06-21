@@ -129,7 +129,7 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
 }
 
 
-parser::ASTAssignmentNode *parser::Parser::parseAssignment() {
+parser::ASTAssignmentNode *parser::Parser::parseAssignment(bool _for) {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
     // Current token is an IDENTIFIER
@@ -148,9 +148,9 @@ parser::ASTAssignmentNode *parser::Parser::parseAssignment() {
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax
-    if(currentToken.type != lexer::TOK_SEMICOLON)
+    if(!_for && currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
-                                 + std::to_string(currentToken.lineNumber) + ".");
+                                + std::to_string(currentToken.lineNumber) + ".");
 
     // Create ASTAssignmentNode to return
     return new ASTAssignmentNode(identifier, expr, lineNumber);
@@ -248,36 +248,25 @@ parser::ASTForNode *parser::Parser::parseFor() {
     // Check for declaration
     ASTDeclarationNode *declaration = nullptr;
     if(currentToken.type == lexer::TOK_LET){
-        // Get next token
-        moveTokenWindow();
         // get declaration
         declaration = parseDeclaration();
         // Get next token
         moveTokenWindow();
     }
-
-    // Ensure proper syntax
-    if(currentToken.type != lexer::TOK_SEMICOLON)
-        throw std::runtime_error("Expected ';' in for () on line "
-                                 + std::to_string(currentToken.lineNumber) + ".");
     // get condition
     ASTExprNode *condition = parseExpression();
 
-    // Get next token
-    moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_SEMICOLON)
-        throw std::runtime_error("Expected ';' in for () on line "
+        throw std::runtime_error("Expected ';' after print on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     // Get next token
     moveTokenWindow();
     // Check for assignment
     ASTAssignmentNode *assignment = nullptr;
-    if(currentToken.type == lexer::TOK_FOR){
-        // Get next token
-        moveTokenWindow();
+    if(currentToken.type == lexer::TOK_IDENTIFIER){
         // get declaration
-        assignment = parseAssignment();
+        assignment = parseAssignment(true);
         // Get next token
         moveTokenWindow();
     }
@@ -421,8 +410,11 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
             // If next token is '(' then we found a function call
             if(nextLoc->type == lexer::TOK_OPENING_CURVY)
                 return parseFunctionCall();
-            // if not, its just an identifier
-            else return new ASTIdentifierNode(currentToken.value, lineNumber);
+            else {
+                // if not, its just an identifier
+                moveTokenWindow();
+                return new ASTIdentifierNode(currentToken.value, lineNumber);
+            }
 
         // Subexpression case
         case lexer::TOK_OPENING_CURVY:
