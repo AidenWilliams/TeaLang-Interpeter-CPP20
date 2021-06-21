@@ -12,12 +12,15 @@ int main() {
     std::string y = "if (True) {\n"
                               "let monkey : bool = - (10);\n"
                               "}";
-    std::string z = "let monkey : bool = - (10);\nx = 10;\nprint monkey;"; //let monkey : bool = foo(1,2,3);
+    std::string z = "let monkey : bool = - (10);\nx = 10;\nprint monkey;\nlet monkey : bool = foo(1,2,3);";
     std::string f = "for (; i < 10; ){\n"
                     "   x = 10;\n"
                     "}";
+    std::string w = "while (True) {\n"
+                    + z +
+                    "}";
     lexer::Lexer lexer;
-    lexer.extraxtLexemes(f);
+    lexer.extraxtLexemes(z);
     std::cout << "value: type" << std::endl;
     for (const auto& i: lexer.tokens){
         std::cout << i.value << " : " << i.type << std::endl;

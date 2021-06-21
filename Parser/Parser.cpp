@@ -164,8 +164,6 @@ parser::ASTPrintStatment *parser::Parser::parsePrint() {
     moveTokenWindow();
     // Get expression after print
     ASTExprNode* expr = parseExpression();
-    // Get next token
-    moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after print on line "
@@ -203,8 +201,6 @@ parser::ASTIfNode *parser::Parser::parseIf() {
     moveTokenWindow();
     // Get condition after (
     ASTExprNode* condition = parseExpression();
-    // Get next token
-    moveTokenWindow();
     // Ensure proper syntax with closing )
     if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' after condition on line "
@@ -236,7 +232,7 @@ parser::ASTIfNode *parser::Parser::parseIf() {
 parser::ASTForNode *parser::Parser::parseFor() {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
-    // Current token is IF
+    // Current token is FOR
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax with starting (
@@ -292,7 +288,33 @@ parser::ASTForNode *parser::Parser::parseFor() {
 }
 
 parser::ASTWhileNode *parser::Parser::parseWhile() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is WHILE
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with starting (
+    if(currentToken.type != lexer::TOK_OPENING_CURVY)
+        throw std::runtime_error("Expected '(' after while on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Get condition after (
+    ASTExprNode* condition = parseExpression();
+    // Ensure proper syntax with closing )
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY)
+        throw std::runtime_error("Expected ')' after condition on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with starting {
+    if(currentToken.type != lexer::TOK_OPENING_CURLY)
+        throw std::runtime_error("Expected '{' after ')' on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // get loop Block
+    ASTBlockNode *loopBlock = parseBlock();
+    // Create ASTIfNode to return
+    return new ASTWhileNode(condition, loopBlock, lineNumber);
 }
 
 parser::ASTReturnNode *parser::Parser::parseReturn() {
