@@ -68,7 +68,7 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
 parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
-
+    // Current token is LET
     // Get next token
     moveTokenWindow();
     // Get identifier for new variable
@@ -123,7 +123,30 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
 
 
 parser::ASTAssignmentNode *parser::Parser::parseAssignment() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is an IDENTIFIER
+    std::string identifier = currentToken.value;
+    // Get next token
+    moveTokenWindow();
+    // Token must be =
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_EQUALS)
+        throw std::runtime_error("Expected assignment operator '=' for " + identifier + " on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Get expression after =
+    ASTExprNode* expr = parseExpression();
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+
+    // Create ASTExpressionNode to return
+    return new ASTAssignmentNode(identifier, expr, lineNumber);
 }
 
 parser::ASTPrintStatment *parser::Parser::parsePrint() {
