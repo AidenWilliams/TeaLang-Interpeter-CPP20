@@ -145,12 +145,27 @@ parser::ASTAssignmentNode *parser::Parser::parseAssignment() {
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
 
-    // Create ASTExpressionNode to return
+    // Create ASTAssignmentNode to return
     return new ASTAssignmentNode(identifier, expr, lineNumber);
 }
 
 parser::ASTPrintStatment *parser::Parser::parsePrint() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is PRINT
+    // Get next token
+    moveTokenWindow();
+    // Get expression after print
+    ASTExprNode* expr = parseExpression();
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' after print on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+
+    // Create ASTAssignmentNode to return
+    return new ASTPrintStatment(expr, lineNumber);
 }
 
 parser::ASTBlockNode *parser::Parser::parseBlock() {
