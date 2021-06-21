@@ -297,6 +297,12 @@ lexer::TOKEN_TYPE lexer::fromState23(const std::string& s){
     return TOK_INVALID;
 }
 
+lexer::TOKEN_TYPE lexer::fromState25(const std::string& s){
+    // Equals
+    if (isClosingCurly(s)) return TOK_CLOSING_CURLY;
+    return TOK_INVALID;
+}
+
 lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
     switch (state) {
         case 1:
@@ -329,6 +335,8 @@ lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int 
             return fromState22(s);
         case 23:
             return fromState23(s);
+        case 25:
+            return fromState25(s);
         default:
             return TOK_INVALID;
     }

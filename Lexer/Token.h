@@ -178,6 +178,7 @@ namespace lexer {
     TOKEN_TYPE fromState21(const std::string& s);
     TOKEN_TYPE fromState22(const std::string& s);
     TOKEN_TYPE fromState23(const std::string& s);
+    TOKEN_TYPE fromState25(const std::string& s);
 
     class Token {
     private:

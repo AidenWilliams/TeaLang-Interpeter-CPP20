@@ -18,7 +18,7 @@ namespace parser {
     public:
         explicit Parser(std::vector<lexer::Token> tokens);
 
-        ASTProgramNode* parseProgram();
+        ASTProgramNode* parseProgram(bool block=false);
         ASTStatementNode* parseStatement();
         ASTDeclarationNode* parseDeclaration();
         ASTAssignmentNode* parseAssignment();

@@ -307,7 +307,7 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
         if(isNewline(c)) lineNumber++;
     }
     // end
-    if(!finalStates[current_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
+    if(!finalStates[current_state] && !finalStates[previous_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
     ret.emplace_back(Token(value, current_state, lineNumber));
     ret.emplace_back(Token("", 15, lineNumber));
     tokens = ret;

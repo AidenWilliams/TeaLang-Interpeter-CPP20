@@ -16,10 +16,10 @@ void parser::Parser::moveTokenWindow(int step){
     nextLoc += step;
 }
 
-parser::ASTProgramNode* parser::Parser::parseProgram() {
+parser::ASTProgramNode* parser::Parser::parseProgram(bool block) {
     auto statements = new std::vector<ASTStatementNode*>;
 
-    while(currentToken.type != lexer::TOK_END){
+    while(currentToken.type != lexer::TOK_END && (block && currentToken.type != lexer::TOK_CLOSING_CURVY)){
         statements->push_back(parseStatement());
         moveTokenWindow();
     }
@@ -175,7 +175,7 @@ parser::ASTBlockNode *parser::Parser::parseBlock() {
     // Get next token
     moveTokenWindow();
     // By definition a block is a program enclosed in { }
-    ASTBlockNode block = ASTBlockNode(*parseProgram(), lineNumber);
+    ASTBlockNode block = ASTBlockNode(*parseProgram(true), lineNumber);
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax with closing }
@@ -207,6 +207,8 @@ parser::ASTIfNode *parser::Parser::parseIf() {
     moveTokenWindow();
     // Get condition after (
     ASTExprNode* condition = parseExpression();
+    // Get next token
+    moveTokenWindow();
     // Ensure proper syntax with closing )
     if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' after condition on line "
@@ -238,7 +240,52 @@ parser::ASTIfNode *parser::Parser::parseIf() {
 }
 
 parser::ASTForNode *parser::Parser::parseFor() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Current token is IF
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with starting (
+    if(currentToken.type != lexer::TOK_OPENING_CURVY)
+        throw std::runtime_error("Expected '(' after for on line "
+                                 + std::to_string(lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Check for declaration
+    ASTDeclarationNode *declaration = nullptr;
+    if(currentToken.type == lexer::TOK_LET){
+        // Get next token
+        moveTokenWindow();
+        // get declaration
+        declaration = parseDeclaration();
+    }
+
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' in for () on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // get condition
+    ASTExprNode *condition = parseExpression();
+
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax
+    if(currentToken.type != lexer::TOK_SEMICOLON)
+        throw std::runtime_error("Expected ';' in for () on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // Check for assignment
+    ASTAssignmentNode *assignment = nullptr;
+    if(currentToken.type == lexer::TOK_FOR){
+        // Get next token
+        moveTokenWindow();
+        // get declaration
+        assignment = parseAssignment();
+    }
+
 }
 
 parser::ASTWhileNode *parser::Parser::parseWhile() {
