@@ -20,12 +20,15 @@ int main() {
                     + z +
                     "}";
     std::string r = "return 10;";
+    std::string d = "int plus(x : int, y : int){\n"
+                    "   return x + y;\n"
+                    "}";
     lexer::Lexer lexer;
-    lexer.extraxtLexemes(r);
-    std::cout << "value: type" << std::endl;
-    for (const auto& i: lexer.tokens){
-        std::cout << i.value << " : " << i.type << std::endl;
-    }
+    lexer.extraxtLexemes(d);
+//    std::cout << "value: type" << std::endl;
+//    for (const auto& i: lexer.tokens){
+//        std::cout << i.value << " : " << i.type << std::endl;
+//    }
 
     parser::Parser parser(lexer.tokens);
     parser::ASTProgramNode* programNode = parser.parseProgram();

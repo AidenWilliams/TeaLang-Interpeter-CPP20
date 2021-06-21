@@ -29,6 +29,7 @@ namespace parser {
         ASTWhileNode* parseWhile();
         ASTReturnNode* parseReturn();
         ASTFunctionDeclarationNode* parseFunctionDeclaration();
+        std::vector<std::pair<std::string, TYPE>>* parseFormalParams();
         ASTExprNode* parseExpression();
         ASTExprNode* parseSimpleExpression();
         ASTExprNode* parseTerm();

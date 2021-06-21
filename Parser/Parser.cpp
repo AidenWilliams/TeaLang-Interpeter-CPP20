@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include "Parser.h"
-
+//TODO: TEST EVERY CASE AND KEEP NOTE
 parser::Parser::Parser(std::vector<lexer::Token> tokens) {
     // Initialise the currentToken and pointer for the next token
     currentToken = tokens.front();
@@ -326,8 +326,7 @@ parser::ASTReturnNode *parser::Parser::parseReturn() {
     // Get expression after
     ASTExprNode* expr = parseExpression();
 
-    // Get next token
-    moveTokenWindow();
+//    moveTokenWindow();
 
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after expression on line "
@@ -337,7 +336,129 @@ parser::ASTReturnNode *parser::Parser::parseReturn() {
 }
 
 parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
-    return nullptr;
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    // Get type
+    TYPE type;
+    try{
+        type = parseType(currentToken.value);
+    }catch (error_t T){
+        throw std::runtime_error("Expected type for " + currentToken.value + " on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    }
+
+    // Get next token
+    moveTokenWindow();
+    // ensure identifier is here
+    ASTIdentifierNode *identifier;
+    if (currentToken.type == lexer::TOK_IDENTIFIER){
+        identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+    }else{
+        throw std::runtime_error("Expected function name after type on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    }
+
+
+    // Get next token
+    moveTokenWindow();
+
+    // If next token is not right bracket, we have parameters
+    auto parameters =  new std::vector<std::pair<std::string, TYPE>>;
+
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY) {
+        parameters = parseFormalParams();
+    }
+    // Ensure right close bracket after fetching parameters
+    if(currentToken.type != lexer::TOK_CLOSING_CURVY)
+        throw std::runtime_error("Expected ')' on line "
+                                 + std::to_string(currentToken.lineNumber)
+                                 + " after function parameters.");
+
+    // Get next token
+    moveTokenWindow();
+    // Ensure proper syntax with starting {
+    if(currentToken.type != lexer::TOK_OPENING_CURLY)
+        throw std::runtime_error("Expected '{' after ')' on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // get loop Block
+    ASTBlockNode *functionBlock = parseBlock();
+
+    // Create ASTFunctionDeclarationNode to return
+    return new ASTFunctionDeclarationNode(type, identifier->identifier, *parameters, functionBlock, lineNumber);
+}
+
+
+std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalParams() {
+    //current token is open curvy
+    // Get next token
+    moveTokenWindow();
+    // Determine line number
+    unsigned int lineNumber = currentToken.lineNumber;
+    auto parameters = new std::vector<std::pair<std::string, parser::TYPE>>;
+    // get first identifier
+    // ensure identifier is here
+    ASTIdentifierNode *identifier;
+    if (currentToken.type == lexer::TOK_IDENTIFIER){
+        identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+    }else{
+        throw std::runtime_error("Expected function name after type on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    }
+    // Get next token
+    moveTokenWindow();
+
+    // Ensure proper syntax with : after identifier
+    if(currentToken.type != lexer::TOK_COLON)
+        throw std::runtime_error("Expected ':' after "+identifier->identifier+" on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    // Get next token
+    moveTokenWindow();
+    // get first TYPE
+    TYPE type;
+    try{
+        type = parseType(currentToken.value);
+    }catch (error_t T){
+        throw std::runtime_error("Expected type for " + currentToken.value + " on line "
+                                 + std::to_string(currentToken.lineNumber) + ".");
+    }
+    // Add first param
+    parameters->emplace_back(std::pair<std::string, parser::TYPE>{identifier->identifier, type } );
+
+    // If next token is a comma there are more
+    while(nextLoc->type == lexer::TOK_COMMA) {
+        // Move current token, to token after comma
+        moveTokenWindow(2);
+
+        // repeat the above steps
+        if (currentToken.type == lexer::TOK_IDENTIFIER){
+            identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+        }else{
+            throw std::runtime_error("Expected function name after type on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+        }
+        // Get next token
+        moveTokenWindow();
+
+        // Ensure proper syntax with : after identifier
+        if(currentToken.type != lexer::TOK_COLON)
+            throw std::runtime_error("Expected ':' after "+identifier->identifier+" on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+        // Get next token
+        moveTokenWindow();
+        // get  TYPE
+        try{
+            type = parseType(currentToken.value);
+        }catch (error_t T){
+            throw std::runtime_error("Expected type for " + currentToken.value + " on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+        }
+        // Add first param
+        parameters->emplace_back(std::pair<std::string, parser::TYPE>{identifier->identifier, type } );
+    }
+    // Current token is on the last param, we need to move beyond that to get the closing )
+    moveTokenWindow();
+
+    return parameters;
 }
 
 
@@ -487,7 +608,7 @@ std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
         // Move current token, to token after comma
         moveTokenWindow(2);
         // Add this token
-        parameters->push_back(parseExpression());
+        parameters->emplace_back(parseExpression());
     }
     // Current token is on the last param, we need to move beyond that to get the closing )
     moveTokenWindow();
