@@ -13,7 +13,7 @@ int main() {
                               "let monkey : bool = - (10);\n"
                               "}";
     std::string z = "let monkey : bool = - (10);\nx = 10;\nprint monkey;"; //let monkey : bool = foo(1,2,3);
-    std::string f = "for (let i : int = 1; i < 10; ){\n"
+    std::string f = "for (let i : int = 1; i < 10; n = n+1){\n"
                     "   x = 10;\n"
                     "}";
     lexer::Lexer lexer;

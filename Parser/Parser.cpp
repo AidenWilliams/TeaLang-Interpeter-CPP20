@@ -255,10 +255,11 @@ parser::ASTForNode *parser::Parser::parseFor() {
     }
     // get condition
     ASTExprNode *condition = parseExpression();
-
+    // Get next token
+    moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_SEMICOLON)
-        throw std::runtime_error("Expected ';' after print on line "
+        throw std::runtime_error("Expected ';' after condition on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     // Get next token
     moveTokenWindow();
@@ -267,16 +268,14 @@ parser::ASTForNode *parser::Parser::parseFor() {
     if(currentToken.type == lexer::TOK_IDENTIFIER){
         // get declaration
         assignment = parseAssignment(true);
-        // Get next token
-        moveTokenWindow();
     }
 
     // Ensure proper syntax with closing )
     if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' after condition on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
-
+    // Get next token
+    moveTokenWindow();
     // Ensure proper syntax with starting {
     if(currentToken.type != lexer::TOK_OPENING_CURLY)
         throw std::runtime_error("Expected '{' after ')' on line "
