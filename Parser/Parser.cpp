@@ -63,7 +63,10 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
         case lexer::TOK_RETURN:
             return parseReturn();
 
-        case lexer::TOK_INT_TYPE || lexer::TOK_FLOAT_TYPE || lexer::TOK_BOOL_TYPE || lexer::TOK_STRING_TYPE:
+        case lexer::TOK_INT_TYPE:
+        case lexer::TOK_FLOAT_TYPE:
+        case lexer::TOK_BOOL_TYPE:
+        case lexer::TOK_STRING_TYPE:
             return parseFunctionDeclaration();
 
         case lexer::TOK_OPENING_CURLY:
@@ -370,7 +373,7 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
     }
 
     // Get next token
-    moveTokenWindow();
+    moveTokenWindow(2);
 
     // If next token is not right bracket, we have parameters
     auto parameters =  new std::vector<std::pair<std::string, TYPE>>;
@@ -399,9 +402,7 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
 
 
 std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalParams() {
-    //current token is open curvy
-    // Get next token
-    moveTokenWindow();
+    //current token is identifier
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
     auto parameters = new std::vector<std::pair<std::string, parser::TYPE>>;
