@@ -35,7 +35,7 @@ namespace parser {
         ASTExprNode* parseTerm();
         ASTExprNode* parseFactor();
         std::vector<ASTExprNode*>* parseActualParams();
-        ASTFunctionCallNode* parseFunctionCall();
+        ASTFunctionCallNode* parseFunctionCall(bool semicolon=false);
         ASTExprNode* parseSubExpression();
 
         [[nodiscard]] TYPE parseType(const std::string& identifier) const;

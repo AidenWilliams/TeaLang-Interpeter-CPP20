@@ -41,7 +41,13 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
             return parseDeclaration();
 
         case lexer::TOK_IDENTIFIER:
-            return parseAssignment();
+            // If next token is '(' then we found a function call
+            if(nextLoc->type == lexer::TOK_OPENING_CURVY)
+                return new ASTSFunctionCallNode(*parseFunctionCall(true));
+            else {
+                // if not, its should be an Assignment
+                return parseAssignment();
+            }
 
         case lexer::TOK_PRINT:
             return parsePrint();
@@ -129,7 +135,6 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     return new ASTDeclarationNode(type, identifier, expr, lineNumber);
 }
 
-
 parser::ASTAssignmentNode *parser::Parser::parseAssignment(bool _for) {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
@@ -148,7 +153,7 @@ parser::ASTAssignmentNode *parser::Parser::parseAssignment(bool _for) {
     ASTExprNode* expr = parseExpression();
     // Get next token
     moveTokenWindow();
-    // Ensure proper syntax
+    // Ensure proper; syntax
     if(!_for && currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                 + std::to_string(currentToken.lineNumber) + ".");
@@ -466,13 +471,14 @@ std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalPa
 parser::ASTExprNode* parser::Parser::parseExpression() {
     ASTExprNode *simple_expr = parseSimpleExpression();
     unsigned int lineNumber = currentToken.lineNumber;
+    std::string op;
 
-    if( currentToken.type == lexer::TOK_LESS_THAN || currentToken.type == lexer::TOK_MORE_THAN ||
-        currentToken.type == lexer::TOK_EQAUL_TO || currentToken.type == lexer::TOK_NOT_EQAUL_TO ||
-        currentToken.type == lexer::TOK_LESS_THAN_EQUAL_TO || currentToken.type == lexer::TOK_MORE_THAN_EQUAL_TO) {
-
-        moveTokenWindow();
-        return new ASTBinaryExprNode(currentToken.value, simple_expr, parseSimpleExpression(), lineNumber);
+    if( nextLoc[0].type == lexer::TOK_LESS_THAN || nextLoc[0].type == lexer::TOK_MORE_THAN ||
+            nextLoc[0].type == lexer::TOK_EQAUL_TO || nextLoc[0].type == lexer::TOK_NOT_EQAUL_TO ||
+            nextLoc[0].type == lexer::TOK_LESS_THAN_EQUAL_TO || nextLoc[0].type == lexer::TOK_MORE_THAN_EQUAL_TO) {
+        op = nextLoc[0].value;
+        moveTokenWindow(2);
+        return new ASTBinaryExprNode(op, simple_expr, parseSimpleExpression(), lineNumber);
     }
 
     return simple_expr;
@@ -481,11 +487,13 @@ parser::ASTExprNode* parser::Parser::parseExpression() {
 parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
     ASTExprNode *term = parseTerm();
     unsigned int lineNumber = currentToken.lineNumber;
+    std::string op;
 
-    if( currentToken.type == lexer::TOK_PLUS || currentToken.type == lexer::TOK_MINUS ||
-        currentToken.type == lexer::TOK_OR) {
-        moveTokenWindow();
-        return new ASTBinaryExprNode(currentToken.value, term, parseSimpleExpression(), lineNumber);
+    if( nextLoc[0].type == lexer::TOK_PLUS || nextLoc[0].type == lexer::TOK_MINUS ||
+            nextLoc[0].type == lexer::TOK_OR) {
+        op = nextLoc[0].value;
+        moveTokenWindow(2);
+        return new ASTBinaryExprNode(op, term, parseSimpleExpression(), lineNumber);
     }
 
     return term;
@@ -493,13 +501,14 @@ parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
 
 parser::ASTExprNode* parser::Parser::parseTerm() {
     ASTExprNode *factor = parseFactor();
-
     unsigned int lineNumber = currentToken.lineNumber;
+    std::string op;
 
-    if( currentToken.type == lexer::TOK_ASTERISK || currentToken.type == lexer::TOK_DIVIDE ||
-        currentToken.type == lexer::TOK_AND) {
-        moveTokenWindow();
-        return new ASTBinaryExprNode(currentToken.value, factor, parseTerm(), lineNumber);
+    if( nextLoc[0].type == lexer::TOK_ASTERISK || nextLoc[0].type == lexer::TOK_DIVIDE ||
+            nextLoc[0].type == lexer::TOK_AND) {
+        op = nextLoc[0].value;
+        moveTokenWindow(2);
+        return new ASTBinaryExprNode(op, factor, parseTerm(), lineNumber);
     }
 
     return factor;
@@ -574,7 +583,6 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 return parseFunctionCall();
             else {
                 // if not, its just an identifier
-                moveTokenWindow();
                 return new ASTIdentifierNode(currentToken.value, lineNumber);
             }
 
@@ -617,7 +625,7 @@ std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
     return parameters;
 }
 
-parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
+parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall(bool semicolon) {
     // current token is the function identifier
     std::string identifier = currentToken.value;
     auto *parameters = new std::vector<ASTExprNode*>;
@@ -642,6 +650,15 @@ parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall() {
         throw std::runtime_error("Expected ')' on line "
                                  + std::to_string(currentToken.lineNumber)
                                  + " after function parameters.");
+
+    if(semicolon){
+        // Get next token
+        moveTokenWindow();
+        if(currentToken.type != lexer::TOK_SEMICOLON)
+            throw std::runtime_error("Expected ';' after ')' on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+
+    }
 
     return new ASTFunctionCallNode(identifier, *parameters, line_number);
 }
