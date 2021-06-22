@@ -11,7 +11,7 @@ std::regex lexer::string(R"(\"(\\.|[^"\\])*\")");
 std::regex lexer::intLiteral("^[0-9]*$");
 std::regex lexer::floatLiteral("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
 std::regex lexer::singleLineComment(R"(^\/\/[^\n\r]+(?:[\n\r]|\*\))$)");
-std::regex lexer::multiLineComment(R"(^/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/$)");
+std::regex lexer::multiLineComment(R"(\/\*(\*(?!\/)|[^*])*\*\/$)");
 
 bool lexer::isFloatType(const std::string& s){
     return s == "float";

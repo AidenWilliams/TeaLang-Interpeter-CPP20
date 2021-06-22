@@ -6,9 +6,12 @@
 
 
 int main() {
-    std::string x = "//this is a comment\n"
-                    "string sean = \"inhobbok fuzzy;\"\n"
-                    "int z = 10 * 2;";
+    std::string comment =   "//this is a comment\n"
+                            "/* multi line comment\n"
+                            " * new line\n"
+                            " * new line\n"
+                            " */"
+                            "let sean : string = \"inhobbok fuzzy;\";\n";
     std::string y = "if (True) {\n"
                               "let monkey : bool = - (10);\n"
                               "}";
@@ -24,11 +27,11 @@ int main() {
                     "   return x + y;\n"
                     "}";
     lexer::Lexer lexer;
-    lexer.extraxtLexemes(r);
-//    std::cout << "value: type" << std::endl;
-//    for (const auto& i: lexer.tokens){
-//        std::cout << i.value << " : " << i.type << std::endl;
-//    }
+    lexer.extraxtLexemes(comment);
+    std::cout << "value: type" << std::endl;
+    for (const auto& i: lexer.tokens){
+        std::cout << i.value << " : " << i.type << std::endl;
+    }
 
     parser::Parser parser(lexer.tokens);
     parser::ASTProgramNode* programNode = parser.parseProgram();
