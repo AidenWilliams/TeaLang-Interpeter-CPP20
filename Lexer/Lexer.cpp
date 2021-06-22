@@ -225,6 +225,9 @@ unsigned int lexer::delta(unsigned int fromState, char c){
                 current_state = 12;
             }else if (fromState == 13){
                 current_state = 13;
+            }else if (fromState == 0){
+                current_state = 0;
+                break;
             }else{
                 current_state = 24;
             }
@@ -303,7 +306,7 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
             current_state = delta(0, c);
             value = "";
             if (current_state == 24) current_state = 0;
-            else if(current_state != 0) value += c;
+            else if(current_state != 0 ) value += c;
         }else{
             if(current_state != 0) value += c;
         }

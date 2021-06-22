@@ -305,6 +305,8 @@ lexer::TOKEN_TYPE lexer::fromState25(const std::string& s){
 
 lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
     switch (state) {
+        case 0:
+            return TOK_END;
         case 1:
             return fromState1(s);
         case 3:
