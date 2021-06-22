@@ -26,10 +26,9 @@ parser::ASTProgramNode* parser::Parser::parseProgram(bool block) {
             && (!block || currentToken.type != lexer::TOK_CLOSING_CURLY))
             statements->push_back(parseStatement());
 
-        if (currentToken.type == lexer::TOK_END)
-            break;
-
         moveTokenWindow();
+        if (currentToken.type == lexer::TOK_END || block && currentToken.type == lexer::TOK_CLOSING_CURLY)
+            break;
     }
 
     return new ASTProgramNode(*statements);
@@ -209,6 +208,8 @@ parser::ASTIfNode *parser::Parser::parseIf() {
     moveTokenWindow();
     // Get condition after (
     ASTExprNode* condition = parseExpression();
+    // Get next token
+    moveTokenWindow();
     // Ensure proper syntax with closing )
     if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' after condition on line "
@@ -223,9 +224,9 @@ parser::ASTIfNode *parser::Parser::parseIf() {
     ASTBlockNode *ifBlock = parseBlock();
     // Check for ELSE
     ASTBlockNode *elseBlock = nullptr;
-    if(currentToken.type == lexer::TOK_ELSE){
+    if(nextLoc[0].type == lexer::TOK_ELSE){
         // Get next token
-        moveTokenWindow();
+        moveTokenWindow(2);
         // Ensure proper syntax with starting {
         if(currentToken.type != lexer::TOK_OPENING_CURLY)
             throw std::runtime_error("Expected '{' after else on line "
@@ -309,6 +310,8 @@ parser::ASTWhileNode *parser::Parser::parseWhile() {
     moveTokenWindow();
     // Get condition after (
     ASTExprNode* condition = parseExpression();
+    // Get next token
+    moveTokenWindow();
     // Ensure proper syntax with closing )
     if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' after condition on line "
@@ -365,7 +368,6 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
         throw std::runtime_error("Expected function name after type on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     }
-
 
     // Get next token
     moveTokenWindow();
@@ -480,7 +482,7 @@ parser::ASTExprNode* parser::Parser::parseExpression() {
             nextLoc[0].type == lexer::TOK_LESS_THAN_EQUAL_TO || nextLoc[0].type == lexer::TOK_MORE_THAN_EQUAL_TO) {
         op = nextLoc[0].value;
         moveTokenWindow(2);
-        return new ASTBinaryExprNode(op, simple_expr, parseSimpleExpression(), lineNumber);
+        return new ASTBinaryExprNode(op, simple_expr, parseExpression(), lineNumber);
     }
 
     return simple_expr;
