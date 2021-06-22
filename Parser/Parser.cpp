@@ -170,6 +170,8 @@ parser::ASTPrintStatment *parser::Parser::parsePrint() {
     moveTokenWindow();
     // Get expression after print
     ASTExprNode* expr = parseExpression();
+    // Get next token
+    moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after print on line "
@@ -331,8 +333,8 @@ parser::ASTReturnNode *parser::Parser::parseReturn() {
     moveTokenWindow();
     // Get expression after
     ASTExprNode* expr = parseExpression();
-
-//    moveTokenWindow();
+    // Get next token
+    moveTokenWindow();
 
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after expression on line "
