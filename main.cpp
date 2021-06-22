@@ -7,7 +7,7 @@
 
 int main() {
     lexer::Lexer lexer;
-    lexer.extraxtLexemes(spaces);
+    lexer.extraxtLexemes(tabs);
     std::cout << "value: type" << std::endl;
     for (const auto& i: lexer.tokens){
         std::cout << i.value << " : " << i.type << std::endl;

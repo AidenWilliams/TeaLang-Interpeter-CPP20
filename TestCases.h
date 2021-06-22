@@ -13,6 +13,7 @@ std::string comment =   "//this is a comment\n"
                         "let sean : string = \"inhobbok fuzzy;\";";
 std::string newlines = "let sean : string = \"inhobbok fuzzy;\";\n\n\n";
 std::string spaces = "let sean : string = \"inhobbok fuzzy;\";\n   \n   \n   ";
+std::string tabs = "\t\tlet sean : string = \"inhobbok fuzzy;\";\t\t";
 std::string y = "if (True) {\n"
                 "let monkey : bool = - (10);\n"
                 "}";
