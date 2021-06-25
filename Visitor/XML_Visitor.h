@@ -40,7 +40,7 @@ namespace visitor{
 
     private:
         std::ofstream xmlfile;
-        unsigned int indentationLlevel;
+        unsigned int indentationLevel;
         const std::string TAB = "    ";
         std::string indentation();
         std::string type(parser::TYPE);
