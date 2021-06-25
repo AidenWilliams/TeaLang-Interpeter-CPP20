@@ -36,6 +36,7 @@ namespace visitor {
     public:
 
         virtual void visit(parser::ASTProgramNode*) = 0;
+
         virtual void visit(parser::ASTLiteralNode<int>*) = 0;
         virtual void visit(parser::ASTLiteralNode<float>*) = 0;
         virtual void visit(parser::ASTLiteralNode<bool>*) = 0;
@@ -44,6 +45,7 @@ namespace visitor {
         virtual void visit(parser::ASTFunctionCallNode*) = 0;
         virtual void visit(parser::ASTIdentifierNode*) = 0;
         virtual void visit(parser::ASTUnaryExprNode*) = 0;
+
         virtual void visit(parser::ASTSFunctionCallNode*) = 0;
         virtual void visit(parser::ASTDeclarationNode*) = 0;
         virtual void visit(parser::ASTAssignmentNode*) = 0;
