@@ -13,8 +13,12 @@ namespace visitor{
     class XMLVisitor : public Visitor {
 
     public:
-        XMLVisitor();
-        ~XMLVisitor();
+        XMLVisitor(): indentationLevel(0) {
+            xmlfile.open("program.xml");
+        }
+        ~XMLVisitor(){
+            xmlfile.close();
+        }
 
         void visit(parser::ASTProgramNode*) override;
 
@@ -43,8 +47,8 @@ namespace visitor{
         unsigned int indentationLevel;
         const std::string TAB = "    ";
         std::string indentation();
-        std::string type(parser::TYPE);
-        std::string xmlSafeOp(std::string);
+        std::string type(parser::TYPE t);
+        std::string xmlSafeOp(std::string op);
     };
 
 }
