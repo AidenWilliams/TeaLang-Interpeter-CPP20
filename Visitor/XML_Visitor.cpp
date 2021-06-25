@@ -25,3 +25,22 @@ std::string XMLVisitor::indentation() {
 XMLVisitor::~XMLVisitor(){
     xmlfile.close();
 }
+
+void XMLVisitor::visit(parser::ASTProgramNode *program) {
+
+    // Add initial <program> tag
+    xmlfile << indentation() << "<program>" << std::endl;
+
+    // Indent
+    indentationLevel++;
+
+    // For each statement, generate XML for it
+    for(auto &statement : program -> statements)
+        statement -> accept(this);
+
+    // Unindent
+    indentationLevel--;
+
+    // Add closing tag
+    xmlfile << indentation() << "</program>" << std::endl;
+}

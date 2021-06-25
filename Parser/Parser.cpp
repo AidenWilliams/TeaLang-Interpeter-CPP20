@@ -19,26 +19,30 @@ void parser::Parser::moveTokenWindow(int step){
 
 parser::ASTProgramNode* parser::Parser::parseProgram(bool block) {
     auto statements = new std::vector<ASTStatementNode*>;
-
+    // Loop over each token and stop with an END token
     while(currentToken.type != lexer::TOK_END){
+        // Ignore comments and skip '}' if parsing a block
         if (currentToken.type != lexer::TOK_SINGLE_LINE_COMMENT
             && currentToken.type != lexer::TOK_MULTI_LINE_COMMENT
             && (!block || currentToken.type != lexer::TOK_CLOSING_CURLY))
             statements->push_back(parseStatement());
-
+        // Get next Token
         moveTokenWindow();
+        // TODO: FIX LOOP AND REMOVE IF
         if (currentToken.type == lexer::TOK_END || block && currentToken.type == lexer::TOK_CLOSING_CURLY)
             break;
     }
-
     return new ASTProgramNode(*statements);
 }
 
 parser::ASTStatementNode* parser::Parser::parseStatement() {
+    // Parse a singular statement
+    // The current token type determines what can be parsed
     switch(currentToken.type){
+        // Variable declaration case
         case lexer::TOK_LET:
             return parseDeclaration();
-
+        // An identifier can either be a function call or an assignment
         case lexer::TOK_IDENTIFIER:
             // If next token is '(' then we found a function call
             if(nextLoc->type == lexer::TOK_OPENING_CURVY)
@@ -47,37 +51,36 @@ parser::ASTStatementNode* parser::Parser::parseStatement() {
                 // if not, its should be an Assignment
                 return parseAssignment();
             }
-
+        // Print case
         case lexer::TOK_PRINT:
             return parsePrint();
-
+        // If case
         case lexer::TOK_IF:
             return parseIf();
-
+        // For case
         case lexer::TOK_FOR:
             return parseFor();
-
+        // While case
         case lexer::TOK_WHILE:
             return parseWhile();
-
+        // Return case
         case lexer::TOK_RETURN:
             return parseReturn();
-
+        // Function declaration cases
         case lexer::TOK_INT_TYPE:
         case lexer::TOK_FLOAT_TYPE:
         case lexer::TOK_BOOL_TYPE:
         case lexer::TOK_STRING_TYPE:
             return parseFunctionDeclaration();
-
+        // Block parsing case
         case lexer::TOK_OPENING_CURLY:
             return parseBlock();
-
+        // Any other case is an error case
         default:
             throw std::runtime_error("Invalid statement starting with '" +
                                      currentToken.value
                                      + "' encountered on line " +
                                      std::to_string(currentToken.lineNumber) + ".");
-
     }
 }
 
@@ -87,22 +90,18 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
     // Current token is LET
     // Get next token
     moveTokenWindow();
-    // Get identifier for new variable
-
+    // Confirm current token is IDENTIFIER
     if(currentToken.type != lexer::TOK_IDENTIFIER)
         throw std::runtime_error("Expected variable name after 'let' on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
+    // Get identifier for new variable
     std::string identifier = currentToken.value;
-
     // Get next token
     moveTokenWindow();
-
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_COLON)
         throw std::runtime_error("Expected ':' after " + identifier + " on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
     // Get next token
     moveTokenWindow();
     // Get type
@@ -113,26 +112,22 @@ parser::ASTDeclarationNode* parser::Parser::parseDeclaration() {
         throw std::runtime_error("Expected type for " + identifier + " after ':' on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     }
-
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_EQUALS)
         throw std::runtime_error("Expected assignment operator '=' for " + identifier + " on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
     // Get next token
     moveTokenWindow();
     // Get expression after =
     ASTExprNode* expr = parseExpression();
-
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
     // Create ASTExpressionNode to return
     return new ASTDeclarationNode(type, identifier, expr, lineNumber);
 }
@@ -159,7 +154,6 @@ parser::ASTAssignmentNode *parser::Parser::parseAssignment(bool _for) {
     if(!_for && currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                 + std::to_string(currentToken.lineNumber) + ".");
-
     // Create ASTAssignmentNode to return
     return new ASTAssignmentNode(identifier, expr, lineNumber);
 }
@@ -178,7 +172,6 @@ parser::ASTPrintStatment *parser::Parser::parsePrint() {
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after print on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
     // Create ASTAssignmentNode to return
     return new ASTPrintStatment(expr, lineNumber);
 }
@@ -192,7 +185,6 @@ parser::ASTBlockNode *parser::Parser::parseBlock() {
     // By definition a block is a program enclosed in { }
     ASTBlockNode block = ASTBlockNode(*parseProgram(true), lineNumber);
     // closing } is handled by parseProgram
-
     // Create ASTBlockNode to return
     return new ASTBlockNode(block.statements, lineNumber);
 }
@@ -360,7 +352,6 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
         throw std::runtime_error("Expected type for " + currentToken.value + " on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     }
-
     // Get next token
     moveTokenWindow();
     // ensure identifier is here
@@ -371,13 +362,10 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
         throw std::runtime_error("Expected function name after type on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
     }
-
     // Get next token
     moveTokenWindow(2);
-
     // If next token is not right bracket, we have parameters
     auto parameters =  new std::vector<std::pair<std::string, TYPE>>;
-
     if(currentToken.type != lexer::TOK_CLOSING_CURVY) {
         parameters = parseFormalParams();
     }
@@ -386,7 +374,6 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
         throw std::runtime_error("Expected ')' on line "
                                  + std::to_string(currentToken.lineNumber)
                                  + " after function parameters.");
-
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax with starting {
@@ -395,7 +382,6 @@ parser::ASTFunctionDeclarationNode *parser::Parser::parseFunctionDeclaration() {
                                  + std::to_string(currentToken.lineNumber) + ".");
     // get loop Block
     ASTBlockNode *functionBlock = parseBlock();
-
     // Create ASTFunctionDeclarationNode to return
     return new ASTFunctionDeclarationNode(type, identifier->identifier, *parameters, functionBlock, lineNumber);
 }
@@ -417,7 +403,6 @@ std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalPa
     }
     // Get next token
     moveTokenWindow();
-
     // Ensure proper syntax with : after identifier
     if(currentToken.type != lexer::TOK_COLON)
         throw std::runtime_error("Expected ':' after "+identifier->identifier+" on line "
@@ -434,12 +419,10 @@ std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalPa
     }
     // Add first param
     parameters->emplace_back(std::pair<std::string, parser::TYPE>{identifier->identifier, type } );
-
     // If next token is a comma there are more
     while(nextLoc->type == lexer::TOK_COMMA) {
         // Move current token, to token after comma
         moveTokenWindow(2);
-
         // repeat the above steps
         if (currentToken.type == lexer::TOK_IDENTIFIER){
             identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
@@ -449,7 +432,6 @@ std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalPa
         }
         // Get next token
         moveTokenWindow();
-
         // Ensure proper syntax with : after identifier
         if(currentToken.type != lexer::TOK_COLON)
             throw std::runtime_error("Expected ':' after "+identifier->identifier+" on line "
@@ -468,7 +450,6 @@ std::vector<std::pair<std::string, parser::TYPE>> *parser::Parser::parseFormalPa
     }
     // Current token is on the last param, we need to move beyond that to get the closing )
     moveTokenWindow();
-
     return parameters;
 }
 
@@ -477,15 +458,17 @@ parser::ASTExprNode* parser::Parser::parseExpression() {
     ASTExprNode *simple_expr = parseSimpleExpression();
     unsigned int lineNumber = currentToken.lineNumber;
     std::string op;
-
+    // Check if the next token is a relational operator
     if( nextLoc[0].type == lexer::TOK_LESS_THAN || nextLoc[0].type == lexer::TOK_MORE_THAN ||
             nextLoc[0].type == lexer::TOK_EQAUL_TO || nextLoc[0].type == lexer::TOK_NOT_EQAUL_TO ||
             nextLoc[0].type == lexer::TOK_LESS_THAN_EQUAL_TO || nextLoc[0].type == lexer::TOK_MORE_THAN_EQUAL_TO) {
+        // store the operator
         op = nextLoc[0].value;
+        // Move over current expression and operator (making the right side expression the current token)
         moveTokenWindow(2);
+        // Parse right side expression and return
         return new ASTBinaryExprNode(op, simple_expr, parseExpression(), lineNumber);
     }
-
     return simple_expr;
 }
 
@@ -493,11 +476,14 @@ parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
     ASTExprNode *term = parseTerm();
     unsigned int lineNumber = currentToken.lineNumber;
     std::string op;
-
+    // Check if the next token is an addition operator
     if( nextLoc[0].type == lexer::TOK_PLUS || nextLoc[0].type == lexer::TOK_MINUS ||
             nextLoc[0].type == lexer::TOK_OR) {
+        // store the operator
         op = nextLoc[0].value;
+        // Move over current simple expression and operator (making the right side simple expression the current token)
         moveTokenWindow(2);
+        // Parse right side simple expression and return
         return new ASTBinaryExprNode(op, term, parseSimpleExpression(), lineNumber);
     }
 
@@ -508,11 +494,14 @@ parser::ASTExprNode* parser::Parser::parseTerm() {
     ASTExprNode *factor = parseFactor();
     unsigned int lineNumber = currentToken.lineNumber;
     std::string op;
-
+    // Check if the next token is an multiplication operator
     if( nextLoc[0].type == lexer::TOK_ASTERISK || nextLoc[0].type == lexer::TOK_DIVIDE ||
             nextLoc[0].type == lexer::TOK_AND) {
+        // store the operator
         op = nextLoc[0].value;
+        // Move over current term and operator (making the right side term the current token)
         moveTokenWindow(2);
+        // Parse right side term and return
         return new ASTBinaryExprNode(op, factor, parseTerm(), lineNumber);
     }
 
@@ -522,26 +511,20 @@ parser::ASTExprNode* parser::Parser::parseTerm() {
 parser::ASTExprNode* parser::Parser::parseFactor() {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
-
+    // check current token type
     switch(currentToken.type){
-
         // Literal Cases
         case lexer::TOK_INT:
             return new ASTLiteralNode<int>(std::stoi(currentToken.value), lineNumber);
-
         case lexer::TOK_FLOAT:
             return new ASTLiteralNode<float>(std::stof(currentToken.value), lineNumber);
-
         case lexer::TOK_TRUE:
             return new ASTLiteralNode<bool>(true, lineNumber);
-
         case lexer::TOK_FALSE:
             return new ASTLiteralNode<bool>(false, lineNumber);
-
         case lexer::TOK_STRING: {
             // Remove " character from front and end of lexeme
             std::string str = currentToken.value.substr(1, currentToken.value.size() - 2);
-
             // Replace \" with quote
             size_t pos = str.find("\\\"");
             while (pos != std::string::npos) {
@@ -550,7 +533,6 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 // Get next occurrence from current position
                 pos = str.find("\\\"", pos + 2);
             }
-
             // Replace \n with newline
             pos = str.find("\\n");
             while (pos != std::string::npos) {
@@ -559,7 +541,6 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 // Get next occurrence from current position
                 pos = str.find("\\n", pos + 2);
             }
-
             // Replace \t with tab
             pos = str.find("\\t");
             while (pos != std::string::npos) {
@@ -568,7 +549,6 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 // Get next occurrence from current position
                 pos = str.find("\\t", pos + 2);
             }
-
             // Replace \b with backslash
             pos = str.find("\\b");
             while (pos != std::string::npos) {
@@ -577,10 +557,8 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 // Get next occurrence from current position
                 pos = str.find("\\b", pos + 2);
             }
-
             return new ASTLiteralNode<std::string>(std::move(str), lineNumber);
         }
-
         // Identifier or function call case
         case lexer::TOK_IDENTIFIER:
             // If next token is '(' then we found a function call
@@ -590,11 +568,9 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
                 // if not, its just an identifier
                 return new ASTIdentifierNode(currentToken.value, lineNumber);
             }
-
         // Subexpression case
         case lexer::TOK_OPENING_CURVY:
             return parseSubExpression();
-
         // Unary expression case
         case lexer::TOK_MINUS:
         case lexer::TOK_NOT:
@@ -603,20 +579,16 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
             moveTokenWindow();
             // return an ASTUnaryNode
             return new ASTUnaryNode(parseExpression(), currentToken.lineNumber);
-
         default:
             throw std::runtime_error("Expected expression on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
-
     }
-
 }
 
 std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
     auto parameters = new std::vector<ASTExprNode*>;
     // Add first param
     parameters->push_back(parseExpression());
-
     // If next token is a comma there are more
     while(nextLoc->type == lexer::TOK_COMMA) {
         // Move current token, to token after comma
@@ -626,7 +598,6 @@ std::vector<parser::ASTExprNode*>* parser::Parser::parseActualParams() {
     }
     // Current token is on the last param, we need to move beyond that to get the closing )
     moveTokenWindow();
-
     return parameters;
 }
 
@@ -635,36 +606,30 @@ parser::ASTFunctionCallNode* parser::Parser::parseFunctionCall(bool semicolon) {
     std::string identifier = currentToken.value;
     auto *parameters = new std::vector<ASTExprNode*>;
     unsigned int line_number = currentToken.lineNumber;
-
     // Get next token
     moveTokenWindow();
     // Ensure proper syntax
     if(currentToken.type != lexer::TOK_OPENING_CURVY)
         throw std::runtime_error("Expected '(' on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-
     // Get next token
     moveTokenWindow();
     // If next token is not right bracket, we have parameters
     if(currentToken.type != lexer::TOK_CLOSING_CURVY) {
         parameters = parseActualParams();
     }
-
     // Ensure right close bracket after fetching parameters
     if(currentToken.type != lexer::TOK_CLOSING_CURVY)
         throw std::runtime_error("Expected ')' on line "
                                  + std::to_string(currentToken.lineNumber)
                                  + " after function parameters.");
-
     if(semicolon){
         // Get next token
         moveTokenWindow();
         if(currentToken.type != lexer::TOK_SEMICOLON)
             throw std::runtime_error("Expected ';' after ')' on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
-
     }
-
     return new ASTFunctionCallNode(identifier, *parameters, line_number);
 }
 
@@ -674,7 +639,6 @@ parser::ASTExprNode* parser::Parser::parseSubExpression() {
     moveTokenWindow();
     // Now we should be able to get an expression
     ASTExprNode *exprNode = parseExpression();
-
     // move over expression
     moveTokenWindow();
     // Ensure ')' is there
@@ -686,19 +650,16 @@ parser::ASTExprNode* parser::Parser::parseSubExpression() {
 }
 
 parser::TYPE parser::Parser::parseType(const std::string& identifier) const {
+    // Parse type by checking the token type of the current token
     switch(currentToken.type){
         case lexer::TOK_INT_TYPE:
             return INT;
-
         case lexer::TOK_FLOAT_TYPE:
             return FLOAT;
-
         case lexer::TOK_BOOL_TYPE:
             return BOOL;
-
         case lexer ::TOK_STRING_TYPE:
             return STRING;
-
         default:
             throw std::runtime_error("Expected type for " + identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");

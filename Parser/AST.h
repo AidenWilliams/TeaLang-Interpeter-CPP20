@@ -97,6 +97,7 @@ namespace parser {
         ~ASTUnaryNode() = default;
         ASTExprNode* exprNode;
         unsigned int lineNumber;
+        void accept(visitor::Visitor*) override;
     };
 
     // Statement Nodes
