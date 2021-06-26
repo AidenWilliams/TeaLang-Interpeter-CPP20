@@ -20,27 +20,27 @@ namespace visitor{
             xmlfile.close();
         }
 
-        void visit(parser::ASTProgramNode*) override;
+        void visit(parser::ASTProgramNode* v) override;
 
-        void visit(parser::ASTLiteralNode<int>*) override;
-        void visit(parser::ASTLiteralNode<float>*) override;
-        void visit(parser::ASTLiteralNode<bool>*) override;
-        void visit(parser::ASTLiteralNode<std::string>*) override;
-        void visit(parser::ASTBinaryExprNode*) override;
-        void visit(parser::ASTIdentifierNode*) override;
-        void visit(parser::ASTUnaryExprNode*) override;
-        void visit(parser::ASTFunctionCallNode*) override;
+        void visit(parser::ASTLiteralNode<int>* v) override;
+        void visit(parser::ASTLiteralNode<float>* v) override;
+        void visit(parser::ASTLiteralNode<bool>* v) override;
+        void visit(parser::ASTLiteralNode<std::string>* v) override;
+        void visit(parser::ASTBinaryNode* v) override;
+        void visit(parser::ASTIdentifierNode* v) override;
+        void visit(parser::ASTUnaryNode* v) override;
+        void visit(parser::ASTFunctionCallNode* v) override;
 
-        void visit(parser::ASTSFunctionCallNode*) override;
-        void visit(parser::ASTDeclarationNode*) override;
-        void visit(parser::ASTAssignmentNode*) override;
-        void visit(parser::ASTPrintNode*) override;
-        void visit(parser::ASTBlockNode*) override;
-        void visit(parser::ASTIfNode*) override;
-        void visit(parser::ASTForNode*) override;
-        void visit(parser::ASTWhileNode*) override;
-        void visit(parser::ASTFunctionDeclarationNode*) override;
-        void visit(parser::ASTReturnNode*) override;
+        void visit(parser::ASTSFunctionCallNode* v) override;
+        void visit(parser::ASTDeclarationNode* v) override;
+        void visit(parser::ASTAssignmentNode* v) override;
+        void visit(parser::ASTPrintNode* v) override;
+        void visit(parser::ASTBlockNode* v) override;
+        void visit(parser::ASTIfNode* v) override;
+        void visit(parser::ASTForNode* v) override;
+        void visit(parser::ASTWhileNode* v) override;
+        void visit(parser::ASTFunctionDeclarationNode* v) override;
+        void visit(parser::ASTReturnNode* v) override;
 
     private:
         std::ofstream xmlfile;
@@ -48,7 +48,7 @@ namespace visitor{
         const std::string TAB = "    ";
         std::string indentation();
         std::string type(parser::TYPE t);
-        std::string xmlSafeOp(std::string op);
+        static std::string xmlSafeOp(std::string op);
     };
 }
 #endif //TEALANG_COMPILER_CPP20_XML_VISITOR_H

@@ -267,37 +267,3 @@ void XMLVisitor::visit(parser::ASTUnaryExprNode *un) {
     // Add closing tag
     xmlfile << indentation() << "</unary>" << std::endl;
 }
-
-void XMLVisitor::visit(parser::ASTFunctionCallNode *func) {
-
-    // Add initial <func-call> tag
-    xmlfile << indentation() << "<func-call>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Function identifier
-    xmlfile << indentation() << "<id>" + func->identifier + "</id>" << std::endl;
-
-    // For each parameter
-    for(auto &param : func -> parameters){
-        xmlfile << indentation() << "<arg>" << std::endl;
-
-        // Add indentation level
-        indentationLevel++;
-
-        // Parameter
-        param->accept(this);
-
-        // Remove indentation level
-        indentationLevel++;
-
-        xmlfile << indentation() << "</arg>" << std::endl;
-    }
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</func-call>" << std::endl;
-}

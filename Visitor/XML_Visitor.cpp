@@ -85,7 +85,7 @@ void XMLVisitor::visit(parser::ASTLiteralNode<bool> *lit) {
     xmlfile << "</bool>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTBinaryExprNode *bin) {
+void XMLVisitor::visit(parser::ASTBinaryNode *bin) {
     // Add initial <bin> tag
     xmlfile << indentation() << "<bin op = \"" + xmlSafeOp(bin->op) +
                                 "\">" << std::endl;
@@ -99,5 +99,29 @@ void XMLVisitor::visit(parser::ASTBinaryExprNode *bin) {
     indentationLevel--;
     // Add closing tag
     xmlfile << indentation() << "</bin>" << std::endl;
+}
+
+void XMLVisitor::visit(parser::ASTFunctionCallNode *func) {
+    // Add initial <func-call> tag
+    xmlfile << indentation() << "<functionEcall>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Function identifier
+    xmlfile << indentation() << "<id>" + func->identifier + "</id>" << std::endl;
+    // For each parameter
+    for(auto &param : func -> parameters){
+        xmlfile << indentation() << "<param>" << std::endl;
+        // Add indentation level
+        indentationLevel++;
+        // Parameter
+        param->accept(this);
+        // Remove indentation level
+        indentationLevel++;
+        xmlfile << indentation() << "</param>" << std::endl;
+    }
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</functionEcall>" << std::endl;
 }
 
