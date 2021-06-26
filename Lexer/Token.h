@@ -195,7 +195,7 @@ namespace lexer {
         ~Token() = default;
         TOKEN_TYPE type;
         std::string value;
-        unsigned int lineNumber;
+        unsigned int lineNumber{};
 
     };
 }

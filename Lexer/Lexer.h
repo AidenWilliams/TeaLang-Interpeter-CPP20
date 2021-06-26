@@ -83,7 +83,7 @@ namespace lexer {
     public:
         std::vector<Token> tokens;
         std::vector<bool> finalStates = {
-                                            false, true, false, true, false, false, true, false, true, true, false, true,
+                                            true, true, false, true, false, false, true, false, true, true, false, true,
                                             false, false, true, true, true, true, true, true, false, true, true, true,
                                             true, true
                                         };

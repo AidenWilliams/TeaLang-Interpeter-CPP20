@@ -11,7 +11,7 @@ std::regex lexer::string(R"(\"(\\.|[^"\\])*\")");
 std::regex lexer::intLiteral("^[0-9]*$");
 std::regex lexer::floatLiteral("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
 std::regex lexer::singleLineComment(R"(^\/\/[^\n\r]+(?:[\n\r]|\*\))$)");
-std::regex lexer::multiLineComment(R"(^/\\*[^*]*\\*+(?:[^/*][^*]*\\*+)*/$)");
+std::regex lexer::multiLineComment(R"(\/\*(\*(?!\/)|[^*])*\*\/$)");
 
 bool lexer::isFloatType(const std::string& s){
     return s == "float";
@@ -305,6 +305,8 @@ lexer::TOKEN_TYPE lexer::fromState25(const std::string& s){
 
 lexer::TOKEN_TYPE lexer::Token::determineTokenType(std::string& s, unsigned int state){
     switch (state) {
+        case 0:
+            return TOK_END;
         case 1:
             return fromState1(s);
         case 3:

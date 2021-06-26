@@ -6,6 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}-march=native")
 
 set(SOURCES main.cpp Lexer/Lexer.cpp Lexer/Token.cpp Parser/Parser.cpp)
-set(HEADERS Lexer/Lexer.h Lexer/Token.h Parser/Parser.h Parser/AST.h Visitor/Visitor.h)
+set(HEADERS Lexer/Lexer.h Lexer/Token.h Parser/Parser.h Parser/AST.h Visitor/Visitor.h TestCases.h)
 
 add_executable(TeaLang ${SOURCES} ${HEADERS})

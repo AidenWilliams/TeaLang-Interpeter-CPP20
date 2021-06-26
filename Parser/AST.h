@@ -107,6 +107,29 @@ namespace parser {
 //        void accept(visitor::Visitor*) override = 0;
     };
 
+    class ASTSFunctionCallNode : public ASTStatementNode {
+        // Identical to the expression node but is a statement
+    public:
+        ASTSFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                parameters(std::move(parameters)),
+                lineNumber(lineNumber)
+        {};
+
+        explicit ASTSFunctionCallNode(const ASTFunctionCallNode& expr) :
+                identifier(expr.identifier),
+                parameters(expr.parameters),
+                lineNumber(expr.lineNumber)
+        {};
+
+        ~ASTSFunctionCallNode() = default;
+
+        std::string identifier;
+        std::vector<ASTExprNode*> parameters;
+        unsigned int lineNumber;
+//        void accept(visitor::Visitor*) override;
+    };
+
     // Program Node
     class ASTProgramNode : public ASTNode {
     public:
