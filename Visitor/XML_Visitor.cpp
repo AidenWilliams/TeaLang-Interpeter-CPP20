@@ -73,7 +73,7 @@ void XMLVisitor::visit(parser::ASTLiteralNode<float> *lit) {
     // Add value
     xmlfile << std::to_string(lit->val);
     // Add closing tag
-    xmlfile << "</floatt>" << std::endl;
+    xmlfile << "</float>" << std::endl;
 }
 
 void XMLVisitor::visit(parser::ASTLiteralNode<bool> *lit) {
