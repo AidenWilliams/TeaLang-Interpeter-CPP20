@@ -135,7 +135,7 @@ void XMLVisitor::visit(parser::ASTUnaryNode *unaryExprNode) {
 }
 
 void XMLVisitor::visit(parser::ASTFunctionCallNode *functionCallNode) {
-    // Add initial <func-call> tag
+    // Add initial <functionEcall> tag
     xmlfile << indentation() << "<functionEcall>" << std::endl;
     // Add indentation level
     indentationLevel++;
@@ -158,3 +158,26 @@ void XMLVisitor::visit(parser::ASTFunctionCallNode *functionCallNode) {
     xmlfile << indentation() << "</functionEcall>" << std::endl;
 }
 
+void XMLVisitor::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
+    // Add initial <functionScall> tag
+    xmlfile << indentation() << "<functionScall>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Function identifier
+    xmlfile << indentation() << "<id>" + sFunctionCallNode->identifier + "</id>" << std::endl;
+    // For each parameter
+    for(auto &param : sFunctionCallNode -> parameters){
+        xmlfile << indentation() << "<param>" << std::endl;
+        // Add indentation level
+        indentationLevel++;
+        // Parameter
+        param->accept(this);
+        // Remove indentation level
+        indentationLevel++;
+        xmlfile << indentation() << "</param>" << std::endl;
+    }
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</functionScall>" << std::endl;
+}
