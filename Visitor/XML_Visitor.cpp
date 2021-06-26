@@ -183,44 +183,32 @@ void XMLVisitor::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
 }
 
 void XMLVisitor::visit(parser::ASTDeclarationNode *declarationNode) {
-
     // Add initial <declaration> tag
     xmlfile << indentation() << "<declaration>" << std::endl;
-
     // Add indentation level
     indentationLevel++;
-
     // Add identifier
     xmlfile << indentation() << "<id type = \"" + type(declarationNode -> type) + "\">"
             << declarationNode -> identifier << "</id>" << std::endl;
-
     // Expression tags
-    declarationNode -> expr -> accept(this);
-
+    declarationNode -> exprNode -> accept(this);
     // Remove indentation level
     indentationLevel--;
-
     // Add closing tag
     xmlfile << indentation() << "</declaration>" << std::endl;
 }
 
 void XMLVisitor::visit(parser::ASTAssignmentNode *assignmentNode) {
-
     // Add initial <assign> tag
     xmlfile << indentation() << "<assign>" << std::endl;
-
     // Add indentation level
     indentationLevel++;
-
     // Add identifier
     xmlfile << indentation() << "<id>" << assignmentNode -> identifier << "</id>" << std::endl;
-
     // Expression tags
-    assignmentNode -> expr -> accept(this);
-
+    assignmentNode -> exprNode -> accept(this);
     // Remove indentation level
     indentationLevel--;
-
     // Add closing tag
     xmlfile << indentation() << "</assign>" << std::endl;
 }
