@@ -1,45 +1,4 @@
-void XMLVisitor::visit(parser::ASTDeclarationNode *decl) {
 
-    // Add initial <decl> tag
-    xmlfile << indentation() << "<decl>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Add identifier
-    xmlfile << indentation() << "<id type = \"" + type(decl -> type) + "\">"
-            << decl -> identifier << "</id>" << std::endl;
-
-    // Expression tags
-    decl -> expr -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</decl>" << std::endl;
-}
-
-void XMLVisitor::visit(parser::ASTAssignmentNode *assign) {
-
-    // Add initial <assign> tag
-    xmlfile << indentation() << "<assign>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Add identifier
-    xmlfile << indentation() << "<id>" << assign -> identifier << "</id>" << std::endl;
-
-    // Expression tags
-    assign -> expr -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</assign>" << std::endl;
-}
 
 void XMLVisitor::visit(parser::ASTPrintNode *print){
 
@@ -221,19 +180,3 @@ void XMLVisitor::visit(parser::ASTFunctionDefinitionNode *func) {
     xmlfile << indentation() << "</func-def>" << std::endl;
 
 }
-
-void XMLVisitor::visit(parser::ASTLiteralNode<std::string> *lit) {
-
-    // Add initial <string> tag
-    xmlfile << indentation() << "<string>";
-
-    // Add value
-    xmlfile << lit->val;
-
-    // Add closing tag
-    xmlfile << "</string>" << std::endl;
-}
-
-
-
-

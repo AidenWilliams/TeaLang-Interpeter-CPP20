@@ -133,10 +133,10 @@ namespace parser {
                 lineNumber(lineNumber)
         {};
 
-        explicit ASTSFunctionCallNode(const ASTFunctionCallNode& expr) :
-                identifier(expr.identifier),
-                parameters(expr.parameters),
-                lineNumber(expr.lineNumber)
+        explicit ASTSFunctionCallNode(const ASTFunctionCallNode& exprNode) :
+                identifier(exprNode.identifier),
+                parameters(exprNode.parameters),
+                lineNumber(exprNode.lineNumber)
         {};
 
         ~ASTSFunctionCallNode() = default;
@@ -149,46 +149,46 @@ namespace parser {
 
     class ASTDeclarationNode : public ASTStatementNode {
     public:
-        ASTDeclarationNode(TYPE type, std::string identifier, ASTExprNode* expr, unsigned int lineNumber) :
+        ASTDeclarationNode(TYPE type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
                 type(type),
                 identifier(std::move(identifier)),
-                expr(expr),
+                exprNode(exprNode),
                 lineNumber(lineNumber)
         {};
         ~ASTDeclarationNode() = default;
 
         TYPE type;
         std::string identifier;
-        ASTExprNode *expr;
+        ASTExprNode *exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTAssignmentNode : public ASTStatementNode {
     public:
-        ASTAssignmentNode(std::string identifier, ASTExprNode* expr, unsigned int lineNumber) :
+        ASTAssignmentNode(std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
-                expr(expr),
+                exprNode(exprNode),
                 lineNumber(lineNumber)
         {};
         ~ASTAssignmentNode() = default;
 
         std::string identifier;
-        ASTExprNode *expr;
+        ASTExprNode *exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTPrintNode : public ASTStatementNode {
     public:
-        ASTPrintNode(ASTExprNode* expr, unsigned int lineNumber) :
-                expr(expr),
+        ASTPrintNode(ASTExprNode* exprNode, unsigned int lineNumber) :
+                exprNode(exprNode),
                 lineNumber(lineNumber)
         {};
         ~ASTPrintNode() = default;
 
         std::string identifier;
-        ASTExprNode *expr;
+        ASTExprNode *exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
@@ -286,13 +286,13 @@ namespace parser {
 
     class ASTReturnNode : public ASTStatementNode {
     public:
-        ASTReturnNode(ASTExprNode* expr, unsigned int lineNumber) :
-            expr(expr),
+        ASTReturnNode(ASTExprNode* exprNode, unsigned int lineNumber) :
+            exprNode(exprNode),
             lineNumber(lineNumber)
         {};
         ~ASTReturnNode() = default;
 
-        ASTExprNode *expr;
+        ASTExprNode *exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
