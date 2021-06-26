@@ -44,13 +44,13 @@ std::string XMLVisitor::xmlSafeOp(std::string op) {
     return op;
 }
 
-void XMLVisitor::visit(parser::ASTProgramNode *program) {
+void XMLVisitor::visit(parser::ASTProgramNode *programNode) {
     // Add initial <program> tag
     xmlfile << indentation() << "<program>" << std::endl;
     // Add indentation level
     indentationLevel++;
     // For each statement, generate XML for it
-    for(auto &statement : program -> statements)
+    for(auto &statement : programNode -> statements)
         statement -> accept(this);
     // Remove indentation level
     indentationLevel--;
@@ -58,58 +58,67 @@ void XMLVisitor::visit(parser::ASTProgramNode *program) {
     xmlfile << indentation() << "</program>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTLiteralNode<int> *lit) {
+void XMLVisitor::visit(parser::ASTLiteralNode<int> *literalNode) {
     // Add initial <int> tag
     xmlfile << indentation() << "<int>";
     // Add value
-    xmlfile << std::to_string(lit->val);
+    xmlfile << std::to_string(literalNode->val);
     // Add closing tag
     xmlfile << "</int>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTLiteralNode<float> *lit) {
+void XMLVisitor::visit(parser::ASTLiteralNode<float> *literalNode) {
     // Add initial <float> tag
     xmlfile << indentation() << "<float>";
     // Add value
-    xmlfile << std::to_string(lit->val);
+    xmlfile << std::to_string(literalNode->val);
     // Add closing tag
     xmlfile << "</float>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTLiteralNode<bool> *lit) {
+void XMLVisitor::visit(parser::ASTLiteralNode<bool> *literalNode) {
     // Add initial <bool> tag
     xmlfile << indentation() << "<bool>";
     // Add value
-    xmlfile << ((lit->val) ? "true" : "false");
+    xmlfile << ((literalNode->val) ? "true" : "false");
     // Add closing tag
     xmlfile << "</bool>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTBinaryNode *bin) {
+void XMLVisitor::visit(parser::ASTLiteralNode<std::string> *literalNode) {
+    // Add initial <string> tag
+    xmlfile << indentation() << "<string>";
+    // Add value
+    xmlfile << literalNode->val;
+    // Add closing tag
+    xmlfile << "</string>" << std::endl;
+}
+
+void XMLVisitor::visit(parser::ASTBinaryNode *binaryNode) {
     // Add initial <bin> tag
-    xmlfile << indentation() << "<bin op = \"" + xmlSafeOp(bin->op) +
+    xmlfile << indentation() << "<bin op = \"" + xmlSafeOp(binaryNode->op) +
                                 "\">" << std::endl;
     // Add indentation level
     indentationLevel++;
     // Left node
-    bin -> left -> accept(this);
+    binaryNode -> left -> accept(this);
     // Right node
-    bin -> right -> accept(this);
+    binaryNode -> right -> accept(this);
     // Remove indentation level
     indentationLevel--;
     // Add closing tag
     xmlfile << indentation() << "</bin>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTFunctionCallNode *func) {
+void XMLVisitor::visit(parser::ASTFunctionCallNode *functionCallNode) {
     // Add initial <func-call> tag
     xmlfile << indentation() << "<functionEcall>" << std::endl;
     // Add indentation level
     indentationLevel++;
     // Function identifier
-    xmlfile << indentation() << "<id>" + func->identifier + "</id>" << std::endl;
+    xmlfile << indentation() << "<id>" + functionCallNode->identifier + "</id>" << std::endl;
     // For each parameter
-    for(auto &param : func -> parameters){
+    for(auto &param : functionCallNode -> parameters){
         xmlfile << indentation() << "<param>" << std::endl;
         // Add indentation level
         indentationLevel++;
