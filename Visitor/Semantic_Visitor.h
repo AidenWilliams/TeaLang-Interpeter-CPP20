@@ -65,10 +65,12 @@ namespace visitor {
         SemanticAnalyser()
         {
             scopes.emplace_back(new SemanticScope());
+            currentType = parser::TYPE();
         };
         ~SemanticAnalyser() = default;
 
         std::vector<SemanticScope*> scopes;
+        parser::TYPE currentType;
 
         void visit(parser::ASTProgramNode* programNode) override;
 
