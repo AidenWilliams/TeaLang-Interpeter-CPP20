@@ -47,12 +47,12 @@ std::string XMLVisitor::xmlSafeOp(std::string op) {
 void XMLVisitor::visit(parser::ASTProgramNode *program) {
     // Add initial <program> tag
     xmlfile << indentation() << "<program>" << std::endl;
-    // Indent
+    // Add indentation level
     indentationLevel++;
     // For each statement, generate XML for it
     for(auto &statement : program -> statements)
         statement -> accept(this);
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
     // Add closing tag
     xmlfile << indentation() << "</program>" << std::endl;
@@ -68,7 +68,7 @@ void XMLVisitor::visit(parser::ASTLiteralNode<int> *lit) {
 }
 
 void XMLVisitor::visit(parser::ASTLiteralNode<float> *lit) {
-    // Add initial <real> tag
+    // Add initial <float> tag
     xmlfile << indentation() << "<float>";
     // Add value
     xmlfile << std::to_string(lit->val);
@@ -84,3 +84,20 @@ void XMLVisitor::visit(parser::ASTLiteralNode<bool> *lit) {
     // Add closing tag
     xmlfile << "</bool>" << std::endl;
 }
+
+void XMLVisitor::visit(parser::ASTBinaryExprNode *bin) {
+    // Add initial <bin> tag
+    xmlfile << indentation() << "<bin op = \"" + xmlSafeOp(bin->op) +
+                                "\">" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Left node
+    bin -> left -> accept(this);
+    // Right node
+    bin -> right -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</bin>" << std::endl;
+}
+

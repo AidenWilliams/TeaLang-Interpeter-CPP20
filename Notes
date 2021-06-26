@@ -3,7 +3,7 @@ void XMLVisitor::visit(parser::ASTDeclarationNode *decl) {
     // Add initial <decl> tag
     xmlfile << indentation() << "<decl>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Add identifier
@@ -13,7 +13,7 @@ void XMLVisitor::visit(parser::ASTDeclarationNode *decl) {
     // Expression tags
     decl -> expr -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -25,7 +25,7 @@ void XMLVisitor::visit(parser::ASTAssignmentNode *assign) {
     // Add initial <assign> tag
     xmlfile << indentation() << "<assign>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Add identifier
@@ -34,7 +34,7 @@ void XMLVisitor::visit(parser::ASTAssignmentNode *assign) {
     // Expression tags
     assign -> expr -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -46,13 +46,13 @@ void XMLVisitor::visit(parser::ASTPrintNode *print){
     // Add initial <print> tag
     xmlfile << indentation() << "<print>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Expression tags
     print -> expr -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -64,13 +64,13 @@ void XMLVisitor::visit(parser::ASTReturnNode *ret) {
     // Add initial <return> tag
     xmlfile << indentation() << "<return>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Expression tags
     ret -> expr -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -82,14 +82,14 @@ void XMLVisitor::visit(parser::ASTBlockNode *block) {
     // Add initial <block> tag
     xmlfile << indentation() << "<block>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // For each statement, accept
     for(auto &statement : block -> statements)
         statement -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -101,19 +101,19 @@ void XMLVisitor::visit(parser::ASTIfNode *ifnode) {
     // Add initial <if> tag
     xmlfile << indentation() << "<if>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Add <condition> tag
     xmlfile << indentation() << "<condition>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Expression
     ifnode -> condition -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -122,19 +122,19 @@ void XMLVisitor::visit(parser::ASTIfNode *ifnode) {
     // Add <if-block> tag
     xmlfile << indentation() << "<if-block>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // If-block
     ifnode -> if_block -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
     xmlfile << indentation() << "</if-block>" << std::endl;
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // If there is an else-block
@@ -143,13 +143,13 @@ void XMLVisitor::visit(parser::ASTIfNode *ifnode) {
         // Add <else-block> tag
         xmlfile << indentation() << "<else-block>" << std::endl;
 
-        // Indent
+        // Add indentation level
         indentationLevel++;
 
         // Else-block
         ifnode -> else_block -> accept(this);
 
-        // Unindent
+        // Remove indentation level
         indentationLevel--;
 
         // Add closing tag
@@ -165,19 +165,19 @@ void XMLVisitor::visit(parser::ASTWhileNode *whilenode) {
     // Add initial <while> tag
     xmlfile << indentation() << "<while>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Add <condition> tag
     xmlfile << indentation() << "<condition>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Expression
     whilenode -> condition -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -186,7 +186,7 @@ void XMLVisitor::visit(parser::ASTWhileNode *whilenode) {
     // while-block
     whilenode -> block -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -199,7 +199,7 @@ void XMLVisitor::visit(parser::ASTFunctionDefinitionNode *func) {
     xmlfile << indentation() << "<func-def type = \"" + type(func->type) +
                                 "\">" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Function identifier
@@ -214,7 +214,7 @@ void XMLVisitor::visit(parser::ASTFunctionDefinitionNode *func) {
     // Function body
     func -> block -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -234,27 +234,7 @@ void XMLVisitor::visit(parser::ASTLiteralNode<std::string> *lit) {
     xmlfile << "</string>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTBinaryExprNode *bin) {
 
-    // Add initial <bin> tag
-    xmlfile << indentation() << "<bin op = \"" + xmlSafeOp(bin->op) +
-                                "\">" << std::endl;
-
-    // Indent
-    indentationLevel++;
-
-    // Left node
-    bin -> left -> accept(this);
-
-    // Right node
-    bin -> right -> accept(this);
-
-    // Unindent
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</bin>" << std::endl;
-}
 
 void XMLVisitor::visit(parser::ASTIdentifierNode *id) {
 
@@ -275,13 +255,13 @@ void XMLVisitor::visit(parser::ASTUnaryExprNode *un) {
     xmlfile << indentation() << "<unary op = \"" + un -> unary_op + "\">"
             << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Value
     un -> expr -> accept(this);
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
@@ -293,7 +273,7 @@ void XMLVisitor::visit(parser::ASTFunctionCallNode *func) {
     // Add initial <func-call> tag
     xmlfile << indentation() << "<func-call>" << std::endl;
 
-    // Indent
+    // Add indentation level
     indentationLevel++;
 
     // Function identifier
@@ -303,19 +283,19 @@ void XMLVisitor::visit(parser::ASTFunctionCallNode *func) {
     for(auto &param : func -> parameters){
         xmlfile << indentation() << "<arg>" << std::endl;
 
-        // Indent
+        // Add indentation level
         indentationLevel++;
 
         // Parameter
         param->accept(this);
 
-        // Unindent
+        // Remove indentation level
         indentationLevel++;
 
         xmlfile << indentation() << "</arg>" << std::endl;
     }
 
-    // Unindent
+    // Remove indentation level
     indentationLevel--;
 
     // Add closing tag
