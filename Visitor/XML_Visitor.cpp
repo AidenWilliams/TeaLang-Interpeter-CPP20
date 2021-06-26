@@ -17,12 +17,11 @@ std::string XMLVisitor::indentation() {
 }
 
 std::string XMLVisitor::type(parser::TYPE t) {
-
     switch(t){
         case parser::INT:
             return "int";
-        case parser::REAL:
-            return "real";
+        case parser::FLOAT:
+            return "float";
         case parser::BOOL:
             return "bool";
         case parser::STRING:
@@ -70,11 +69,11 @@ void XMLVisitor::visit(parser::ASTLiteralNode<int> *lit) {
 
 void XMLVisitor::visit(parser::ASTLiteralNode<float> *lit) {
     // Add initial <real> tag
-    xmlfile << indentation() << "<real>";
+    xmlfile << indentation() << "<float>";
     // Add value
     xmlfile << std::to_string(lit->val);
     // Add closing tag
-    xmlfile << "</real>" << std::endl;
+    xmlfile << "</floatt>" << std::endl;
 }
 
 void XMLVisitor::visit(parser::ASTLiteralNode<bool> *lit) {
