@@ -3,7 +3,6 @@
 #include "Lexer/Token.h"
 #include "Parser/Parser.h"
 #include "Parser/AST.h"
-#include "TestCases.h"
 
 int main(int argc, char **argv) {
     if (std::string("-l") == argv[1]){

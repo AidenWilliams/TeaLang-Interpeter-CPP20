@@ -290,34 +290,42 @@ std::vector<lexer::Token> lexer::Lexer::extraxtLexemes(const std::string &text) 
     std::string value;
     unsigned int previous_state, current_state = 0;
     unsigned int lineNumber = 1;
-
+    // Go over every character in text
     for (auto c : text){
+        // Do DFSA transition
         previous_state = current_state;
-
         current_state = delta(previous_state, c);
-
+        // Is the current state TODO: What is state 24?
         if (current_state == 24){
-
+            // Confirm previous state was a final state
             if(!finalStates[previous_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
-
+            // Create a token for value with given its final state
             Token t(value, previous_state, lineNumber);
+            // Store this token t
             ret.emplace_back(t);
             //reset
             current_state = delta(0, c);
             value = "";
+            // if current state moves to state again 24, go back to state 0
             if (current_state == 24) current_state = 0;
+            // else if the current state is not 0 add c to value
             else if(current_state != 0 ) value += c;
         }else{
+            // if the current state is not 0 add c to value
             if(current_state != 0) value += c;
         }
-
+        // If c is a new line char '\n' increase the lineNumber
         if(isNewline(c)) lineNumber++;
     }
-    // end
+    // If any of the states aren't final there is a lexical error
     if(!finalStates[current_state] && !finalStates[previous_state]) throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
+    // emplace token so far with current state
     ret.emplace_back(Token(value, current_state, lineNumber));
+    // emplace End token
     ret.emplace_back(Token("", 15, lineNumber));
+    // set tokens = ret {vector of tokens}
     tokens = ret;
+    // return ret {vector of tokens}
     return ret;
 }
 
