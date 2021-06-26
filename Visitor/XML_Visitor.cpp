@@ -284,3 +284,69 @@ void XMLVisitor::visit(parser::ASTIfNode *ifNode) {
     // Add closing tag
     xmlfile << indentation() << "</if>" << std::endl;
 }
+
+void XMLVisitor::visit(parser::ASTForNode *forNode) {
+    // Add initial <while> tag
+    xmlfile << indentation() << "<for>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Add <declaration> tag
+    xmlfile << indentation() << "<declaration>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Expression
+    forNode -> declaration -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</declaration>" << std::endl;
+    // Add <condition> tag
+    xmlfile << indentation() << "<condition>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Expression
+    forNode -> condition -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</condition>" << std::endl;
+    // Add <assignment> tag
+    xmlfile << indentation() << "<assignment>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Expression
+    forNode -> assignment -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</assignment>" << std::endl;
+    // loopBlock
+    forNode -> loopBlock -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</for>" << std::endl;
+}
+
+void XMLVisitor::visit(parser::ASTWhileNode *whileNode) {
+    // Add initial <while> tag
+    xmlfile << indentation() << "<while>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Add <condition> tag
+    xmlfile << indentation() << "<condition>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Expression
+    whileNode -> condition -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</condition>" << std::endl;
+    // loopBlock
+    whileNode -> loopBlock -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</while>" << std::endl;
+}

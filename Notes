@@ -24,38 +24,7 @@ void XMLVisitor::visit(parser::ASTReturnNode *ret) {
 
 
 
-void XMLVisitor::visit(parser::ASTWhileNode *whilenode) {
 
-    // Add initial <while> tag
-    xmlfile << indentation() << "<while>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Add <condition> tag
-    xmlfile << indentation() << "<condition>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Expression
-    whilenode -> condition -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</condition>" << std::endl;
-
-    // while-block
-    whilenode -> block -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</while>" << std::endl;
-}
 
 void XMLVisitor::visit(parser::ASTFunctionDefinitionNode *func) {
 
