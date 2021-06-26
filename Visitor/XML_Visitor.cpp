@@ -110,6 +110,30 @@ void XMLVisitor::visit(parser::ASTBinaryNode *binaryNode) {
     xmlfile << indentation() << "</bin>" << std::endl;
 }
 
+void XMLVisitor::visit(parser::ASTIdentifierNode *identifierNode) {
+    // Add initial <id> tag
+    xmlfile << indentation() << "<id>";
+    // Add value
+    xmlfile << identifierNode -> identifier;
+    // Add closing tag
+    xmlfile << "</id>" << std::endl;
+
+}
+
+void XMLVisitor::visit(parser::ASTUnaryNode *unaryExprNode) {
+    // Add initial <unary> tag
+    xmlfile << indentation() << "<unary op = \"" + unaryExprNode ->  + "\">"
+            << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Value
+    unaryExprNode -> exprNode -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</unary>" << std::endl;
+}
+
 void XMLVisitor::visit(parser::ASTFunctionCallNode *functionCallNode) {
     // Add initial <func-call> tag
     xmlfile << indentation() << "<functionEcall>" << std::endl;

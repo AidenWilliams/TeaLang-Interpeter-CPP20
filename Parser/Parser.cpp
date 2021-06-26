@@ -158,7 +158,7 @@ parser::ASTAssignmentNode *parser::Parser::parseAssignment(bool _for) {
     return new ASTAssignmentNode(identifier, expr, lineNumber);
 }
 
-parser::ASTPrintStatment *parser::Parser::parsePrint() {
+parser::ASTPrintNode *parser::Parser::parsePrint() {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
     // Current token is PRINT
@@ -172,8 +172,8 @@ parser::ASTPrintStatment *parser::Parser::parsePrint() {
     if(currentToken.type != lexer::TOK_SEMICOLON)
         throw std::runtime_error("Expected ';' after print on line "
                                  + std::to_string(currentToken.lineNumber) + ".");
-    // Create ASTAssignmentNode to return
-    return new ASTPrintStatment(expr, lineNumber);
+    // Create ASTPrintNode to return
+    return new ASTPrintNode(expr, lineNumber);
 }
 
 parser::ASTBlockNode *parser::Parser::parseBlock() {
@@ -467,7 +467,7 @@ parser::ASTExprNode* parser::Parser::parseExpression() {
         // Move over current expression and operator (making the right side expression the current token)
         moveTokenWindow(2);
         // Parse right side expression and return
-        return new ASTBinaryExprNode(op, simple_expr, parseExpression(), lineNumber);
+        return new ASTBinaryNode(op, simple_expr, parseExpression(), lineNumber);
     }
     return simple_expr;
 }
@@ -484,7 +484,7 @@ parser::ASTExprNode* parser::Parser::parseSimpleExpression() {
         // Move over current simple expression and operator (making the right side simple expression the current token)
         moveTokenWindow(2);
         // Parse right side simple expression and return
-        return new ASTBinaryExprNode(op, term, parseSimpleExpression(), lineNumber);
+        return new ASTBinaryNode(op, term, parseSimpleExpression(), lineNumber);
     }
 
     return term;
@@ -502,7 +502,7 @@ parser::ASTExprNode* parser::Parser::parseTerm() {
         // Move over current term and operator (making the right side term the current token)
         moveTokenWindow(2);
         // Parse right side term and return
-        return new ASTBinaryExprNode(op, factor, parseTerm(), lineNumber);
+        return new ASTBinaryNode(op, factor, parseTerm(), lineNumber);
     }
 
     return factor;
@@ -511,6 +511,8 @@ parser::ASTExprNode* parser::Parser::parseTerm() {
 parser::ASTExprNode* parser::Parser::parseFactor() {
     // Determine line number
     unsigned int lineNumber = currentToken.lineNumber;
+    // Define operator for Unary
+    std::string op;
     // check current token type
     switch(currentToken.type){
         // Literal Cases
@@ -575,10 +577,12 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
         case lexer::TOK_MINUS:
         case lexer::TOK_NOT:
             // Current token is either not or -
+            // store the operator
+            op = currentToken.value;
             // Move over it
             moveTokenWindow();
             // return an ASTUnaryNode
-            return new ASTUnaryNode(parseExpression(), currentToken.lineNumber);
+            return new ASTUnaryNode(parseExpression(), currentToken, currentToken.lineNumber);
         default:
             throw std::runtime_error("Expected expression on line "
                                      + std::to_string(currentToken.lineNumber) + ".");

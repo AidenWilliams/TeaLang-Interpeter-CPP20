@@ -236,34 +236,4 @@ void XMLVisitor::visit(parser::ASTLiteralNode<std::string> *lit) {
 
 
 
-void XMLVisitor::visit(parser::ASTIdentifierNode *id) {
 
-    // Add initial <id> tag
-    xmlfile << indentation() << "<id>";
-
-    // Add value
-    xmlfile << id -> identifier;
-
-    // Add closing tag
-    xmlfile << "</id>" << std::endl;
-
-}
-
-void XMLVisitor::visit(parser::ASTUnaryExprNode *un) {
-
-    // Add initial <unary> tag
-    xmlfile << indentation() << "<unary op = \"" + un -> unary_op + "\">"
-            << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Value
-    un -> expr -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</unary>" << std::endl;
-}

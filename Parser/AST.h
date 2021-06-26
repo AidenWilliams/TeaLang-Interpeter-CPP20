@@ -90,12 +90,14 @@ namespace parser {
 
     class ASTUnaryNode : public ASTExprNode {
     public:
-        explicit ASTUnaryNode(ASTExprNode* exprNode, unsigned int lineNumber) :
+        explicit ASTUnaryNode(ASTExprNode* exprNode, std::string op,unsigned int lineNumber) :
             exprNode(exprNode),
+            op(std::move(op)),
             lineNumber(lineNumber)
         {};
         ~ASTUnaryNode() = default;
         ASTExprNode* exprNode;
+        std::string op;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
