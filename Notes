@@ -1,22 +1,6 @@
 
 
-void XMLVisitor::visit(parser::ASTPrintNode *print){
 
-    // Add initial <print> tag
-    xmlfile << indentation() << "<print>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Expression tags
-    print -> expr -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</print>" << std::endl;
-}
 
 void XMLVisitor::visit(parser::ASTReturnNode *ret) {
 
@@ -36,88 +20,9 @@ void XMLVisitor::visit(parser::ASTReturnNode *ret) {
     xmlfile << indentation() << "</return>" << std::endl;
 }
 
-void XMLVisitor::visit(parser::ASTBlockNode *block) {
 
-    // Add initial <block> tag
-    xmlfile << indentation() << "<block>" << std::endl;
 
-    // Add indentation level
-    indentationLevel++;
 
-    // For each statement, accept
-    for(auto &statement : block -> statements)
-        statement -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</block>" << std::endl;
-}
-
-void XMLVisitor::visit(parser::ASTIfNode *ifnode) {
-
-    // Add initial <if> tag
-    xmlfile << indentation() << "<if>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Add <condition> tag
-    xmlfile << indentation() << "<condition>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Expression
-    ifnode -> condition -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</condition>" << std::endl;
-
-    // Add <if-block> tag
-    xmlfile << indentation() << "<if-block>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // If-block
-    ifnode -> if_block -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</if-block>" << std::endl;
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // If there is an else-block
-    if(ifnode->else_block){
-
-        // Add <else-block> tag
-        xmlfile << indentation() << "<else-block>" << std::endl;
-
-        // Add indentation level
-        indentationLevel++;
-
-        // Else-block
-        ifnode -> else_block -> accept(this);
-
-        // Remove indentation level
-        indentationLevel--;
-
-        // Add closing tag
-        xmlfile << indentation() << "</else-block>" << std::endl;
-    }
-
-    // Add closing tag
-    xmlfile << indentation() << "</if>" << std::endl;
-}
 
 void XMLVisitor::visit(parser::ASTWhileNode *whilenode) {
 
