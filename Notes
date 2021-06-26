@@ -2,23 +2,6 @@
 
 
 
-void XMLVisitor::visit(parser::ASTReturnNode *ret) {
-
-    // Add initial <return> tag
-    xmlfile << indentation() << "<return>" << std::endl;
-
-    // Add indentation level
-    indentationLevel++;
-
-    // Expression tags
-    ret -> expr -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</return>" << std::endl;
-}
 
 
 
@@ -26,31 +9,5 @@ void XMLVisitor::visit(parser::ASTReturnNode *ret) {
 
 
 
-void XMLVisitor::visit(parser::ASTFunctionDefinitionNode *func) {
 
-    // Add initial <func-def> tag
-    xmlfile << indentation() << "<func-def type = \"" + type(func->type) +
-                                "\">" << std::endl;
 
-    // Add indentation level
-    indentationLevel++;
-
-    // Function identifier
-    xmlfile << indentation() << "<id>" + func->identifier + "</id>" << std::endl;
-
-    // For each parameter
-    for(auto &param : func -> parameters){
-        xmlfile << indentation() << "<param type = \"" + type(param.second) +
-                                    "\">" + param.first + "</param>" << std::endl;
-    }
-
-    // Function body
-    func -> block -> accept(this);
-
-    // Remove indentation level
-    indentationLevel--;
-
-    // Add closing tag
-    xmlfile << indentation() << "</func-def>" << std::endl;
-
-}

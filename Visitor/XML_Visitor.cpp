@@ -350,3 +350,36 @@ void XMLVisitor::visit(parser::ASTWhileNode *whileNode) {
     // Add closing tag
     xmlfile << indentation() << "</while>" << std::endl;
 }
+void XMLVisitor::visit(parser::ASTFunctionDeclarationNode *functionDeclarationNode) {
+    // Add initial <functionDeclaration> tag
+    xmlfile << indentation() << "<functionDeclaration type = \"" + type(functionDeclarationNode->type) +
+                                "\">" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Function identifier
+    xmlfile << indentation() << "<id>" + functionDeclarationNode->identifier + "</id>" << std::endl;
+    // For each parameter
+    for(auto &param : functionDeclarationNode -> parameters){
+        xmlfile << indentation() << "<param type = \"" + type(param.second) +
+                                    "\">" + param.first + "</param>" << std::endl;
+    }
+    // Function body
+    functionDeclarationNode -> functionBlock -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</functionDeclaration>" << std::endl;
+}
+
+void XMLVisitor::visit(parser::ASTReturnNode *returnNode) {
+    // Add initial <return> tag
+    xmlfile << indentation() << "<return>" << std::endl;
+    // Add indentation level
+    indentationLevel++;
+    // Expression tags
+    returnNode -> exprNode -> accept(this);
+    // Remove indentation level
+    indentationLevel--;
+    // Add closing tag
+    xmlfile << indentation() << "</return>" << std::endl;
+}
