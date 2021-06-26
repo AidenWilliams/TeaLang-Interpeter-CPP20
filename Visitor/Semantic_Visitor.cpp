@@ -43,7 +43,7 @@ void visitor::SemanticAnalyser::visit(parser::ASTBinaryNode* binaryNode) {
     parser::TYPE right_type = currentType;
     // Start checking operator cases
     // These only work for int/float
-    if(op == "*" || op == "/" || op == "-"){
+    if(lexer::isAsterisk(op) || lexer::isDivide(op) || lexer::isMinus(op)){
         if((left_type != parser::INT && left_type != parser::FLOAT) ||
            (right_type != parser::INT && right_type != parser::FLOAT))
             throw std::runtime_error("Expected numerical operands for '" + op +
@@ -53,7 +53,7 @@ void visitor::SemanticAnalyser::visit(parser::ASTBinaryNode* binaryNode) {
                                   parser::INT : parser::FLOAT;
     }
     // + works for all types except bool
-    else if(op == "+") {
+    else if(lexer::isPlus(op)) {
         if(left_type == parser::BOOL || right_type == parser::BOOL)
             throw std::runtime_error("Invalid operand for '+' operator, expected numerical or string"
                                      " operand on line " + std::to_string(binaryNode->lineNumber) + ".");
@@ -71,14 +71,14 @@ void visitor::SemanticAnalyser::visit(parser::ASTBinaryNode* binaryNode) {
                                       parser::INT : parser::FLOAT;
     }
     // and/or only work for bool
-    else if(op == "and" || op == "or") {
+    else if(lexer::isAnd(op) || lexer::isOr(op)) {
         if (left_type == parser::BOOL && right_type == parser::BOOL)
             currentType = parser::BOOL;
         else throw std::runtime_error("Expected two boolean-type operands for '" + op + "' operator " +
                                       "on line " + std::to_string(binaryNode->lineNumber) + ".");
     }
     // relational operators only work for numeric types
-    else if(op == "<" || op == ">" || op == "<=" || op == ">=") {
+    else if(lexer::isLessThan(op) || lexer::isMoreThan(op) || lexer::isLessThanEqualTo(op) || lexer::isMoreThanEqualTo(op)) {
         if ((left_type != parser::FLOAT && left_type != parser::INT) ||
             (right_type != parser::FLOAT && right_type != parser::INT))
             throw std::runtime_error("Expected two numerical operands for '" + op + "' operator " +
@@ -86,7 +86,7 @@ void visitor::SemanticAnalyser::visit(parser::ASTBinaryNode* binaryNode) {
         currentType = parser::BOOL;
     }
     // == and != only work for like types
-    else if(op == "==" || op == "!=") {
+    else if(lexer::isEqualTo(op) || lexer::isNotEqualTo(op)) {
         if (left_type != right_type && (left_type != parser::FLOAT || right_type != parser::INT) &&
             (left_type != parser::INT || right_type != parser::FLOAT))
             throw std::runtime_error("Expected arguments of the same type '" + op + "' operator " +

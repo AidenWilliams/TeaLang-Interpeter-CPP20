@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include <map>
+#include "../Lexer/Token.h"
 
 namespace visitor {
     class variable{
