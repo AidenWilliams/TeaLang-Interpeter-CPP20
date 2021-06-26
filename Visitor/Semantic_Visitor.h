@@ -14,8 +14,6 @@
 namespace visitor {
     class variable{
     public:
-//        lookup(std::vector<>, std::string identifier);
-    private:
         variable(std::string identifier, parser::TYPE type, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 type(type),
@@ -26,11 +24,12 @@ namespace visitor {
         std::string identifier;
         parser::TYPE type;
         unsigned int lineNumber;
+
+        // lookup(std::vector<>, std::string identifier);
     };
 
     class function{
-//        lookup(std::vector<>, std::string identifier);
-    private:
+    public:
         function(std::string identifier, parser::TYPE type, std::vector<parser::TYPE> paramTypes, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 type(type),
@@ -43,12 +42,15 @@ namespace visitor {
         parser::TYPE type;
         std::vector<parser::TYPE> paramTypes;
         unsigned int lineNumber;
+
+        // lookup(std::vector<>, std::string identifier);
     };
 
     class SemanticScope {
     public:
+        SemanticScope() = default;
+        ~SemanticScope() = default;
 
-    private:
         // Python equivalent of:
         // variableTable = {identifier: {identifier, TYPE, lineNumber}}
         std::map<std::string, variable> variableTable;
@@ -60,8 +62,13 @@ namespace visitor {
 
     class SemanticAnalyser : public Visitor {
     public:
-        SemanticAnalyser();
+        SemanticAnalyser()
+        {
+            scopes.emplace_back(new SemanticScope());
+        };
         ~SemanticAnalyser() = default;
+
+        std::vector<SemanticScope*> scopes;
 
         void visit(parser::ASTProgramNode* programNode) override;
 
