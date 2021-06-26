@@ -3,8 +3,9 @@
 //
 #include <iostream>
 #include "Parser.h"
-//TODO: TEST EVERY CASE AND KEEP NOTE
-//TODO: FIX UNALIGNED CURRENT TOKEN (PARSE EXPRESSION)
+
+//TODO: ADD INCORRECT UNIT TESTING (JUMBLE THE INPUT STRINGS)
+
 parser::Parser::Parser(std::vector<lexer::Token> tokens) {
     // Initialise the currentToken and pointer for the next token
     currentToken = tokens.front();
@@ -582,7 +583,7 @@ parser::ASTExprNode* parser::Parser::parseFactor() {
             // Move over it
             moveTokenWindow();
             // return an ASTUnaryNode
-            return new ASTUnaryNode(parseExpression(), currentToken, currentToken.lineNumber);
+            return new ASTUnaryNode(parseExpression(), op, currentToken.lineNumber);
         default:
             throw std::runtime_error("Expected expression on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
