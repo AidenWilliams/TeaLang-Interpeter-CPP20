@@ -70,7 +70,7 @@ namespace visitor {
             case parser::STRING:
                 return "string";
             default:
-                throw std::runtime_error("Invalid type encountered in syntax tree.");
+                throw std::runtime_error("Invalid type encountered.");
         }
     }
 

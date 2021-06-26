@@ -65,7 +65,7 @@ void visitor::SemanticAnalyser::visit(parser::ASTBinaryNode* binaryNode) {
             throw std::runtime_error("Mismatched operands for '+' operator, found " + type(left_type) +
                                      " on the left, but " + type(right_type) + " on the right (line " +
                                      std::to_string(binaryNode->lineNumber) + ").");
-        // FLOAT/int possibilities remain. If both int, then result is int, otherwise result is float
+        // float/int possibilities remain. If both int, then result is int, otherwise result is float
         else
             currentType = (left_type == parser::INT && right_type == parser::INT) ?
                                       parser::INT : parser::FLOAT;
@@ -77,7 +77,7 @@ void visitor::SemanticAnalyser::visit(parser::ASTBinaryNode* binaryNode) {
         else throw std::runtime_error("Expected two boolean-type operands for '" + op + "' operator " +
                                       "on line " + std::to_string(binaryNode->lineNumber) + ".");
     }
-    // rel-ops only work for numeric types
+    // relational operators only work for numeric types
     else if(op == "<" || op == ">" || op == "<=" || op == ">=") {
         if ((left_type != parser::FLOAT && left_type != parser::INT) ||
             (right_type != parser::FLOAT && right_type != parser::INT))
