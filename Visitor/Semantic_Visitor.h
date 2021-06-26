@@ -1,0 +1,14 @@
+//
+// Created by Aiden Williams on 26/06/2021.
+//
+
+#ifndef TEALANG_COMPILER_CPP20_SEMANTIC_VISITOR_H
+#define TEALANG_COMPILER_CPP20_SEMANTIC_VISITOR_H
+
+
+class Semantic_Visitor {
+
+};
+
+
+#endif //TEALANG_COMPILER_CPP20_SEMANTIC_VISITOR_H

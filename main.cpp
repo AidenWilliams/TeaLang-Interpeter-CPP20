@@ -6,6 +6,7 @@
 #include "Visitor/Visitor.h"
 #include "Visitor/XML_Visitor.h"
 
+
 int main(int argc, char **argv) {
     if (std::string("-l") == argv[1]){
 //        std::cout << "TESTING LEXER" << std::endl;
@@ -23,7 +24,7 @@ int main(int argc, char **argv) {
         parser::Parser parser(lexer.tokens);
         parser::ASTProgramNode* programNode = parser.parseProgram();
     }else if (std::string("-x") == argv[1]){
-//        std::cout << "TESTING PARSER" << std::endl;
+//        std::cout << "TESTING XML Generator" << std::endl;
         lexer::Lexer lexer;
         lexer.extraxtLexemes(argv[2]);
 
@@ -33,7 +34,5 @@ int main(int argc, char **argv) {
         visitor::XMLVisitor xmlVisitor;
         xmlVisitor.visit(programNode);
     }
-
-//    std::cout << "break" << std::endl;
     return 0;
 }
