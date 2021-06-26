@@ -22,7 +22,7 @@ namespace parser {
         ASTStatementNode* parseStatement();
         ASTDeclarationNode* parseDeclaration();
         ASTAssignmentNode* parseAssignment(bool _for=false);
-        ASTPrintStatment* parsePrint();
+        ASTPrintNode* parsePrint();
         ASTBlockNode* parseBlock();
         ASTIfNode* parseIf();
         ASTForNode* parseFor();

@@ -58,7 +58,7 @@ void parser::ASTUnaryNode::accept(visitor::Visitor *v) {
 // Statement
 
 void parser::ASTSFunctionCallNode::accept(visitor::Visitor *v) {
-    ASTStatementNode::accept(v);
+    v -> visit(this);
 }
 
 void parser::ASTDeclarationNode::accept(visitor::Visitor *v){
@@ -82,7 +82,7 @@ void parser::ASTIfNode::accept(visitor::Visitor *v){
 }
 
 void parser::ASTForNode::accept(visitor::Visitor *v) {
-    ASTStatementNode::accept(v);
+    v -> visit(this);
 }
 
 void parser::ASTWhileNode::accept(visitor::Visitor *v){

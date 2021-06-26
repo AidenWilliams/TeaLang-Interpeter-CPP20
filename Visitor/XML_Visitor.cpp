@@ -123,7 +123,7 @@ void XMLVisitor::visit(parser::ASTIdentifierNode *identifierNode) {
 
 void XMLVisitor::visit(parser::ASTUnaryNode *unaryExprNode) {
     // Add initial <unary> tag
-    xmlfile << indentation() << "<unary op = \"" + unaryExprNode ->  + "\">"
+    xmlfile << indentation() << "<unary op = \"" + unaryExprNode -> op + "\">"
             << std::endl;
     // Add indentation level
     indentationLevel++;
