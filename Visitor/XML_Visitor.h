@@ -50,6 +50,5 @@ namespace visitor{
         std::string type(parser::TYPE t);
         std::string xmlSafeOp(std::string op);
     };
-
 }
 #endif //TEALANG_COMPILER_CPP20_XML_VISITOR_H
