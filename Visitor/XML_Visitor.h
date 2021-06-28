@@ -47,7 +47,6 @@ namespace visitor{
         unsigned int indentationLevel;
         const std::string TAB = "    ";
         std::string indentation();
-        std::string type(parser::TYPE t);
         static std::string xmlSafeOp(std::string op);
     };
 }

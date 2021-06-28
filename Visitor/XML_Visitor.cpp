@@ -16,21 +16,6 @@ namespace visitor {
         return tabs;
     }
 
-    std::string XMLVisitor::type(parser::TYPE t) {
-        switch (t) {
-            case parser::INT:
-                return "int";
-            case parser::FLOAT:
-                return "float";
-            case parser::BOOL:
-                return "bool";
-            case parser::STRING:
-                return "string";
-            default:
-                throw std::runtime_error("Invalid type encountered in syntax tree when generating XML.");
-        }
-    }
-
     std::string XMLVisitor::xmlSafeOp(std::string op) {
         // changes unsafe characters into safe ones for XML parser
         if (op == "<")
@@ -188,7 +173,7 @@ namespace visitor {
         // Add indentation level
         indentationLevel++;
         // Add identifier
-        xmlfile << indentation() << "<id type = \"" + type(declarationNode->type) + "\">"
+        xmlfile << indentation() << "<id type = \"" + declarationNode->type + "\">"
                 << declarationNode->identifier << "</id>" << std::endl;
         // Expression tags
         declarationNode->exprNode->accept(this);
@@ -352,7 +337,7 @@ namespace visitor {
 
     void XMLVisitor::visit(parser::ASTFunctionDeclarationNode *functionDeclarationNode) {
         // Add initial <functionDeclaration> tag
-        xmlfile << indentation() << "<functionDeclaration type = \"" + type(functionDeclarationNode->type) +
+        xmlfile << indentation() << "<functionDeclaration type = \"" + functionDeclarationNode->type +
                                     "\">" << std::endl;
         // Add indentation level
         indentationLevel++;
@@ -360,7 +345,7 @@ namespace visitor {
         xmlfile << indentation() << "<id>" + functionDeclarationNode->identifier + "</id>" << std::endl;
         // For each parameter
         for (auto &param : functionDeclarationNode->parameters) {
-            xmlfile << indentation() << "<param type = \"" + type(param.second) +
+            xmlfile << indentation() << "<param type = \"" + param.second +
                                         "\">" + param.first + "</param>" << std::endl;
         }
         // Function body

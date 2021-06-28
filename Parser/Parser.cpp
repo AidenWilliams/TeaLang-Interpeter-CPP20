@@ -106,13 +106,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Get type
-        TYPE type;
-        try {
-            type = parseType(identifier);
-        } catch (error_t T) {
-            throw std::runtime_error("Expected type for " + identifier + " after ':' on line "
-                                     + std::to_string(currentToken.lineNumber) + ".");
-        }
+        std::string type = parseType();
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax
@@ -346,13 +340,7 @@ namespace parser {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Get type
-        TYPE type;
-        try {
-            type = parseType(currentToken.value);
-        } catch (error_t T) {
-            throw std::runtime_error("Expected type for " + currentToken.value + " on line "
-                                     + std::to_string(currentToken.lineNumber) + ".");
-        }
+        std::string type = parseType();
         // Get next token
         moveTokenWindow();
         // ensure identifier is here
@@ -366,7 +354,7 @@ namespace parser {
         // Get next token
         moveTokenWindow(2);
         // If next token is not right bracket, we have parameters
-        auto parameters = new std::vector <std::pair<std::string, TYPE>>;
+        auto parameters = new std::vector <std::pair<std::string, std::string>>;
         if (currentToken.type != lexer::TOK_CLOSING_CURVY) {
             parameters = parseFormalParams();
         }
@@ -388,11 +376,11 @@ namespace parser {
     }
 
 
-    std::vector <std::pair<std::string, TYPE>> *Parser::parseFormalParams() {
+    std::vector <std::pair<std::string, std::string>> *Parser::parseFormalParams() {
         //current token is identifier
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
-        auto parameters = new std::vector <std::pair<std::string, TYPE>>;
+        auto parameters = new std::vector <std::pair<std::string, std::string>>;
         // get first identifier
         // ensure identifier is here
         ASTIdentifierNode *identifier;
@@ -410,16 +398,10 @@ namespace parser {
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Get next token
         moveTokenWindow();
-        // get first TYPE
-        TYPE type;
-        try {
-            type = parseType(currentToken.value);
-        } catch (error_t T) {
-            throw std::runtime_error("Expected type for " + currentToken.value + " on line "
-                                     + std::to_string(currentToken.lineNumber) + ".");
-        }
+        // get first type
+        std::string type = parseType();
         // Add first param
-        parameters->emplace_back(std::pair < std::string, TYPE > {identifier->identifier, type});
+        parameters->emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
         // If next token is a comma there are more
         while (nextLoc->type == lexer::TOK_COMMA) {
             // Move current token, to token after comma
@@ -439,15 +421,10 @@ namespace parser {
                                          + std::to_string(currentToken.lineNumber) + ".");
             // Get next token
             moveTokenWindow();
-            // get  TYPE
-            try {
-                type = parseType(currentToken.value);
-            } catch (error_t T) {
-                throw std::runtime_error("Expected type for " + currentToken.value + " on line "
-                                         + std::to_string(currentToken.lineNumber) + ".");
-            }
+            // get  type
+            type = parseType();
             // Add first param
-            parameters->emplace_back(std::pair < std::string, TYPE > {identifier->identifier, type});
+            parameters->emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
         }
         // Current token is on the last param, we need to move beyond that to get the closing )
         moveTokenWindow();
@@ -654,19 +631,15 @@ namespace parser {
         return exprNode;
     }
 
-    TYPE Parser::parseType(const std::string &identifier) const {
-        // Parse type by checking the token type of the current token
+        std::string Parser::parseType() const {
         switch (currentToken.type) {
             case lexer::TOK_INT_TYPE:
-                return INT;
             case lexer::TOK_FLOAT_TYPE:
-                return FLOAT;
             case lexer::TOK_BOOL_TYPE:
-                return BOOL;
             case lexer::TOK_STRING_TYPE:
-                return STRING;
+                return currentToken.value;
             default:
-                throw std::runtime_error("Expected type for " + identifier + " on line "
+                throw std::runtime_error("Expected type after ':' on line "
                                          + std::to_string(currentToken.lineNumber) + ".");
         }
     }

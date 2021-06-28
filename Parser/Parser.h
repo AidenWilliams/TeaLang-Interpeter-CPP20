@@ -29,7 +29,7 @@ namespace parser {
         ASTWhileNode* parseWhile();
         ASTReturnNode* parseReturn();
         ASTFunctionDeclarationNode* parseFunctionDeclaration();
-        std::vector<std::pair<std::string, TYPE>>* parseFormalParams();
+        std::vector<std::pair<std::string, std::string>>* parseFormalParams();
         ASTExprNode* parseExpression();
         ASTExprNode* parseSimpleExpression();
         ASTExprNode* parseTerm();
@@ -38,7 +38,7 @@ namespace parser {
         ASTFunctionCallNode* parseFunctionCall(bool semicolon=false);
         ASTExprNode* parseSubExpression();
 
-        [[nodiscard]] TYPE parseType(const std::string& identifier) const;
+        [[nodiscard]] std::string parseType() const;
 
     private:
         lexer::Token currentToken;
