@@ -81,15 +81,19 @@ namespace lexer {
 
     class Lexer {
     public:
+        Lexer() = default;
+        ~Lexer() = default;
+        // Vector of the program tokens
         std::vector<Token> tokens;
+        // Vector of final states
+        // When used, given a vector it acts as a function to determine whether a state is final or not
+        // e.g finalStates[0] == true
         std::vector<bool> finalStates = {
                                             true, true, false, true, false, false, true, false, true, true, false, true,
                                             false, false, true, true, true, true, true, true, false, true, true, true,
                                             true, true
                                         };
-        Lexer() = default;
-        ~Lexer() = default;
-
+        // Function to exract program lexemes into tokens
         std::vector<Token> extraxtLexemes(const std::string& text);
 
     };
