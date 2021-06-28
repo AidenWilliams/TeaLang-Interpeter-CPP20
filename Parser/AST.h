@@ -98,7 +98,7 @@ namespace parser {
         void accept(visitor::Visitor* v) override;
     };
 
-    // Statement Nodes
+     Statement Nodes
     class ASTStatementNode : public ASTNode {
     public:
         ASTStatementNode() = default;
@@ -106,11 +106,9 @@ namespace parser {
         void accept(visitor::Visitor* v) override = 0;
     };
 
-    // Program Node
+     Program Node
     class ASTProgramNode : public ASTNode {
     public:
-//        explicit ASTProgramNode(std::vector<ASTStatementNode *> statements);
-
         explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
                 statements(std::move(statements))
         {};
@@ -145,7 +143,7 @@ namespace parser {
 
     class ASTDeclarationNode : public ASTStatementNode {
     public:
-        ASTDeclarationNode(lexer::TOKEN type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
+        ASTDeclarationNode(std::string type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
                 type(type),
                 identifier(std::move(identifier)),
                 exprNode(exprNode),
@@ -153,7 +151,7 @@ namespace parser {
         {};
         ~ASTDeclarationNode() = default;
 
-        lexer::TOKEN type;
+        std::string type;
         std::string identifier;
         ASTExprNode *exprNode;
         unsigned int lineNumber;
@@ -262,7 +260,7 @@ namespace parser {
 
     class ASTFunctionDeclarationNode : public ASTStatementNode {
     public:
-        ASTFunctionDeclarationNode(  lexer::TOKEN type, std::string identifier, std::vector<std::pair<std::string, lexer::TOKEN>> parameters,
+        ASTFunctionDeclarationNode(  std::string type, std::string identifier, std::vector<std::pair<std::string, std::string>> parameters,
                                     ASTBlockNode* functionBlock, unsigned int lineNumber) :
                 type(type),
                 identifier(std::move(identifier)),
@@ -272,9 +270,9 @@ namespace parser {
         {};
         ~ASTFunctionDeclarationNode() = default;
 
-        lexer::TOKEN type;
+        std::string type;
         std::string identifier;
-        std::vector<std::pair<std::string, lexer::TOKEN>> parameters;
+        std::vector<std::pair<std::string, std::string>> parameters;
         ASTBlockNode* functionBlock;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
