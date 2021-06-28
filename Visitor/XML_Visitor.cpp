@@ -17,6 +17,21 @@ std::string XMLVisitor::indentation() {
     return tabs;
 }
 
+std::string XMLVisitor::type(parser::TYPE t) {
+    switch(t){
+        case parser::INT:
+            return "int";
+        case parser::FLOAT:
+            return "float";
+        case parser::BOOL:
+            return "bool";
+        case parser::STRING:
+            return "string";
+        default:
+            throw std::runtime_error("Invalid type encountered in syntax tree when generating XML.");
+    }
+}
+
 std::string XMLVisitor::xmlSafeOp(std::string op) {
     // changes unsafe characters into safe ones for XML parser
     if(op == "<")
