@@ -113,7 +113,7 @@ namespace parser {
                 statements(std::move(statements))
         {};
 
-        explicit ASTProgramNode(std::shared_ptr<ASTProgramNode> programNode) :
+        explicit ASTProgramNode(const std::shared_ptr<ASTProgramNode>& programNode) :
                 statements(std::move(programNode->statements))
         {};
 
