@@ -21,18 +21,18 @@ int main(int argc, char **argv) {
         lexer::Lexer lexer;
         lexer.extraxtLexemes(argv[2]);
 
-//        parser::Parser parser(lexer.tokens);
-//        parser::ASTProgramNode* programNode = parser.parseProgram();
+        parser::Parser parser(lexer.tokens);
+        parser::ASTProgramNode* programNode = parser.parseProgram();
     }else if (std::string("-x") == argv[1]){
 //        std::cout << "TESTING XML Generator" << std::endl;
-//        lexer::Lexer lexer;
-//        lexer.extraxtLexemes(argv[2]);
-//
-//        parser::Parser parser(lexer.tokens);
-//        parser::ASTProgramNode* programNode = parser.parseProgram();
-//
-//        visitor::XMLVisitor xmlVisitor;
-//        xmlVisitor.visit(programNode);
+        lexer::Lexer lexer;
+        lexer.extraxtLexemes(argv[2]);
+
+        parser::Parser parser(lexer.tokens);
+        parser::ASTProgramNode* programNode = parser.parseProgram();
+
+        visitor::XMLVisitor xmlVisitor;
+        xmlVisitor.visit(programNode);
     }
     return 0;
 }

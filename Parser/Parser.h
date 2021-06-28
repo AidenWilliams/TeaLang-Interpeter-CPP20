@@ -16,11 +16,7 @@
 namespace parser {
     class Parser {
     public:
-        explicit Parser(std::vector<lexer::Token> tokens){
-            // Initialise the currentToken and pointer for the next token
-            currentToken = tokens.front();
-            nextLoc = tokens.begin() + 1;
-        }
+        explicit Parser(std::vector<lexer::Token> tokens);
 
         ASTProgramNode* parseProgram(bool block=false);
         ASTStatementNode* parseStatement();
@@ -33,7 +29,7 @@ namespace parser {
         ASTWhileNode* parseWhile();
         ASTReturnNode* parseReturn();
         ASTFunctionDeclarationNode* parseFunctionDeclaration();
-        std::vector<std::pair<std::string, std::string>>* parseFormalParams();
+        std::vector<std::pair<std::string, TYPE>>* parseFormalParams();
         ASTExprNode* parseExpression();
         ASTExprNode* parseSimpleExpression();
         ASTExprNode* parseTerm();
@@ -42,7 +38,7 @@ namespace parser {
         ASTFunctionCallNode* parseFunctionCall(bool semicolon=false);
         ASTExprNode* parseSubExpression();
 
-        std::string parseType() const;
+        [[nodiscard]] TYPE parseType(const std::string& identifier) const;
 
     private:
         lexer::Token currentToken;
