@@ -14,8 +14,9 @@ int main(int argc, char **argv) {
         lexer::Lexer lexer;
         lexer.extraxtLexemes(argv[2]);
         std::cout << "value: type" << std::endl;
+        int j = 0;
         for (const auto& i: lexer.tokens){
-            std::cout << i.value << " : " << i.type << std::endl;
+            std::cout << j++ << " : " << i.value << " : " << i.type << std::endl;
         }
     }else if (std::string("-p") == argv[1]){
 //        std::cout << "TESTING PARSER" << std::endl;
@@ -31,10 +32,13 @@ int main(int argc, char **argv) {
         lexer.extraxtLexemes(argv[2]);
 
         parser::Parser parser(lexer.tokens);
-        std::shared_ptr<parser::ASTProgramNode> programNode = parser.parseProgram();
+        auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
 
         visitor::XMLVisitor xmlVisitor;
-//        xmlVisitor.visit(programNode);
+        auto *programNode1 = new parser::ASTProgramNode(programNode);
+        xmlVisitor.visit(programNode1);
+
+        delete programNode1;
     }
     return 0;
 }

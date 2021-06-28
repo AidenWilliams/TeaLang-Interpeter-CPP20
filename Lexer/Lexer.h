@@ -93,7 +93,7 @@ namespace lexer {
         // When used, given a vector it acts as a function to determine whether a state is final or not
         // e.g finalStates[0] == true
         std::vector<bool> finalStates = {
-                                            true, true, false, true, false, false, true, false, true, true, false, true,
+                                            true, true, false, true, false, false, true, false, true, true, true, true,
                                             false, false, true, true, true, true, true, true, false, true, true, true,
                                             true, true
                                         };

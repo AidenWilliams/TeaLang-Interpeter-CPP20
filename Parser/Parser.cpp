@@ -23,7 +23,7 @@ namespace parser {
                 statements.push_back(parseStatement());
             // Get next Token
             // There is a case when a scope/block is empty where were need to check before moving the token window
-            if (currentToken.type != lexer::TOK_END)
+            if (currentToken.type != lexer::TOK_END || nextLoc[0].type != lexer::TOK_END)
                 moveTokenWindow();
             // TODO: FIX LOOP AND REMOVE IF
             if (currentToken.type == lexer::TOK_END || block && currentToken.type == lexer::TOK_CLOSING_CURLY)

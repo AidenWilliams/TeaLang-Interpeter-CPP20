@@ -83,7 +83,7 @@ namespace lexer {
     }
 
     bool isSpace(char c) {
-        return c == ' ';
+        return c == ' ' || c == '\t';
     }
 
     bool isClosingCurly(char c) {
@@ -324,6 +324,11 @@ namespace lexer {
         // If any of the states aren't final there is a lexical error
         if (!finalStates[current_state] && !finalStates[previous_state])
             throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
+        // Helper case for when a single line comment doesnt end with a new line char
+        if(current_state == 10){
+            value += "\n";
+            current_state = 11;
+        }
         // emplace token so far with current state
         ret.emplace_back(Token(value, current_state, lineNumber));
         // emplace End token
