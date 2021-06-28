@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         lexer.extraxtLexemes(argv[2]);
 
         parser::Parser parser(lexer.tokens);
-        std::shared_ptr<parser::ASTProgramNode> programNode = parser.parseProgram();
+        auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
 //        parser::ASTProgramNode* programNode = parser.parseProgram();
     }else if (std::string("-x") == argv[1]){
 //        std::cout << "TESTING XML Generator" << std::endl;
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
         std::shared_ptr<parser::ASTProgramNode> programNode = parser.parseProgram();
 
         visitor::XMLVisitor xmlVisitor;
-        xmlVisitor.visit(programNode);
+//        xmlVisitor.visit(programNode);
     }
     return 0;
 }

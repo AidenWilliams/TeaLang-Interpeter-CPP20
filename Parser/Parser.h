@@ -17,7 +17,11 @@
 namespace parser {
     class Parser {
     public:
-        explicit Parser(std::vector<lexer::Token> tokens);
+        explicit Parser(std::vector<lexer::Token> tokens){
+            // Initialise the currentToken and pointer for the next token
+            currentToken = tokens.front();
+            nextLoc = tokens.begin() + 1;
+        }
 
         std::shared_ptr<ASTProgramNode> parseProgram(bool block=false);
         std::shared_ptr<ASTStatementNode> parseStatement();
@@ -30,12 +34,12 @@ namespace parser {
         std::shared_ptr<ASTWhileNode> parseWhile();
         std::shared_ptr<ASTReturnNode> parseReturn();
         std::shared_ptr<ASTFunctionDeclarationNode> parseFunctionDeclaration();
-        std::shared_ptr<std::vector<std::pair<std::string, std::string>>> parseFormalParams();
+        std::vector<std::pair<std::string, std::string>> parseFormalParams();
         std::shared_ptr<ASTExprNode> parseExpression();
         std::shared_ptr<ASTExprNode> parseSimpleExpression();
         std::shared_ptr<ASTExprNode> parseTerm();
         std::shared_ptr<ASTExprNode> parseFactor();
-        std::shared_ptr<std::vector<ASTExprNode>> parseActualParams();
+        std::vector<std::shared_ptr<ASTExprNode>> parseActualParams();
         std::shared_ptr<ASTFunctionCallNode> parseFunctionCall(bool semicolon=false);
         std::shared_ptr<ASTExprNode> parseSubExpression();
 

@@ -5,6 +5,7 @@
 #ifndef TEALANG_COMPILER_CPP20_XML_VISITOR_H
 #define TEALANG_COMPILER_CPP20_XML_VISITOR_H
 #include <fstream>
+#include <memory>
 #include "Visitor.h"
 #include "../Parser/AST.h"
 
@@ -48,6 +49,7 @@ namespace visitor{
         const std::string TAB = "    ";
         std::string indentation();
         static std::string xmlSafeOp(std::string op);
+
     };
 }
 #endif //TEALANG_COMPILER_CPP20_XML_VISITOR_H

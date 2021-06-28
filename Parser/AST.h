@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <memory>
 #include "../Visitor/Visitor.h"
 
 namespace parser {
@@ -42,22 +43,22 @@ namespace parser {
 
     class ASTBinaryNode : public ASTExprNode {
     public:
-        ASTBinaryNode(std::string op, ASTExprNode* left, ASTExprNode* right, unsigned int lineNumber) :
+        ASTBinaryNode(std::string op, std::shared_ptr<ASTExprNode> left, std::shared_ptr<ASTExprNode> right, unsigned int lineNumber) :
                 op(std::move(op)),
-                left(left),
-                right(right),
+                left(std::move(left)),
+                right(std::move(right)),
                 lineNumber(lineNumber)
         {};
         std::string op;
-        ASTExprNode *left;
-        ASTExprNode *right;
+        std::shared_ptr<ASTExprNode> left;
+        std::shared_ptr<ASTExprNode> right;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTFunctionCallNode : public ASTExprNode {
     public:
-        ASTFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+        ASTFunctionCallNode(std::string identifier, std::vector<std::shared_ptr<ASTExprNode>> parameters, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 parameters(std::move(parameters)),
                 lineNumber(lineNumber)
@@ -65,7 +66,7 @@ namespace parser {
         ~ASTFunctionCallNode() = default;
 
         std::string identifier;
-        std::vector<ASTExprNode*> parameters;
+        std::vector<std::shared_ptr<ASTExprNode>> parameters;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
@@ -85,13 +86,13 @@ namespace parser {
 
     class ASTUnaryNode : public ASTExprNode {
     public:
-        explicit ASTUnaryNode(ASTExprNode* exprNode, std::string op, unsigned int lineNumber) :
-            exprNode(exprNode),
+        explicit ASTUnaryNode(std::shared_ptr<ASTExprNode> exprNode, std::string op, unsigned int lineNumber) :
+            exprNode(std::move(exprNode)),
             op(std::move(op)),
             lineNumber(lineNumber)
         {};
         ~ASTUnaryNode() = default;
-        ASTExprNode* exprNode;
+        std::shared_ptr<ASTExprNode> exprNode;
         std::string op;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
@@ -108,137 +109,136 @@ namespace parser {
     // Program Node
     class ASTProgramNode : public ASTNode {
     public:
-//        explicit ASTProgramNode(std::vector<ASTStatementNode *> statements);
 
-        explicit ASTProgramNode(std::vector<ASTStatementNode*> statements) :
+        explicit ASTProgramNode(std::vector<std::shared_ptr<ASTStatementNode>> statements) :
                 statements(std::move(statements))
         {};
         ~ASTProgramNode() = default;
 
-        std::vector<ASTStatementNode*> statements;
+        std::vector<std::shared_ptr<ASTStatementNode>> statements;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTSFunctionCallNode : public ASTStatementNode {
         // Identical to the expression node but is a statement
     public:
-        ASTSFunctionCallNode(std::string identifier, std::vector<ASTExprNode*> parameters, unsigned int lineNumber) :
+        ASTSFunctionCallNode(std::string identifier, std::vector<std::shared_ptr<ASTExprNode>> parameters, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 parameters(std::move(parameters)),
                 lineNumber(lineNumber)
         {};
 
-        explicit ASTSFunctionCallNode(const ASTFunctionCallNode& exprNode) :
-                identifier(exprNode.identifier),
-                parameters(exprNode.parameters),
-                lineNumber(exprNode.lineNumber)
+        explicit ASTSFunctionCallNode(const std::shared_ptr<ASTFunctionCallNode>& exprNode) :
+                identifier(exprNode->identifier),
+                parameters(exprNode->parameters),
+                lineNumber(exprNode->lineNumber)
         {};
 
         ~ASTSFunctionCallNode() = default;
 
         std::string identifier;
-        std::vector<ASTExprNode*> parameters;
+        std::vector<std::shared_ptr<ASTExprNode>> parameters;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTDeclarationNode : public ASTStatementNode {
     public:
-        ASTDeclarationNode(std::string type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
+        ASTDeclarationNode(std::string type, std::string identifier, std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
-                exprNode(exprNode),
+                exprNode(std::move(exprNode)),
                 lineNumber(lineNumber)
         {};
         ~ASTDeclarationNode() = default;
 
         std::string type;
         std::string identifier;
-        ASTExprNode *exprNode;
+        std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTAssignmentNode : public ASTStatementNode {
     public:
-        ASTAssignmentNode(std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
+        ASTAssignmentNode(std::string identifier, std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
-                exprNode(exprNode),
+                exprNode(std::move(exprNode)),
                 lineNumber(lineNumber)
         {};
         ~ASTAssignmentNode() = default;
 
         std::string identifier;
-        ASTExprNode *exprNode;
+        std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTPrintNode : public ASTStatementNode {
     public:
-        ASTPrintNode(ASTExprNode* exprNode, unsigned int lineNumber) :
-                exprNode(exprNode),
+        ASTPrintNode(std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
+                exprNode(std::move(exprNode)),
                 lineNumber(lineNumber)
         {};
         ~ASTPrintNode() = default;
 
         std::string identifier;
-        ASTExprNode *exprNode;
+        std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTBlockNode : public ASTStatementNode {
     public:
-        ASTBlockNode(std::vector<ASTStatementNode*> statements, unsigned int lineNumber) :
+        ASTBlockNode(std::vector<std::shared_ptr<ASTStatementNode>> statements, unsigned int lineNumber) :
                 statements(std::move(statements)),
                 lineNumber(lineNumber)
         {};
 
-        ASTBlockNode(const ASTProgramNode& program, unsigned int lineNumber) :
-                statements(program.statements),
+        ASTBlockNode(const std::shared_ptr<ASTProgramNode>& program, unsigned int lineNumber) :
+                statements(program->statements),
                 lineNumber(lineNumber)
         {};
 
         ~ASTBlockNode() = default;
 
-        std::vector<ASTStatementNode*> statements;
+        std::vector<std::shared_ptr<ASTStatementNode>> statements;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTIfNode : public ASTStatementNode {
     public:
-        ASTIfNode(ASTExprNode* condition, ASTBlockNode* ifBlock, unsigned int lineNumber, ASTBlockNode* elseBlock = nullptr) :
-                condition(condition),
-                ifBlock(ifBlock),
-                elseBlock(elseBlock),
+        ASTIfNode(std::shared_ptr<ASTExprNode> condition, std::shared_ptr<ASTBlockNode> ifBlock, unsigned int lineNumber, std::shared_ptr<ASTBlockNode> elseBlock = nullptr) :
+                condition(std::move(condition)),
+                ifBlock(std::move(ifBlock)),
+                elseBlock(std::move(elseBlock)),
                 lineNumber(lineNumber)
         {};
         ~ASTIfNode() = default;
 
-        ASTExprNode *condition;
-        ASTBlockNode *ifBlock;
-        ASTBlockNode *elseBlock;
+        std::shared_ptr<ASTExprNode> condition;
+        std::shared_ptr<ASTBlockNode> ifBlock;
+        std::shared_ptr<ASTBlockNode> elseBlock;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
     class ASTForNode : public ASTStatementNode {
     public:
-        ASTForNode( ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber,
-                    ASTDeclarationNode* declaration = nullptr, ASTAssignmentNode* assignment = nullptr) :
-                condition(condition),
-                declaration(declaration),
-                assignment(assignment),
-                loopBlock(loopBlock),
+        ASTForNode(std::shared_ptr<ASTExprNode> condition, std::shared_ptr<ASTBlockNode> loopBlock, unsigned int lineNumber,
+                std::shared_ptr<ASTDeclarationNode> declaration = nullptr, std::shared_ptr<ASTAssignmentNode> assignment = nullptr) :
+                condition(std::move(condition)),
+                declaration(std::move(declaration)),
+                assignment(std::move(assignment)),
+                loopBlock(std::move(loopBlock)),
                 lineNumber(lineNumber)
         {};
         ~ASTForNode() = default;
 
-        ASTDeclarationNode *declaration;
-        ASTExprNode *condition;
-        ASTAssignmentNode *assignment;
-        ASTBlockNode *loopBlock;
+        std::shared_ptr<ASTDeclarationNode> declaration;
+        std::shared_ptr<ASTExprNode> condition;
+        std::shared_ptr<ASTAssignmentNode> assignment;
+        std::shared_ptr<ASTBlockNode> loopBlock;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
@@ -246,15 +246,15 @@ namespace parser {
 
     class ASTWhileNode : public ASTStatementNode {
     public:
-        ASTWhileNode(ASTExprNode* condition, ASTBlockNode* loopBlock, unsigned int lineNumber) :
-                condition(condition),
-                loopBlock(loopBlock),
+        ASTWhileNode(std::shared_ptr<ASTExprNode> condition, std::shared_ptr<ASTBlockNode> loopBlock, unsigned int lineNumber) :
+                condition(std::move(condition)),
+                loopBlock(std::move(loopBlock)),
                 lineNumber(lineNumber)
         {};
         ~ASTWhileNode() = default;
 
-        ASTExprNode *condition;
-        ASTBlockNode *loopBlock;
+        std::shared_ptr<ASTExprNode> condition;
+        std::shared_ptr<ASTBlockNode> loopBlock;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
@@ -262,11 +262,11 @@ namespace parser {
     class ASTFunctionDeclarationNode : public ASTStatementNode {
     public:
         ASTFunctionDeclarationNode(std::string type, std::string identifier, std::vector<std::pair<std::string, std::string>> parameters,
-                                    ASTBlockNode* functionBlock, unsigned int lineNumber) :
+                                   std::shared_ptr<ASTBlockNode> functionBlock, unsigned int lineNumber) :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
                 parameters(std::move(parameters)),
-                functionBlock(functionBlock),
+                functionBlock(std::move(functionBlock)),
                 lineNumber(lineNumber)
         {};
         ~ASTFunctionDeclarationNode() = default;
@@ -274,20 +274,20 @@ namespace parser {
         std::string type;
         std::string identifier;
         std::vector<std::pair<std::string, std::string>> parameters;
-        ASTBlockNode* functionBlock;
+        std::shared_ptr<ASTBlockNode> functionBlock;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };
 
     class ASTReturnNode : public ASTStatementNode {
     public:
-        ASTReturnNode(ASTExprNode* exprNode, unsigned int lineNumber) :
-            exprNode(exprNode),
+        ASTReturnNode(std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
+            exprNode(std::move(exprNode)),
             lineNumber(lineNumber)
         {};
         ~ASTReturnNode() = default;
 
-        ASTExprNode *exprNode;
+        std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
     };

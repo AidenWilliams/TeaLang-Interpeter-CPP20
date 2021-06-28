@@ -6,12 +6,6 @@
 
 //TODO: ADD INCORRECT UNIT TESTING (JUMBLE THE INPUT STRINGS)
 namespace parser {
-    Parser::Parser(std::vector <lexer::Token> tokens) {
-        // Initialise the currentToken and pointer for the next token
-        currentToken = tokens.front();
-        nextLoc = tokens.begin() + 1;
-    }
-
     void Parser::moveTokenWindow(int step) {
         // Move window by step
         currentToken = *(nextLoc + step - 1);
@@ -19,7 +13,7 @@ namespace parser {
     }
 
     std::shared_ptr<ASTProgramNode> Parser::parseProgram(bool block) {
-        auto statements = new std::vector<ASTStatementNode *>;
+        auto statements = new std::vector<std::shared_ptr<ASTStatementNode>>;
         // Loop over each token and stop with an END token
         while (currentToken.type != lexer::TOK_END) {
             // Ignore comments and skip '}' if parsing a block
@@ -28,7 +22,9 @@ namespace parser {
                 && (!block || currentToken.type != lexer::TOK_CLOSING_CURLY))
                 statements->push_back(parseStatement());
             // Get next Token
-            moveTokenWindow();
+            // There is a case when a scope/block is empty where were need to check before moving the token window
+            if (currentToken.type != lexer::TOK_END)
+                moveTokenWindow();
             // TODO: FIX LOOP AND REMOVE IF
             if (currentToken.type == lexer::TOK_END || block && currentToken.type == lexer::TOK_CLOSING_CURLY)
                 break;
@@ -36,9 +32,8 @@ namespace parser {
         return std::make_shared<ASTProgramNode>(*statements);
     }
 
-
     std::shared_ptr<ASTExprNode> Parser::parseExpression() {
-        auto simple_expr = std::make_shared<std::shared_ptr<ASTExprNode>>(parseSimpleExpression());
+        auto simple_expr = std::shared_ptr<ASTExprNode>(parseSimpleExpression());
         unsigned int lineNumber = currentToken.lineNumber;
         std::string op;
         // Check if the next token is a relational operator
@@ -50,13 +45,13 @@ namespace parser {
             // Move over current expression and operator (making the right side expression the current token)
             moveTokenWindow(2);
             // Parse right side expression and return
-            return std::make_shared<ASTBinaryNode(op, simple_expr, parseExpression(), lineNumber)>;
+            return std::make_shared<ASTBinaryNode>(op, simple_expr, parseExpression(), lineNumber);
         }
         return simple_expr;
     }
 
-    ASTExprNode *Parser::parseSimpleExpression() {
-        ASTExprNode *term = parseTerm();
+    std::shared_ptr<ASTExprNode> Parser::parseSimpleExpression() {
+        auto term = std::shared_ptr<ASTExprNode>(parseTerm());
         unsigned int lineNumber = currentToken.lineNumber;
         std::string op;
         // Check if the next token is an addition operator
@@ -67,14 +62,13 @@ namespace parser {
             // Move over current simple expression and operator (making the right side simple expression the current token)
             moveTokenWindow(2);
             // Parse right side simple expression and return
-            return new ASTBinaryNode(op, term, parseSimpleExpression(), lineNumber);
+            return std::make_shared<ASTBinaryNode>(op, term, parseSimpleExpression(), lineNumber);
         }
-
         return term;
     }
 
-    ASTExprNode *Parser::parseTerm() {
-        ASTExprNode *factor = parseFactor();
+    std::shared_ptr<ASTExprNode> Parser::parseTerm() {
+        auto factor = std::shared_ptr<ASTExprNode>(parseFactor());
         unsigned int lineNumber = currentToken.lineNumber;
         std::string op;
         // Check if the next token is an multiplication operator
@@ -85,13 +79,12 @@ namespace parser {
             // Move over current term and operator (making the right side term the current token)
             moveTokenWindow(2);
             // Parse right side term and return
-            return new ASTBinaryNode(op, factor, parseTerm(), lineNumber);
+            return std::make_shared<ASTBinaryNode>(op, factor, parseTerm(), lineNumber);
         }
-
         return factor;
     }
 
-    ASTExprNode *Parser::parseFactor() {
+    std::shared_ptr<ASTExprNode> Parser::parseFactor() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Define operator for Unary
@@ -100,13 +93,13 @@ namespace parser {
         switch (currentToken.type) {
             // Literal Cases
             case lexer::TOK_INT:
-                return new ASTLiteralNode<int>(std::stoi(currentToken.value), lineNumber);
+                return std::make_shared<ASTLiteralNode<int>>(std::stoi(currentToken.value), lineNumber);
             case lexer::TOK_FLOAT:
-                return new ASTLiteralNode<float>(std::stof(currentToken.value), lineNumber);
+                return std::make_shared<ASTLiteralNode<float>>(std::stof(currentToken.value), lineNumber);
             case lexer::TOK_TRUE:
-                return new ASTLiteralNode<bool>(true, lineNumber);
+                return std::make_shared<ASTLiteralNode<bool>>(true, lineNumber);
             case lexer::TOK_FALSE:
-                return new ASTLiteralNode<bool>(false, lineNumber);
+                return std::make_shared<ASTLiteralNode<bool>>(false, lineNumber);
             case lexer::TOK_STRING: {
                 // Remove " character from front and end of lexeme
                 std::string str = currentToken.value.substr(1, currentToken.value.size() - 2);
@@ -142,7 +135,7 @@ namespace parser {
                     // Get next occurrence from current position
                     pos = str.find("\\b", pos + 2);
                 }
-                return new ASTLiteralNode<std::string>(std::move(str), lineNumber);
+                return std::make_shared<ASTLiteralNode<std::string>>(std::move(str), lineNumber);
             }
                 // Identifier or function call case
             case lexer::TOK_IDENTIFIER:
@@ -151,7 +144,7 @@ namespace parser {
                     return parseFunctionCall();
                 else {
                     // if not, its just an identifier
-                    return new ASTIdentifierNode(currentToken.value, lineNumber);
+                    return std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
                 }
                 // Subexpression case
             case lexer::TOK_OPENING_CURVY:
@@ -165,33 +158,33 @@ namespace parser {
                 // Move over it
                 moveTokenWindow();
                 // return an ASTUnaryNode
-                return new ASTUnaryNode(parseExpression(), op, currentToken.lineNumber);
+                return std::make_shared<ASTUnaryNode>(parseExpression(), op, currentToken.lineNumber);
             default:
                 throw std::runtime_error("Expected expression on line "
                                          + std::to_string(currentToken.lineNumber) + ".");
         }
     }
 
-    std::vector<ASTExprNode *> *Parser::parseActualParams() {
-        auto parameters = new std::vector<ASTExprNode *>;
+    std::vector<std::shared_ptr<ASTExprNode>> Parser::parseActualParams() {
+        auto parameters = std::vector<std::shared_ptr<ASTExprNode>>();
         // Add first param
-        parameters->push_back(parseExpression());
+        parameters.emplace_back(parseExpression());
         // If next token is a comma there are more
         while (nextLoc->type == lexer::TOK_COMMA) {
             // Move current token, to token after comma
             moveTokenWindow(2);
             // Add this token
-            parameters->emplace_back(parseExpression());
+            parameters.emplace_back(parseExpression());
         }
         // Current token is on the last param, we need to move beyond that to get the closing )
         moveTokenWindow();
         return parameters;
     }
 
-    ASTFunctionCallNode *Parser::parseFunctionCall(bool semicolon) {
+    std::shared_ptr<ASTFunctionCallNode> Parser::parseFunctionCall(bool semicolon) {
         // current token is the function identifier
         std::string identifier = currentToken.value;
-        auto *parameters = new std::vector<ASTExprNode *>;
+        auto parameters = std::vector<std::shared_ptr<ASTExprNode>>();
         unsigned int line_number = currentToken.lineNumber;
         // Get next token
         moveTokenWindow();
@@ -217,15 +210,15 @@ namespace parser {
                 throw std::runtime_error("Expected ';' after ')' on line "
                                          + std::to_string(currentToken.lineNumber) + ".");
         }
-        return new ASTFunctionCallNode(identifier, *parameters, line_number);
+        return std::make_shared<ASTFunctionCallNode>(identifier, parameters, line_number);
     }
 
-    ASTExprNode *Parser::parseSubExpression() {
+    std::shared_ptr<ASTExprNode> Parser::parseSubExpression() {
         // current token is the curvy bracket
         // move over first curvy bracket
         moveTokenWindow();
         // Now we should be able to get an expression
-        ASTExprNode *exprNode = parseExpression();
+        auto exprNode = parseExpression();
         // move over expression
         moveTokenWindow();
         // Ensure ')' is there
@@ -249,7 +242,7 @@ namespace parser {
         }
     }
 
-    ASTStatementNode *Parser::parseStatement() {
+    std::shared_ptr<ASTStatementNode> Parser::parseStatement() {
         // Parse a singular statement
         // The current token type determines what can be parsed
         switch (currentToken.type) {
@@ -260,7 +253,7 @@ namespace parser {
             case lexer::TOK_IDENTIFIER:
                 // If next token is '(' then we found a function call
                 if (nextLoc->type == lexer::TOK_OPENING_CURVY)
-                    return new ASTSFunctionCallNode(*parseFunctionCall(true));
+                    return std::make_shared<ASTSFunctionCallNode>(parseFunctionCall(true));
                 else {
                     // if not, its should be an Assignment
                     return parseAssignment();
@@ -298,7 +291,7 @@ namespace parser {
         }
     }
 
-    ASTDeclarationNode *Parser::parseDeclaration() {
+    std::shared_ptr<ASTDeclarationNode> Parser::parseDeclaration() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is LET
@@ -329,7 +322,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Get expression after =
-        ASTExprNode *expr = parseExpression();
+        auto expr = parseExpression();
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax
@@ -337,10 +330,10 @@ namespace parser {
             throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Create ASTExpressionNode to return
-        return new ASTDeclarationNode(type, identifier, expr, lineNumber);
+        return std::make_shared<ASTDeclarationNode>(type, identifier, expr, lineNumber);
     }
 
-    ASTAssignmentNode *Parser::parseAssignment(bool _for) {
+    std::shared_ptr<ASTAssignmentNode> Parser::parseAssignment(bool _for) {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is an IDENTIFIER
@@ -355,7 +348,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Get expression after =
-        ASTExprNode *expr = parseExpression();
+        auto expr = parseExpression();
         // Get next token
         moveTokenWindow();
         // Ensure proper; syntax
@@ -363,17 +356,17 @@ namespace parser {
             throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Create ASTAssignmentNode to return
-        return new ASTAssignmentNode(identifier, expr, lineNumber);
+        return std::make_shared<ASTAssignmentNode>(identifier, expr, lineNumber);
     }
 
-    ASTPrintNode *Parser::parsePrint() {
+    std::shared_ptr<ASTPrintNode> Parser::parsePrint() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is PRINT
         // Get next token
         moveTokenWindow();
         // Get expression after print
-        ASTExprNode *expr = parseExpression();
+        auto expr = parseExpression();
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax
@@ -381,23 +374,23 @@ namespace parser {
             throw std::runtime_error("Expected ';' after print on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Create ASTPrintNode to return
-        return new ASTPrintNode(expr, lineNumber);
+        return std::make_shared<ASTPrintNode>(expr, lineNumber);
     }
 
-    ASTBlockNode *Parser::parseBlock() {
+    std::shared_ptr<ASTBlockNode> Parser::parseBlock() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is {
         // Get next token
         moveTokenWindow();
         // By definition a block is a program enclosed in { }
-        ASTBlockNode block = ASTBlockNode(*parseProgram(true), lineNumber);
+        auto block = std::make_shared<ASTBlockNode>(parseProgram(true), lineNumber);
         // closing } is handled by parseProgram
         // Create ASTBlockNode to return
-        return new ASTBlockNode(block.statements, lineNumber);
+        return std::make_shared<ASTBlockNode>(block->statements, lineNumber);
     }
 
-    ASTIfNode *Parser::parseIf() {
+    std::shared_ptr<ASTIfNode> Parser::parseIf() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is IF
@@ -410,7 +403,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Get condition after (
-        ASTExprNode *condition = parseExpression();
+        auto condition = parseExpression();
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax with closing )
@@ -424,9 +417,9 @@ namespace parser {
             throw std::runtime_error("Expected '{' after ')' on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // get if block
-        ASTBlockNode *ifBlock = parseBlock();
+        auto ifBlock = parseBlock();
         // Check for ELSE
-        ASTBlockNode *elseBlock = nullptr;
+        auto elseBlock = std::shared_ptr<ASTBlockNode>();
         if (nextLoc[0].type == lexer::TOK_ELSE) {
             // Get next token
             moveTokenWindow(2);
@@ -438,10 +431,10 @@ namespace parser {
             elseBlock = parseBlock();
         }
         // Create ASTIfNode to return
-        return new ASTIfNode(condition, ifBlock, lineNumber, elseBlock);
+        return std::make_shared<ASTIfNode>(condition, ifBlock, lineNumber, elseBlock);
     }
 
-    ASTForNode *Parser::parseFor() {
+    std::shared_ptr<ASTForNode> Parser::parseFor() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is FOR
@@ -454,7 +447,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Check for declaration
-        ASTDeclarationNode *declaration = nullptr;
+        auto declaration = std::shared_ptr<ASTDeclarationNode>();
         if (currentToken.type == lexer::TOK_LET) {
             // get declaration
             declaration = parseDeclaration();
@@ -466,7 +459,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // get condition
-        ASTExprNode *condition = parseExpression();
+        auto condition = parseExpression();
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax
@@ -476,7 +469,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Check for assignment
-        ASTAssignmentNode *assignment = nullptr;
+        auto assignment = std::shared_ptr<ASTAssignmentNode>();
         if (currentToken.type == lexer::TOK_IDENTIFIER) {
             // get declaration
             assignment = parseAssignment(true);
@@ -493,13 +486,13 @@ namespace parser {
             throw std::runtime_error("Expected '{' after ')' on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // get if block
-        ASTBlockNode *loopBlock = parseBlock();
+        auto loopBlock = parseBlock();
 
         // Create ASTForNode to return
-        return new ASTForNode(condition, loopBlock, lineNumber, declaration, assignment);
+        return std::make_shared<ASTForNode>(condition, loopBlock, lineNumber, declaration, assignment);
     }
 
-    ASTWhileNode *Parser::parseWhile() {
+    std::shared_ptr<ASTWhileNode> Parser::parseWhile() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is WHILE
@@ -512,7 +505,7 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // Get condition after (
-        ASTExprNode *condition = parseExpression();
+        auto condition = parseExpression();
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax with closing )
@@ -526,19 +519,19 @@ namespace parser {
             throw std::runtime_error("Expected '{' after ')' on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // get loop Block
-        ASTBlockNode *loopBlock = parseBlock();
+        auto loopBlock = parseBlock();
         // Create ASTWhileNode to return
-        return new ASTWhileNode(condition, loopBlock, lineNumber);
+        return std::make_shared<ASTWhileNode>(condition, loopBlock, lineNumber);
     }
 
-    ASTReturnNode *Parser::parseReturn() {
+    std::shared_ptr<ASTReturnNode> Parser::parseReturn() {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is RETURN
         // Get next token
         moveTokenWindow();
         // Get expression after
-        ASTExprNode *expr = parseExpression();
+        auto expr = parseExpression();
         // Get next token
         moveTokenWindow();
 
@@ -546,54 +539,14 @@ namespace parser {
             throw std::runtime_error("Expected ';' after expression on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Create ASTReturnNode to return
-        return new ASTReturnNode(expr, lineNumber);
+        return std::make_shared<ASTReturnNode>(expr, lineNumber);
     }
 
-    ASTFunctionDeclarationNode *Parser::parseFunctionDeclaration() {
-        // Determine line number
-        unsigned int lineNumber = currentToken.lineNumber;
-        // Get type
-        std::string type = parseType();
-        // Get next token
-        moveTokenWindow();
-        // ensure identifier is here
-        ASTIdentifierNode *identifier;
-        if (currentToken.type == lexer::TOK_IDENTIFIER) {
-            identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
-        } else {
-            throw std::runtime_error("Expected function name after type on line "
-                                     + std::to_string(currentToken.lineNumber) + ".");
-        }
-        // Get next token
-        moveTokenWindow(2);
-        // If next token is not right bracket, we have parameters
-        auto parameters = new std::vector <std::pair<std::string, std::string>>;
-        if (currentToken.type != lexer::TOK_CLOSING_CURVY) {
-            parameters = parseFormalParams();
-        }
-        // Ensure right close bracket after fetching parameters
-        if (currentToken.type != lexer::TOK_CLOSING_CURVY)
-            throw std::runtime_error("Expected ')' on line "
-                                     + std::to_string(currentToken.lineNumber)
-                                     + " after function parameters.");
-        // Get next token
-        moveTokenWindow();
-        // Ensure proper syntax with starting {
-        if (currentToken.type != lexer::TOK_OPENING_CURLY)
-            throw std::runtime_error("Expected '{' after ')' on line "
-                                     + std::to_string(currentToken.lineNumber) + ".");
-        // get loop Block
-        ASTBlockNode *functionBlock = parseBlock();
-        // Create ASTFunctionDeclarationNode to return
-        return new ASTFunctionDeclarationNode(type, identifier->identifier, *parameters, functionBlock, lineNumber);
-    }
-
-
-    std::vector <std::pair<std::string, std::string>> *Parser::parseFormalParams() {
+    std::vector <std::pair<std::string, std::string>> Parser::parseFormalParams() {
         //current token is identifier
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
-        auto parameters = new std::vector <std::pair<std::string, std::string>>;
+        auto parameters = std::vector <std::pair<std::string, std::string>>();
         // get first identifier
         // ensure identifier is here
         ASTIdentifierNode *identifier;
@@ -614,7 +567,7 @@ namespace parser {
         // get first type
         std::string type = parseType();
         // Add first param
-        parameters->emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
+        parameters.emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
         // If next token is a comma there are more
         while (nextLoc->type == lexer::TOK_COMMA) {
             // Move current token, to token after comma
@@ -637,10 +590,49 @@ namespace parser {
             // get  type
             type = parseType();
             // Add first param
-            parameters->emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
+            parameters.emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
         }
         // Current token is on the last param, we need to move beyond that to get the closing )
         moveTokenWindow();
         return parameters;
+    }
+
+    std::shared_ptr<ASTFunctionDeclarationNode> Parser::parseFunctionDeclaration() {
+        // Determine line number
+        unsigned int lineNumber = currentToken.lineNumber;
+        // Get type
+        std::string type = parseType();
+        // Get next token
+        moveTokenWindow();
+        // ensure identifier is here
+        ASTIdentifierNode *identifier;
+        if (currentToken.type == lexer::TOK_IDENTIFIER) {
+            identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+        } else {
+            throw std::runtime_error("Expected function name after type on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+        }
+        // Get next token
+        moveTokenWindow(2);
+        // If next token is not right bracket, we have parameters
+        auto parameters = std::vector <std::pair<std::string, std::string>>();
+        if (currentToken.type != lexer::TOK_CLOSING_CURVY) {
+            parameters = parseFormalParams();
+        }
+        // Ensure right close bracket after fetching parameters
+        if (currentToken.type != lexer::TOK_CLOSING_CURVY)
+            throw std::runtime_error("Expected ')' on line "
+                                     + std::to_string(currentToken.lineNumber)
+                                     + " after function parameters.");
+        // Get next token
+        moveTokenWindow();
+        // Ensure proper syntax with starting {
+        if (currentToken.type != lexer::TOK_OPENING_CURLY)
+            throw std::runtime_error("Expected '{' after ')' on line "
+                                     + std::to_string(currentToken.lineNumber) + ".");
+        // get loop Block
+        auto functionBlock = parseBlock();
+        // Create ASTFunctionDeclarationNode to return
+        return std::make_shared<ASTFunctionDeclarationNode>(type, identifier->identifier, parameters, functionBlock, lineNumber);
     }
 }

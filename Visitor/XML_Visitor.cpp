@@ -29,7 +29,7 @@ namespace visitor {
         return op;
     }
 
-    void XMLVisitor::visit(parser::ASTProgramNode *programNode) {
+    void XMLVisitor::visit(parser::ASTProgramNode* programNode) {
         // Add initial <program> tag
         xmlfile << indentation() << "<program>" << std::endl;
         // Add indentation level
