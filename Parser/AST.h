@@ -9,13 +9,9 @@
 #include <utility>
 #include <vector>
 #include "../Visitor/Visitor.h"
+#include "../Lexer/Token.h"
 
 namespace parser {
-    // Types
-    enum TYPE {
-        FLOAT, INT, BOOL, STRING
-    };
-
     // Abstract Nodes
     class ASTNode {
     public:
@@ -149,7 +145,7 @@ namespace parser {
 
     class ASTDeclarationNode : public ASTStatementNode {
     public:
-        ASTDeclarationNode(TYPE type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
+        ASTDeclarationNode(lexer::TOKEN type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
                 type(type),
                 identifier(std::move(identifier)),
                 exprNode(exprNode),
@@ -157,7 +153,7 @@ namespace parser {
         {};
         ~ASTDeclarationNode() = default;
 
-        TYPE type;
+        lexer::TOKEN type;
         std::string identifier;
         ASTExprNode *exprNode;
         unsigned int lineNumber;
@@ -266,7 +262,7 @@ namespace parser {
 
     class ASTFunctionDeclarationNode : public ASTStatementNode {
     public:
-        ASTFunctionDeclarationNode(  TYPE type, std::string identifier, std::vector<std::pair<std::string, TYPE>> parameters,
+        ASTFunctionDeclarationNode(  lexer::TOKEN type, std::string identifier, std::vector<std::pair<std::string, lexer::TOKEN>> parameters,
                                     ASTBlockNode* functionBlock, unsigned int lineNumber) :
                 type(type),
                 identifier(std::move(identifier)),
@@ -276,9 +272,9 @@ namespace parser {
         {};
         ~ASTFunctionDeclarationNode() = default;
 
-        TYPE type;
+        lexer::TOKEN type;
         std::string identifier;
-        std::vector<std::pair<std::string, TYPE>> parameters;
+        std::vector<std::pair<std::string, lexer::TOKEN>> parameters;
         ASTBlockNode* functionBlock;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;

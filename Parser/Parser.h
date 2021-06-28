@@ -16,7 +16,11 @@
 namespace parser {
     class Parser {
     public:
-        explicit Parser(std::vector<lexer::Token> tokens);
+        explicit Parser(std::vector<lexer::Token> tokens){
+            // Initialise the currentToken and pointer for the next token
+            currentToken = tokens.front();
+            nextLoc = tokens.begin() + 1;
+        }
 
         ASTProgramNode* parseProgram(bool block=false);
         ASTStatementNode* parseStatement();

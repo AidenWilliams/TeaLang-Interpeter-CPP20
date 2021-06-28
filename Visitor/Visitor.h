@@ -31,9 +31,7 @@ namespace parser {
 }
 
 namespace visitor {
-
     class Visitor {
-
     public:
 
         virtual void visit(parser::ASTProgramNode*) = 0;
@@ -58,22 +56,6 @@ namespace visitor {
         virtual void visit(parser::ASTFunctionDeclarationNode*) = 0;
         virtual void visit(parser::ASTReturnNode*) = 0;
     };
-
-    std::string type(parser::TYPE t) {
-        switch(t){
-            case parser::INT:
-                return "int";
-            case parser::FLOAT:
-                return "float";
-            case parser::BOOL:
-                return "bool";
-            case parser::STRING:
-                return "string";
-            default:
-                throw std::runtime_error("Invalid type encountered.");
-        }
-    }
-
 }
 
 #endif //TEALANG_COMPILER_CPP20_VISITOR_H
