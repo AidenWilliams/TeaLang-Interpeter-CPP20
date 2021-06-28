@@ -13,14 +13,14 @@ namespace parser {
     }
 
     std::shared_ptr<ASTProgramNode> Parser::parseProgram(bool block) {
-        auto statements = new std::vector<std::shared_ptr<ASTStatementNode>>;
+        auto statements = std::vector<std::shared_ptr<ASTStatementNode>>();
         // Loop over each token and stop with an END token
         while (currentToken.type != lexer::TOK_END) {
             // Ignore comments and skip '}' if parsing a block
             if (currentToken.type != lexer::TOK_SINGLE_LINE_COMMENT
                 && currentToken.type != lexer::TOK_MULTI_LINE_COMMENT
                 && (!block || currentToken.type != lexer::TOK_CLOSING_CURLY))
-                statements->push_back(parseStatement());
+                statements.push_back(parseStatement());
             // Get next Token
             // There is a case when a scope/block is empty where were need to check before moving the token window
             if (currentToken.type != lexer::TOK_END)
@@ -29,7 +29,7 @@ namespace parser {
             if (currentToken.type == lexer::TOK_END || block && currentToken.type == lexer::TOK_CLOSING_CURLY)
                 break;
         }
-        return std::make_shared<ASTProgramNode>(*statements);
+        return std::make_shared<ASTProgramNode>(statements);
     }
 
     std::shared_ptr<ASTExprNode> Parser::parseExpression() {
@@ -549,9 +549,10 @@ namespace parser {
         auto parameters = std::vector <std::pair<std::string, std::string>>();
         // get first identifier
         // ensure identifier is here
-        ASTIdentifierNode *identifier;
+
+        auto identifier = std::shared_ptr<ASTIdentifierNode>();
         if (currentToken.type == lexer::TOK_IDENTIFIER) {
-            identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+            identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         } else {
             throw std::runtime_error("Expected function name after type on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
@@ -574,7 +575,7 @@ namespace parser {
             moveTokenWindow(2);
             // repeat the above steps
             if (currentToken.type == lexer::TOK_IDENTIFIER) {
-                identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+                identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
             } else {
                 throw std::runtime_error("Expected function name after type on line "
                                          + std::to_string(currentToken.lineNumber) + ".");
@@ -605,9 +606,9 @@ namespace parser {
         // Get next token
         moveTokenWindow();
         // ensure identifier is here
-        ASTIdentifierNode *identifier;
+        auto identifier = std::shared_ptr<ASTIdentifierNode>();
         if (currentToken.type == lexer::TOK_IDENTIFIER) {
-            identifier = new ASTIdentifierNode(currentToken.value, lineNumber);
+            identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         } else {
             throw std::runtime_error("Expected function name after type on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
