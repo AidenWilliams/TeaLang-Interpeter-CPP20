@@ -7,6 +7,7 @@
 
 #include <string>
 #include <regex>
+#include <utility>
 
 namespace lexer {
     // Defined according to pdf and state

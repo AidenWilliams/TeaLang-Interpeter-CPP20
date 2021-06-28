@@ -145,7 +145,7 @@ namespace parser {
     class ASTDeclarationNode : public ASTStatementNode {
     public:
         ASTDeclarationNode(std::string type, std::string identifier, ASTExprNode* exprNode, unsigned int lineNumber) :
-                type(type),
+                type(std::move(type)),
                 identifier(std::move(identifier)),
                 exprNode(exprNode),
                 lineNumber(lineNumber)
@@ -261,9 +261,9 @@ namespace parser {
 
     class ASTFunctionDeclarationNode : public ASTStatementNode {
     public:
-        ASTFunctionDeclarationNode(  std::string type, std::string identifier, std::vector<std::pair<std::string, std::string>> parameters,
+        ASTFunctionDeclarationNode(std::string type, std::string identifier, std::vector<std::pair<std::string, std::string>> parameters,
                                     ASTBlockNode* functionBlock, unsigned int lineNumber) :
-                type(type),
+                type(std::move(type)),
                 identifier(std::move(identifier)),
                 parameters(std::move(parameters)),
                 functionBlock(functionBlock),

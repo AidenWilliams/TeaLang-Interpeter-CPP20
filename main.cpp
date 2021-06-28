@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include "Lexer/Lexer.h"
 #include "Lexer/Token.h"
 #include "Parser/Parser.h"
@@ -22,14 +23,15 @@ int main(int argc, char **argv) {
         lexer.extraxtLexemes(argv[2]);
 
         parser::Parser parser(lexer.tokens);
-        parser::ASTProgramNode* programNode = parser.parseProgram();
+        std::shared_ptr<parser::ASTProgramNode> programNode = parser.parseProgram();
+//        parser::ASTProgramNode* programNode = parser.parseProgram();
     }else if (std::string("-x") == argv[1]){
 //        std::cout << "TESTING XML Generator" << std::endl;
         lexer::Lexer lexer;
         lexer.extraxtLexemes(argv[2]);
 
         parser::Parser parser(lexer.tokens);
-        parser::ASTProgramNode* programNode = parser.parseProgram();
+        std::shared_ptr<parser::ASTProgramNode> programNode = parser.parseProgram();
 
         visitor::XMLVisitor xmlVisitor;
         xmlVisitor.visit(programNode);
