@@ -191,14 +191,13 @@ namespace lexer {
         {};
         Token(Token const &t) = default;;
         Token() = default;;
-
         ~Token() = default;
+
         TOKEN_TYPE type;
         std::string value;
         unsigned int lineNumber{};
 
     };
 }
-
 
 #endif //TEALANG_COMPILER_CPP20_TOKEN_H
