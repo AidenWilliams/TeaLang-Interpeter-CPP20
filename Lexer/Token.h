@@ -114,6 +114,12 @@ namespace lexer {
         TOK_INVALID             = 40,
     };
 
+    /* regex statements that defines:
+     * identifiers
+     * strings
+     * any literal
+     * comments
+     */
     extern std::regex identifier;
     extern std::regex string;
     extern std::regex intLiteral;
@@ -121,6 +127,7 @@ namespace lexer {
     extern std::regex singleLineComment;
     extern std::regex multiLineComment;
 
+    // Bool functions that confirm the passed string's proper state
     bool isFloatType(const std::string& s);
     bool isIntType(const std::string& s);
     bool isBoolType(const std::string& s);
@@ -163,6 +170,8 @@ namespace lexer {
     bool isNotEqualTo(const std::string& s);
     bool isEqualTo(const std::string& s);
 
+    // TOKEN_TYPE functions that provide possible token type building avenues from a particular state
+    // some states do not have a dedicated function as they are completely final states
     TOKEN_TYPE fromState1(const std::string& s);
     TOKEN_TYPE fromState3(const std::string& s);
     TOKEN_TYPE fromState6(const std::string& s);
@@ -180,18 +189,23 @@ namespace lexer {
     TOKEN_TYPE fromState23(const std::string& s);
     TOKEN_TYPE fromState25(const std::string& s);
 
+    // Token class
     class Token {
     private:
+        // TOKEN_TYPE function that determines the TOKEN_TYPE for a string given a state
         static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     public:
+        // The token constructor requires a string for its value and type as well as a line number
+        // for future use by the parser and visitor classes
         Token(std::string s, unsigned int state, unsigned int lineNumber) :
                 type(determineTokenType(s, state)),
                 value(s),
                 lineNumber(lineNumber)
         {};
-        Token(Token const &t) = default;;
-        Token() = default;;
+        // default copy constructor
+        Token(Token const &t) = default;
 
+        Token() = default;
         ~Token() = default;
         TOKEN_TYPE type;
         std::string value;

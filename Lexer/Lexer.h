@@ -52,11 +52,12 @@ namespace lexer {
         SPACE         = 18,
         CLOSING_CURLY         = 19
     };
-
+    // regex statements that define a letter, digit, or printable character
     extern std::regex letter;
     extern std::regex digit;
     extern std::regex printable;
 
+    // bool functions that determine the char type
     bool isLetter(char c);
     bool isDigit(char c);
     bool isPrintable(char c);
@@ -76,9 +77,12 @@ namespace lexer {
     bool isSpace(char c);
     bool isClosingCurly(char c);
 
+    // TRANSITION_TYPE function that determines the TRANSITION_TYPE when given a char c
     static TRANSITION_TYPE determineTransitionType(char c);
+    // delta function for the DFSA designed for this lexer
     unsigned int delta(unsigned int fromState, char c);
 
+    // Lexer class
     class Lexer {
     public:
         Lexer() = default;
