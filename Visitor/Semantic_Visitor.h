@@ -94,10 +94,10 @@ namespace visitor {
         void visit(parser::ASTDeclarationNode* declarationNode) override;
         void visit(parser::ASTAssignmentNode* assignmentNode) override;
         void visit(parser::ASTPrintNode* printNode) override;
-//        void visit(parser::ASTBlockNode* blockNode) override;
-//        void visit(parser::ASTIfNode* ifNode) override;
-//        void visit(parser::ASTForNode* forNode) override;
-//        void visit(parser::ASTWhileNode* whileNode) override;
+        void visit(parser::ASTBlockNode* blockNode) override;
+        void visit(parser::ASTIfNode* ifNode) override;
+        void visit(parser::ASTForNode* forNode) override;
+        void visit(parser::ASTWhileNode* whileNode) override;
 //        void visit(parser::ASTFunctionDeclarationNode* functionDeclarationNode) override;
 //        void visit(parser::ASTReturnNode* returnNode) override;
     };

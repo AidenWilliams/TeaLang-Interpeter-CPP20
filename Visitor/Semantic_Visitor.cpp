@@ -134,5 +134,29 @@ namespace visitor{
         // Get the exprNode type
         printNode -> exprNode -> accept(this);
     }
+
+    void SemanticAnalyser::visit(parser::ASTBlockNode *blockNode) {
+        // Create new scope
+        scopes.emplace_back(new SemanticScope());
+        // Visit each statement in the block
+        for(auto &statement : blockNode -> statements)
+            statement -> accept(this);
+        // Close scope
+        scopes.pop_back();
+    }
+
+    void SemanticAnalyser::visit(parser::ASTIfNode *ifNode) {
+        // Get the condition type
+        ifNode -> condition -> accept(this);
+        // Make sure it is boolean
+        if(currentType != "bool")
+            throw std::runtime_error("Invalid if-condition on line " + std::to_string(ifNode->lineNumber)
+                                     + ", expected boolean expression.");
+        // Check the if block
+        ifNode -> ifBlock -> accept(this);
+        // If there is an else block, check it too
+        if(ifNode -> elseBlock)
+            ifNode -> elseBlock -> accept(this);
+    }
     // Statements
 }
