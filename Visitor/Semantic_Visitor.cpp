@@ -40,9 +40,11 @@ namespace visitor{
 
     // Program
     void SemanticAnalyser::visit(parser::ASTProgramNode *programNode) {
+        scopes.emplace_back(new SemanticScope(true));
         // For each statement, accept
         for(auto &statement : programNode -> statements)
             statement -> accept(this);
+        scopes.pop_back();
     }
     // Program
 
@@ -189,6 +191,44 @@ namespace visitor{
                                      + ", expected boolean expression.");
         // Check the while block
         whileNode -> loopBlock -> accept(this);
+    }
+
+    void SemanticAnalyser::visit(parser::ASTFunctionDeclarationNode *functionDeclarationNode) {
+        // If current scope is not global then do not allow declaration
+        auto scope = scopes.back();
+        if (!scope->isGlobal()){
+            throw std::runtime_error("Tried declaring function with identifier " + functionDeclarationNode->identifier
+                                     + " in a non-global scope.");
+        }
+        // Generate Function
+        // First get the param types vector
+        std::vector<std::string> paramTypes;
+        for (const auto& param : functionDeclarationNode->parameters){
+            paramTypes.emplace_back(param.first);
+        }
+        // now generate the function object
+        Function f(functionDeclarationNode->identifier, paramTypes, functionDeclarationNode->lineNumber);
+        // Try to insert f
+        auto search = scope->find(f);
+        // compare the found key and the actual key
+        // if identical than the function is already declared
+        // Overloading is a problem for task 2 so we do not care if the params area actually different
+        if(search->first == f.identifier){
+            // The variable has already been declared in the current scope
+            // Overloading is a problem for task 2
+            throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
+                                     + std::to_string(f.lineNumber) + " already declared on line "
+                                     + std::to_string(search->second.lineNumber));
+        }
+        // Go check the block node
+        returns = false;
+        functionDeclarationNode->functionBlock->accept(this);
+        // confirm function has a return and that the return type is as defined in the declaration node
+        // if(currentType != functionDeclarationNode->type)
+        if(!returns){
+            throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
+                                     + std::to_string(f.lineNumber) + " does not have a return statement.");
+        }
     }
     // Statements
 }

@@ -22,6 +22,7 @@ namespace visitor {
         {};
         ~Variable() = default;
 
+        void foo();
         std::string identifier;
         std::string type;
         unsigned int lineNumber;
@@ -50,9 +51,12 @@ namespace visitor {
         // Python equivalent of:
         // functionTable = {identifier: { identifier, [ARGUMENT_TYPES,], lineNumber}}
         std::map<std::string, Function> functionTable;
+        bool global;
     public:
-        SemanticScope() = default;
+        explicit SemanticScope(bool global=false) : global(global) {};
         ~SemanticScope() = default;
+
+        bool isGlobal() { return global; }
 
         bool insert(const Variable& v);
         bool insert(const Function& f);
@@ -73,11 +77,13 @@ namespace visitor {
         {
             scopes.emplace_back(new SemanticScope());
             currentType = std::string();
+            returns = false;
         };
         ~SemanticAnalyser() = default;
 
         std::vector<SemanticScope*> scopes;
         std::string currentType;
+        bool returns;
 
         void visit(parser::ASTProgramNode* programNode) override;
 
@@ -98,7 +104,7 @@ namespace visitor {
         void visit(parser::ASTIfNode* ifNode) override;
         void visit(parser::ASTForNode* forNode) override;
         void visit(parser::ASTWhileNode* whileNode) override;
-//        void visit(parser::ASTFunctionDeclarationNode* functionDeclarationNode) override;
+        void visit(parser::ASTFunctionDeclarationNode* functionDeclarationNode) override;
 //        void visit(parser::ASTReturnNode* returnNode) override;
     };
 }
