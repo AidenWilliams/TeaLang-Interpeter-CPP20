@@ -137,9 +137,9 @@ namespace parser {
                 }
                 return std::make_shared<ASTLiteralNode<std::string>>(std::move(str), lineNumber);
             }
-                // Identifier or function call case
+                // Identifier or Function call case
             case lexer::TOK_IDENTIFIER:
-                // If next token is '(' then we found a function call
+                // If next token is '(' then we found a Function call
                 if (nextLoc->type == lexer::TOK_OPENING_CURVY)
                     return parseFunctionCall();
                 else {
@@ -182,7 +182,7 @@ namespace parser {
     }
 
     std::shared_ptr<ASTFunctionCallNode> Parser::parseFunctionCall(bool semicolon) {
-        // current token is the function identifier
+        // current token is the Function identifier
         std::string identifier = currentToken.value;
         auto parameters = std::vector<std::shared_ptr<ASTExprNode>>();
         unsigned int line_number = currentToken.lineNumber;
@@ -202,7 +202,7 @@ namespace parser {
         if (currentToken.type != lexer::TOK_CLOSING_CURVY)
             throw std::runtime_error("Expected ')' on line "
                                      + std::to_string(currentToken.lineNumber)
-                                     + " after function parameters.");
+                                     + " after Function parameters.");
         if (semicolon) {
             // Get next token
             moveTokenWindow();
@@ -249,9 +249,9 @@ namespace parser {
             // Variable declaration case
             case lexer::TOK_LET:
                 return parseDeclaration();
-                // An identifier can either be a function call or an assignment
+                // An identifier can either be a Function call or an assignment
             case lexer::TOK_IDENTIFIER:
-                // If next token is '(' then we found a function call
+                // If next token is '(' then we found a Function call
                 if (nextLoc->type == lexer::TOK_OPENING_CURVY)
                     return std::make_shared<ASTSFunctionCallNode>(parseFunctionCall(true));
                 else {
@@ -299,9 +299,9 @@ namespace parser {
         moveTokenWindow();
         // Confirm current token is IDENTIFIER
         if (currentToken.type != lexer::TOK_IDENTIFIER)
-            throw std::runtime_error("Expected variable name after 'let' on line "
+            throw std::runtime_error("Expected Variable name after 'let' on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
-        // Get identifier for new variable
+        // Get identifier for new Variable
         std::string identifier = currentToken.value;
         // Get next token
         moveTokenWindow();
@@ -554,7 +554,7 @@ namespace parser {
         if (currentToken.type == lexer::TOK_IDENTIFIER) {
             identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         } else {
-            throw std::runtime_error("Expected function name after type on line "
+            throw std::runtime_error("Expected Function name after type on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         }
         // Get next token
@@ -577,7 +577,7 @@ namespace parser {
             if (currentToken.type == lexer::TOK_IDENTIFIER) {
                 identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
             } else {
-                throw std::runtime_error("Expected function name after type on line "
+                throw std::runtime_error("Expected Function name after type on line "
                                          + std::to_string(currentToken.lineNumber) + ".");
             }
             // Get next token
@@ -610,7 +610,7 @@ namespace parser {
         if (currentToken.type == lexer::TOK_IDENTIFIER) {
             identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         } else {
-            throw std::runtime_error("Expected function name after type on line "
+            throw std::runtime_error("Expected Function name after type on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         }
         // Get next token
@@ -624,7 +624,7 @@ namespace parser {
         if (currentToken.type != lexer::TOK_CLOSING_CURVY)
             throw std::runtime_error("Expected ')' on line "
                                      + std::to_string(currentToken.lineNumber)
-                                     + " after function parameters.");
+                                     + " after Function parameters.");
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax with starting {

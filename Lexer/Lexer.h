@@ -77,9 +77,9 @@ namespace lexer {
     bool isSpace(char c);
     bool isClosingCurly(char c);
 
-    // TRANSITION_TYPE function that determines the TRANSITION_TYPE when given a char c
+    // TRANSITION_TYPE Function that determines the TRANSITION_TYPE when given a char c
     static TRANSITION_TYPE determineTransitionType(char c);
-    // delta function for the DFSA designed for this lexer
+    // delta Function for the DFSA designed for this lexer
     unsigned int delta(unsigned int fromState, char c);
 
     // Lexer class
@@ -90,7 +90,7 @@ namespace lexer {
         // Vector of the program tokens
         std::vector<Token> tokens;
         // Vector of final states
-        // When used, given a vector it acts as a function to determine whether a state is final or not
+        // When used, given a vector it acts as a Function to determine whether a state is final or not
         // e.g finalStates[0] == true
         std::vector<bool> finalStates = {
                                             true, true, false, true, false, false, true, false, true, true, true, true,

@@ -13,51 +13,58 @@
 #include "../Lexer/Token.h"
 
 namespace visitor {
-    class variable{
+    class Variable{
     public:
-        variable(std::string identifier, std::string type, unsigned int lineNumber) :
+        Variable(std::string type, std::string identifier, unsigned int lineNumber) :
+                type(std::move(type)),
                 identifier(std::move(identifier)),
-                type(type),
                 lineNumber(lineNumber)
         {};
-        ~variable() = default;
+        ~Variable() = default;
 
         std::string identifier;
         std::string type;
         unsigned int lineNumber;
-
-        // lookup(std::vector<>, std::string identifier);
     };
 
-    class function{
+    class Function{
     public:
-        function(std::string identifier, std::string type, std::vector<std::string> paramTypes, unsigned int lineNumber) :
+        Function(std::string type, std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
+                type(std::move(type)),
                 identifier(std::move(identifier)),
-                type(type),
                 paramTypes(std::move(paramTypes)),
                 lineNumber(lineNumber)
         {};
-        ~function() = default;
+        ~Function() = default;
 
         std::string identifier;
         std::string type;
         std::vector<std::string> paramTypes;
         unsigned int lineNumber;
-
-        // lookup(std::vector<>, std::string identifier);
     };
 
     class SemanticScope {
+    private:
+        // Python equivalent of:
+        // variableTable = {identifier: {TYPE, identifier, lineNumber}}
+        std::map<std::string, Variable> variableTable;
+        // Python equivalent of:
+        // functionTable = {identifier: { FUNCTION_TYPE, identifier, [ARGUMENT_TYPES,], lineNumber}}
+        std::map<std::string, Function> functionTable;
     public:
         SemanticScope() = default;
         ~SemanticScope() = default;
 
-        // Python equivalent of:
-        // variableTable = {identifier: {identifier, TYPE, lineNumber}}
-        std::map<std::string, variable> variableTable;
-        // Python equivalent of:
-        // functionTable = {identifier: {identifier, FUNCTION_TYPE, [ARGUMENT_TYPES,], lineNumber}}
-        std::map<std::string, function> functionTable;
+        bool insert(const Variable& v);
+        bool insert(const Function& f);
+
+        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
+        find(const Variable& v);
+        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
+        find(const Function& f);
+
+        void erase(const Variable& v);
+        void erase(const Function& f);
     };
 
 
@@ -84,8 +91,8 @@ namespace visitor {
 //        void visit(parser::ASTUnaryNode* unaryNode) override;
 //        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
 //
-//        void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
-//        void visit(parser::ASTDeclarationNode* declarationNode) override;
+        void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
+        void visit(parser::ASTDeclarationNode* declarationNode) override;
 //        void visit(parser::ASTAssignmentNode* assignmentNode) override;
 //        void visit(parser::ASTPrintNode* printNode) override;
 //        void visit(parser::ASTBlockNode* blockNode) override;

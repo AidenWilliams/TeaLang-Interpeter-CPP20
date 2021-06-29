@@ -172,7 +172,7 @@ namespace lexer {
     bool isEqualTo(const std::string& s);
 
     // TOKEN_TYPE functions that provide possible token type building avenues from a particular state
-    // some states do not have a dedicated function as they are completely final states
+    // some states do not have a dedicated Function as they are completely final states
     TOKEN_TYPE fromState1(const std::string& s);
     TOKEN_TYPE fromState3(const std::string& s);
     TOKEN_TYPE fromState6(const std::string& s);
@@ -193,7 +193,7 @@ namespace lexer {
     // Token class
     class Token {
     private:
-        // TOKEN_TYPE function that determines the TOKEN_TYPE for a string given a state
+        // TOKEN_TYPE Function that determines the TOKEN_TYPE for a string given a state
         static TOKEN_TYPE determineTokenType(std::string& s, unsigned int state);
     public:
         // The token constructor requires a string for its value and type as well as a line number
