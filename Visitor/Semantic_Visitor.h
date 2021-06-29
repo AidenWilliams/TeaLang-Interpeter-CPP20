@@ -29,8 +29,7 @@ namespace visitor {
 
     class Function{
     public:
-        Function(std::string type, std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
-                type(std::move(type)),
+        Function(std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 paramTypes(std::move(paramTypes)),
                 lineNumber(lineNumber)
@@ -49,7 +48,7 @@ namespace visitor {
         // variableTable = {identifier: {TYPE, identifier, lineNumber}}
         std::map<std::string, Variable> variableTable;
         // Python equivalent of:
-        // functionTable = {identifier: { FUNCTION_TYPE, identifier, [ARGUMENT_TYPES,], lineNumber}}
+        // functionTable = {identifier: { identifier, [ARGUMENT_TYPES,], lineNumber}}
         std::map<std::string, Function> functionTable;
     public:
         SemanticScope() = default;

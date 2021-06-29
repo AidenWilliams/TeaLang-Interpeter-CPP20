@@ -52,12 +52,24 @@ namespace visitor{
     // Expressions
 
     // Statements
-
-
-//    void SemanticAnalyser::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
-//        // Generate Function
-//        Function f(sFunctionCallNode.)
-//    }
+    void SemanticAnalyser::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
+        // Generate Function
+        // First get the param types vector
+        std::vector<std::string> paramTypes;
+        for (const auto& param : sFunctionCallNode->parameters){
+            param->accept(this);
+            paramTypes.emplace_back(currentType);
+        }
+        // now generate the function object
+        Function f(sFunctionCallNode->identifier, paramTypes, sFunctionCallNode->lineNumber);
+        // Now confirm this exists in the function table for any scope
+        for(auto scope : scopes){
+            if(scope->find(f)->first == f.identifier) return;
+        }
+        // Function hasn't been found in any scope
+        throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
+                                 + std::to_string(f.lineNumber) + " has not been declared. ");
+    }
 
     void SemanticAnalyser::visit(parser::ASTDeclarationNode *declarationNode) {
         // Generate Variable
@@ -70,7 +82,7 @@ namespace visitor{
         // if identical than the variable is already declared
         if(search->first == v.identifier){
             // The variable has already been declared in the current scope
-            throw std::runtime_error("Variable with identifier " + v.identifier + " on line "
+            throw std::runtime_error("Variable with identifier " + v.identifier + " declared on line "
                                      + std::to_string(v.lineNumber) + " already declared on line "
                                      + std::to_string(search->second.lineNumber));
         }
