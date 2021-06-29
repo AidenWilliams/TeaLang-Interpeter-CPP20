@@ -68,7 +68,7 @@ namespace visitor{
         }
         // Function hasn't been found in any scope
         throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
-                                 + std::to_string(f.lineNumber) + " has not been declared. ");
+                                 + std::to_string(f.lineNumber) + " has not been declared.");
     }
 
     void SemanticAnalyser::visit(parser::ASTDeclarationNode *declarationNode) {
@@ -99,6 +99,35 @@ namespace visitor{
                                      + std::to_string(v.lineNumber) + " but has been assigned invalid value of type"
                                      + currentType + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
         }
+    }
+
+    void SemanticAnalyser::visit(parser::ASTAssignmentNode *assignmentNode) {
+        // Get the exprNode type
+        assignmentNode->exprNode->accept(this);
+        /* Check for a variable with:
+         * identifier = assignmentNode.identifier
+         * type = currentType
+         */
+        // Generate Variable
+        Variable v(currentType, assignmentNode->identifier, assignmentNode->lineNumber);
+        // Now confirm this exists in the function table for any scope
+        for(auto scope : scopes){
+            auto result = scope->find(v);
+            if(result->first == v.identifier){
+                // if identifier has been found
+                // check that the types match
+                if(result->second.type != v.type){
+                    // throw an error since type casting is not supported
+                    throw std::runtime_error("Variable " + v.identifier + " declared on line " + std::to_string(result->second.lineNumber)
+                                                + " cannot be assigned a value of type " + v.type
+                                                + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
+                }
+                return;
+            }
+        }
+        // Variable hasn't been found in any scope
+        throw std::runtime_error("Variable with identifier " + v.identifier + " called on line "
+                                 + std::to_string(v.lineNumber) + " has not been declared.");
     }
     // Statements
 }

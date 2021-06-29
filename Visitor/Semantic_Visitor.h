@@ -92,7 +92,7 @@ namespace visitor {
 //
         void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
         void visit(parser::ASTDeclarationNode* declarationNode) override;
-//        void visit(parser::ASTAssignmentNode* assignmentNode) override;
+        void visit(parser::ASTAssignmentNode* assignmentNode) override;
 //        void visit(parser::ASTPrintNode* printNode) override;
 //        void visit(parser::ASTBlockNode* blockNode) override;
 //        void visit(parser::ASTIfNode* ifNode) override;
