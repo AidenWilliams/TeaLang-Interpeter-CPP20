@@ -129,5 +129,10 @@ namespace visitor{
         throw std::runtime_error("Variable with identifier " + v.identifier + " called on line "
                                  + std::to_string(v.lineNumber) + " has not been declared.");
     }
+
+    void SemanticAnalyser::visit(parser::ASTPrintNode *printNode) {
+        // Get the exprNode type
+        printNode -> exprNode -> accept(this);
+    }
     // Statements
 }
