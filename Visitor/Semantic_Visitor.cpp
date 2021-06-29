@@ -158,5 +158,37 @@ namespace visitor{
         if(ifNode -> elseBlock)
             ifNode -> elseBlock -> accept(this);
     }
+
+    void SemanticAnalyser::visit(parser::ASTForNode *forNode) {
+        // Create new scope for loop params
+        // This allows the creation of a new variable only used by the loop
+        scopes.emplace_back(new SemanticScope());
+        // First go over the declaration
+        forNode -> declaration -> accept(this);
+        // Get the condition type
+        forNode -> condition -> accept(this);
+        // Make sure it is boolean
+        if(currentType != "bool")
+            throw std::runtime_error("Invalid for-condition on line " + std::to_string(forNode->lineNumber)
+                                     + ", expected boolean expression.");
+        // Now go over the assignment
+        forNode -> assignment -> accept(this);
+        // Now go over the loop block
+        forNode -> loopBlock ->accept(this);
+        // Close loop scope
+        // This discards any declared variable in the for(;;) section
+        scopes.pop_back();
+    }
+
+    void SemanticAnalyser::visit(parser::ASTWhileNode *whileNode) {
+        // Get the condition type
+        whileNode -> condition -> accept(this);
+        // Make sure it is boolean
+        if(currentType != "bool")
+            throw std::runtime_error("Invalid while-condition on line " + std::to_string(whileNode->lineNumber)
+                                     + ", expected boolean expression.");
+        // Check the while block
+        whileNode -> loopBlock -> accept(this);
+    }
     // Statements
 }
