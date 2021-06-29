@@ -66,6 +66,74 @@ namespace visitor{
         currentType = "string";
     }
 
+    void SemanticAnalyser::visit(parser::ASTBinaryNode *binaryNode) {
+        // Go over left expression first
+        binaryNode->left->accept(this);
+        // store the currentType for the left expression
+        std::string leftType(currentType);
+        // Now go over the right expression
+        binaryNode->right->accept(this);
+        // store the currentType for the left expression
+        std::string rightType(currentType);
+        // type casting is not supported so both types need to be the same
+        if (leftType != rightType) {
+            // Variable hasn't been found in any scope
+            throw std::runtime_error("Expression with left type " + leftType + " does not share a common right type "
+                                     + rightType + " on line " + std::to_string(binaryNode->lineNumber)
+                                     + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
+        }
+
+        // check op type
+        if (leftType == "string") {
+            switch (lexer::determineOperatorType(binaryNode->op)) {
+                // string accepted operators
+                case lexer::TOK_PLUS:
+                case lexer::TOK_NOT_EQAUL_TO:
+                case lexer::TOK_EQAUL_TO:
+                    // Valid tokens
+                    break;
+                default:
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
+                                                + " has incorrect operator " + binaryNode->op
+                                                + " acting between expressions of type " + leftType);
+            }
+        }else if (leftType == "int" || leftType == "float") {
+            switch (lexer::determineOperatorType(binaryNode->op)) {
+                // string accepted operators
+                case lexer::TOK_PLUS:
+                case lexer::TOK_NOT_EQAUL_TO:
+                case lexer::TOK_EQAUL_TO:
+                // int and float accepted operators
+                case lexer::TOK_ASTERISK:
+                case lexer::TOK_DIVIDE:
+                case lexer::TOK_MINUS:
+                    // Valid tokens
+                    break;
+                default:
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
+                                             + " has incorrect operator " + binaryNode->op
+                                             + " acting between expressions of type " + leftType);
+            }
+        }else if (leftType == "bool"){
+            switch (lexer::determineOperatorType(binaryNode->op)) {
+                case lexer::TOK_NOT_EQAUL_TO:
+                case lexer::TOK_EQAUL_TO:
+                case lexer::TOK_AND:
+                case lexer::TOK_NOT:
+                case lexer::TOK_MORE_THAN:
+                case lexer::TOK_LESS_THAN:
+                case lexer::TOK_MORE_THAN_EQUAL_TO:
+                case lexer::TOK_LESS_THAN_EQUAL_TO:
+                    // Valid tokens
+                    break;
+                default:
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
+                                             + " has incorrect operator " + binaryNode->op
+                                             + " acting between expressions of type " + leftType);
+            }
+        }
+    }
+
     // Expressions
 
     // Statements
@@ -239,7 +307,6 @@ namespace visitor{
         returns = false;
         functionDeclarationNode->functionBlock->accept(this);
         // confirm function has a return and that the return type is as defined in the declaration node
-        // if(currentType != functionDeclarationNode->type)
         if(!returns){
             throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
                                      + std::to_string(f.lineNumber) + " does not have a return statement.");

@@ -178,6 +178,26 @@ namespace lexer {
         return s == "==";
     }
 
+    TOKEN_TYPE determineOperatorType(const std::string& op){
+        // Multiplicative
+        if(isAnd(op)) return TOK_AND;
+        if (isAsterisk(op)) return TOK_ASTERISK;
+        if (isDivide(op)) return TOK_DIVIDE;
+        // Additive
+        if (isPlus(op)) return TOK_PLUS;
+        // Relational
+        if (isMoreThan(op)) return TOK_MORE_THAN;
+        if (isLessThan(op)) return TOK_LESS_THAN;
+        if (isMoreThanEqualTo(op)) return TOK_MORE_THAN_EQUAL_TO;
+        if (isLessThanEqualTo(op)) return TOK_LESS_THAN_EQUAL_TO;
+        if (isNotEqualTo(op)) return TOK_NOT_EQAUL_TO;
+        if (isEqualTo(op)) return TOK_EQAUL_TO;
+        // Unary
+        if (isNot(op)) return TOK_NOT;
+        if (isMinus(op)) return TOK_MINUS;
+        return TOK_INVALID;
+    }
+
     TOKEN_TYPE fromState1(const std::string &s) {
         // Keywords
         if (isFloatType(s)) return TOK_FLOAT_TYPE;

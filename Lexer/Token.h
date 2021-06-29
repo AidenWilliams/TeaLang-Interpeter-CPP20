@@ -89,30 +89,30 @@ namespace lexer {
         TOK_MINUS               = 31,
         // State 18
         // *
-        TOK_ASTERISK            = 31,
+        TOK_ASTERISK            = 32,
         // State 19
         // +
-        TOK_PLUS                = 32,
+        TOK_PLUS                = 33,
         // State 21
         // >
-        TOK_MORE_THAN           = 33,
+        TOK_MORE_THAN           = 34,
         // <
-        TOK_LESS_THAN           = 34,
+        TOK_LESS_THAN           = 35,
         // State 23
         // =
-        TOK_EQUALS              = 35,
+        TOK_EQUALS              = 36,
         // State 24
         // >=
-        TOK_MORE_THAN_EQUAL_TO  = 36,
+        TOK_MORE_THAN_EQUAL_TO  = 37,
         // <=
-        TOK_LESS_THAN_EQUAL_TO  = 37,
+        TOK_LESS_THAN_EQUAL_TO  = 38,
         // !=
-        TOK_NOT_EQAUL_TO        = 38,
+        TOK_NOT_EQAUL_TO        = 39,
         // ==
-        TOK_EQAUL_TO            = 39,
+        TOK_EQAUL_TO            = 40,
         // Invalid
         // Invalid
-        TOK_INVALID             = 40,
+        TOK_INVALID             = 41,
     };
 
     /* regex statements that defines:
@@ -170,6 +170,9 @@ namespace lexer {
     bool isLessThanEqualTo(const std::string& s);
     bool isNotEqualTo(const std::string& s);
     bool isEqualTo(const std::string& s);
+
+    // determines the token for an operator
+    TOKEN_TYPE determineOperatorType(const std::string& op);
 
     // TOKEN_TYPE functions that provide possible token type building avenues from a particular state
     // some states do not have a dedicated Function as they are completely final states
