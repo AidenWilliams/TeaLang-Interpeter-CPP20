@@ -39,6 +39,20 @@ int main(int argc, char **argv) {
         xmlVisitor.visit(programNode1);
 
         delete programNode1;
+    }else if (std::string("-s") == argv[1]){
+//        std::cout << "TESTING Semantic Analyzer" << std::endl;
+
+        lexer::Lexer lexer;
+        lexer.extraxtLexemes(argv[2]);
+
+        parser::Parser parser(lexer.tokens);
+        auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
+
+        visitor::SemanticAnalyser semanticAnalyser;
+        auto *programNode1 = new parser::ASTProgramNode(programNode);
+        semanticAnalyser.visit(programNode1);
+
+        delete programNode1;
     }
     return 0;
 }
