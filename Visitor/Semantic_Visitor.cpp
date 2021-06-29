@@ -10,7 +10,7 @@
 
 namespace visitor{
     // Semantic Scope
-
+    //TODO: Definitely needs to be tested out
     bool SemanticScope::insert(const Variable& v){
         auto ret = variableTable.insert(std::pair<std::string, Variable>(v.identifier, v) );
         return ret.second;
@@ -132,6 +132,63 @@ namespace visitor{
                                              + " acting between expressions of type " + leftType);
             }
         }
+    }
+    //TODO: Check why ASTIdentifierNode exists
+    void SemanticAnalyser::visit(parser::ASTIdentifierNode *identifierNode) {
+        // Build variable shell
+        Variable v(identifierNode->identifier, identifierNode->lineNumber);
+        // Check that a variable with this identifier exists
+        for(const auto& scope : scopes) {
+            auto result = scope->find(v);
+        }
+        // Variable hasn't been found in any scope
+        throw std::runtime_error("Variable with identifier " + v.identifier + " called on line "
+                                 + std::to_string(v.lineNumber) + " has not been declared.");
+    }
+
+    void SemanticAnalyser::visit(parser::ASTUnaryNode *unaryNode) {
+        // Go over exprNode
+        unaryNode -> exprNode -> accept(this);
+        // Handle different cases
+        if (currentType == "string") {
+            throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
+                                     + " has incorrect operator " + unaryNode->op
+                                     + " acting for expression of type " + currentType);
+        }else if (currentType == "int" || currentType == "float") {
+            if(unaryNode -> op != "+" && unaryNode -> op != "-")
+                throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
+                                         + " has incorrect operator " + unaryNode->op
+                                         + " acting for expression of type " + currentType);
+        }else if (currentType == "bool"){
+            if(unaryNode -> op != "not")
+                throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
+                                         + " has incorrect operator " + unaryNode->op
+                                         + " acting for expression of type " + currentType);
+
+        }
+    }
+
+    void SemanticAnalyser::visit(parser::ASTFunctionCallNode *functionCallNode) {
+        // Generate Function
+        // Get the param types vector
+        std::vector<std::string> paramTypes;
+        for (const auto& param : functionCallNode->parameters){
+            param->accept(this);
+            paramTypes.emplace_back(currentType);
+        }
+        // now generate the function object
+        Function f(functionCallNode->identifier, paramTypes, functionCallNode->lineNumber);
+        // Now confirm this exists in the function table for any scope
+        for(const auto& scope : scopes){
+            if(scope->find(f)->first == f.identifier) {
+                // change current type to the function return type
+                currentType = scope->find(f)->second.type;
+                return;
+            }
+        }
+        // Function hasn't been found in any scope
+        throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
+                                 + std::to_string(f.lineNumber) + " has not been declared.");
     }
 
     // Expressions
@@ -290,7 +347,7 @@ namespace visitor{
             paramTypes.emplace_back(param.first);
         }
         // now generate the function object
-        Function f(functionDeclarationNode->identifier, paramTypes, functionDeclarationNode->lineNumber);
+        Function f(functionDeclarationNode->identifier, functionDeclarationNode->type,paramTypes, functionDeclarationNode->lineNumber);
         // Try to insert f
         auto search = scope->find(f);
         // compare the found key and the actual key

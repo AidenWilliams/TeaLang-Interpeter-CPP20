@@ -22,6 +22,10 @@ namespace visitor {
 
     class Variable{
     public:
+        Variable(std::string identifier, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                lineNumber(lineNumber)
+        {};
         Variable(std::string type, std::string identifier, unsigned int lineNumber) :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
@@ -38,6 +42,13 @@ namespace visitor {
     public:
         Function(std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
+                paramTypes(std::move(paramTypes)),
+                lineNumber(lineNumber)
+        {};
+
+        Function(std::string identifier,std::string type, std::vector<std::string> paramTypes, unsigned int lineNumber) :
+                identifier(std::move(identifier)),
+                type(std::move(type)),
                 paramTypes(std::move(paramTypes)),
                 lineNumber(lineNumber)
         {};
@@ -71,6 +82,8 @@ namespace visitor {
         find(const Variable& v);
         std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
         find(const Function& f);
+        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
+        find(const std::string& v);
 
         void erase(const Variable& v);
         void erase(const Function& f);
@@ -98,10 +111,10 @@ namespace visitor {
         void visit(parser::ASTLiteralNode<bool>* literalNode) override;
         void visit(parser::ASTLiteralNode<std::string>* literalNode) override;
         void visit(parser::ASTBinaryNode* binaryNode) override;
-//        void visit(parser::ASTIdentifierNode* identifierNode) override;
-//        void visit(parser::ASTUnaryNode* unaryNode) override;
-//        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
-//
+        void visit(parser::ASTIdentifierNode* identifierNode) override;
+        void visit(parser::ASTUnaryNode* unaryNode) override;
+        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
+
         void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
         void visit(parser::ASTDeclarationNode* declarationNode) override;
         void visit(parser::ASTAssignmentNode* assignmentNode) override;
