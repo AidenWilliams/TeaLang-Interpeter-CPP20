@@ -40,7 +40,7 @@ namespace visitor{
 
     // Program
     void SemanticAnalyser::visit(parser::ASTProgramNode *programNode) {
-        scopes.emplace_back(new SemanticScope(true));
+        scopes.emplace_back(std::make_shared<SemanticScope>(true));
         // For each statement, accept
         for(auto &statement : programNode -> statements)
             statement -> accept(this);
@@ -49,7 +49,22 @@ namespace visitor{
     // Program
 
     // Expressions
+    // Literal visits change the currentType value
+    void SemanticAnalyser::visit(parser::ASTLiteralNode<int> *literalNode) {
+        currentType = "int";
+    }
 
+    void SemanticAnalyser::visit(parser::ASTLiteralNode<float> *literalNode) {
+        currentType = "float";
+    }
+
+    void SemanticAnalyser::visit(parser::ASTLiteralNode<bool> *literalNode) {
+        currentType = "bool";
+    }
+
+    void SemanticAnalyser::visit(parser::ASTLiteralNode<std::string> *literalNode) {
+        currentType = "string";
+    }
 
     // Expressions
 
@@ -65,7 +80,7 @@ namespace visitor{
         // now generate the function object
         Function f(sFunctionCallNode->identifier, paramTypes, sFunctionCallNode->lineNumber);
         // Now confirm this exists in the function table for any scope
-        for(auto scope : scopes){
+        for(const auto& scope : scopes){
             if(scope->find(f)->first == f.identifier) return;
         }
         // Function hasn't been found in any scope
@@ -113,7 +128,7 @@ namespace visitor{
         // Generate Variable
         Variable v(currentType, assignmentNode->identifier, assignmentNode->lineNumber);
         // Now confirm this exists in the function table for any scope
-        for(auto scope : scopes){
+        for(const auto& scope : scopes){
             auto result = scope->find(v);
             if(result->first == v.identifier){
                 // if identifier has been found
@@ -139,7 +154,7 @@ namespace visitor{
 
     void SemanticAnalyser::visit(parser::ASTBlockNode *blockNode) {
         // Create new scope
-        scopes.emplace_back(new SemanticScope());
+        scopes.emplace_back(std::make_shared<SemanticScope>());
         // Visit each statement in the block
         for(auto &statement : blockNode -> statements)
             statement -> accept(this);
@@ -164,7 +179,7 @@ namespace visitor{
     void SemanticAnalyser::visit(parser::ASTForNode *forNode) {
         // Create new scope for loop params
         // This allows the creation of a new variable only used by the loop
-        scopes.emplace_back(new SemanticScope());
+        scopes.emplace_back(std::make_shared<SemanticScope>());
         // First go over the declaration
         forNode -> declaration -> accept(this);
         // Get the condition type

@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 #include <map>
+#include <memory>
 #include "../Lexer/Token.h"
 
 namespace visitor {
@@ -80,23 +81,23 @@ namespace visitor {
     public:
         SemanticAnalyser()
         {
-            scopes.emplace_back(new SemanticScope());
+            scopes.emplace_back(std::make_shared<SemanticScope>());
             currentType = std::string();
             returns = false;
         };
         ~SemanticAnalyser() = default;
 
-        std::vector<SemanticScope*> scopes;
+        std::vector<std::shared_ptr<SemanticScope>> scopes;
         std::string currentType;
         bool returns;
 
         void visit(parser::ASTProgramNode* programNode) override;
 
-//        void visit(parser::ASTLiteralNode<int>* literalNode) override;
-//        void visit(parser::ASTLiteralNode<float>* literalNode) override;
-//        void visit(parser::ASTLiteralNode<bool>* literalNode) override;
-//        void visit(parser::ASTLiteralNode<std::string>* literalNode) override;
-//        void visit(parser::ASTBinaryNode* binaryNode) override;
+        void visit(parser::ASTLiteralNode<int>* literalNode) override;
+        void visit(parser::ASTLiteralNode<float>* literalNode) override;
+        void visit(parser::ASTLiteralNode<bool>* literalNode) override;
+        void visit(parser::ASTLiteralNode<std::string>* literalNode) override;
+        void visit(parser::ASTBinaryNode* binaryNode) override;
 //        void visit(parser::ASTIdentifierNode* identifierNode) override;
 //        void visit(parser::ASTUnaryNode* unaryNode) override;
 //        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
