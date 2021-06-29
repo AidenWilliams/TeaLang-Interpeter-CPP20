@@ -229,6 +229,28 @@ namespace visitor{
             throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
                                      + std::to_string(f.lineNumber) + " does not have a return statement.");
         }
+        // Now that the return is confirmed
+        // Check current type with the declaration type
+        // since the language does not perform any implicit/automatic typecast (as said in spec)
+        if(functionDeclarationNode->type == currentType){
+            scope->insert(f);
+        }else{
+            // throw an error since type casting is not supported
+            throw std::runtime_error("Function " + f.identifier + " was declared of type " + f.type + " on line "
+                                     + std::to_string(f.lineNumber) + " but has been assigned invalid value of type"
+                                     + currentType + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
+        }
+    }
+
+    void SemanticAnalyser::visit(parser::ASTReturnNode *returnNode) {
+        // Ensure returns is false
+        if(returns){
+            throw ReturnsException();
+        }
+        // Update current expression and update currentType
+        returnNode -> exprNode -> accept(this);
+        // mark returns as true
+        returns = true;
     }
     // Statements
 }

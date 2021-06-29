@@ -13,6 +13,12 @@
 #include "../Lexer/Token.h"
 
 namespace visitor {
+    class ReturnsException : public std::exception{
+        [[nodiscard]] const char* what() const noexcept override{
+            return "Returns Design Exception";
+        }
+    };
+
     class Variable{
     public:
         Variable(std::string type, std::string identifier, unsigned int lineNumber) :
@@ -22,7 +28,6 @@ namespace visitor {
         {};
         ~Variable() = default;
 
-        void foo();
         std::string identifier;
         std::string type;
         unsigned int lineNumber;
@@ -56,7 +61,7 @@ namespace visitor {
         explicit SemanticScope(bool global=false) : global(global) {};
         ~SemanticScope() = default;
 
-        bool isGlobal() { return global; }
+        [[nodiscard]] bool isGlobal() const { return global; }
 
         bool insert(const Variable& v);
         bool insert(const Function& f);
@@ -105,7 +110,7 @@ namespace visitor {
         void visit(parser::ASTForNode* forNode) override;
         void visit(parser::ASTWhileNode* whileNode) override;
         void visit(parser::ASTFunctionDeclarationNode* functionDeclarationNode) override;
-//        void visit(parser::ASTReturnNode* returnNode) override;
+        void visit(parser::ASTReturnNode* returnNode) override;
     };
 }
 
