@@ -33,8 +33,8 @@ namespace visitor {
         {};
         ~Variable() = default;
 
-        std::string identifier;
         std::string type;
+        std::string identifier;
         unsigned int lineNumber;
     };
 
@@ -45,7 +45,6 @@ namespace visitor {
                 paramTypes(std::move(paramTypes)),
                 lineNumber(lineNumber)
         {};
-
         Function(std::string identifier,std::string type, std::vector<std::string> paramTypes, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 type(std::move(type)),
@@ -60,7 +59,7 @@ namespace visitor {
         unsigned int lineNumber;
     };
 
-    class SemanticScope {
+    class Scope {
     private:
         // Python equivalent of:
         // variableTable = {identifier: {TYPE, identifier, lineNumber}}
@@ -70,8 +69,8 @@ namespace visitor {
         std::map<std::string, Function> functionTable;
         bool global;
     public:
-        explicit SemanticScope(bool global=false) : global(global) {};
-        ~SemanticScope() = default;
+        explicit Scope(bool global=false) : global(global) {};
+        ~Scope() = default;
 
         [[nodiscard]] bool isGlobal() const { return global; }
 
@@ -92,13 +91,13 @@ namespace visitor {
     public:
         SemanticAnalyser()
         {
-            scopes.emplace_back(std::make_shared<SemanticScope>());
+            scopes.emplace_back(std::make_shared<Scope>());
             currentType = std::string();
             returns = false;
         };
         ~SemanticAnalyser() = default;
 
-        std::vector<std::shared_ptr<SemanticScope>> scopes;
+        std::vector<std::shared_ptr<Scope>> scopes;
         std::string currentType;
         bool returns;
 
@@ -125,7 +124,5 @@ namespace visitor {
         void visit(parser::ASTReturnNode* returnNode) override;
     };
 }
-
-
 
 #endif //TEALANG_COMPILER_CPP20_SEMANTIC_VISITOR_H

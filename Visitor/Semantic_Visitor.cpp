@@ -11,32 +11,32 @@
 namespace visitor{
     // Semantic Scope
     //TODO: Definitely needs to be tested out
-    bool SemanticScope::insert(const Variable& v){
+    bool Scope::insert(const Variable& v){
         auto ret = variableTable.insert(std::pair<std::string, Variable>(v.identifier, v) );
         return ret.second;
     }
 
-    bool SemanticScope::insert(const Function& f){
+    bool Scope::insert(const Function& f){
         auto ret = functionTable.insert(std::pair<std::string, Function>(f.identifier, f) );
         return ret.second;
     }
 
     std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
-    SemanticScope::find(const Variable& v) {
+    Scope::find(const Variable& v) {
         return variableTable.find(v.identifier);
     }
 
     std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
-    SemanticScope::find(const Function& f) {
+    Scope::find(const Function& f) {
         return functionTable.find(f.identifier);
     }
 
-    bool SemanticScope::found(
+    bool Scope::found(
             std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>> result) {
         return result != variableTable.end();
     }
 
-    bool SemanticScope::found(
+    bool Scope::found(
             std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result) {
         return result != functionTable.end();;
     }
@@ -50,7 +50,7 @@ namespace visitor{
 
     // Program
     void SemanticAnalyser::visit(parser::ASTProgramNode *programNode) {
-        scopes.emplace_back(std::make_shared<SemanticScope>(true));
+        scopes.emplace_back(std::make_shared<Scope>(true));
         // For each statement, accept
         for(auto &statement : programNode -> statements)
             statement -> accept(this);
@@ -305,7 +305,7 @@ namespace visitor{
 
     void SemanticAnalyser::visit(parser::ASTBlockNode *blockNode) {
         // Create new scope
-        scopes.emplace_back(std::make_shared<SemanticScope>());
+        scopes.emplace_back(std::make_shared<Scope>());
         // Visit each statement in the block
         for(auto &statement : blockNode -> statements)
             statement -> accept(this);
@@ -330,7 +330,7 @@ namespace visitor{
     void SemanticAnalyser::visit(parser::ASTForNode *forNode) {
         // Create new scope for loop params
         // This allows the creation of a new variable only used by the loop
-        scopes.emplace_back(std::make_shared<SemanticScope>());
+        scopes.emplace_back(std::make_shared<Scope>());
         // First go over the declaration
         forNode -> declaration -> accept(this);
         // Get the condition type
@@ -368,7 +368,7 @@ namespace visitor{
         }
         // Create new scope for function params
         // This allows the creation of a new variables when they are params
-        scopes.emplace_back(std::make_shared<SemanticScope>());
+        scopes.emplace_back(std::make_shared<Scope>());
         // Generate Function
         // First get the param types vector
         std::vector<std::string> paramTypes;
