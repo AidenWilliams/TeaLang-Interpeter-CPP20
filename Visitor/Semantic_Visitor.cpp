@@ -177,7 +177,7 @@ namespace visitor{
             paramTypes.emplace_back(currentType);
         }
         // now generate the function object
-        Function f(functionCallNode->identifier, paramTypes, functionCallNode->lineNumber);
+        Function f(functionCallNode->identifier->identifier, paramTypes, functionCallNode->lineNumber);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
             if(scope->find(f)->first == f.identifier) {
@@ -203,7 +203,7 @@ namespace visitor{
             paramTypes.emplace_back(currentType);
         }
         // now generate the function object
-        Function f(sFunctionCallNode->identifier, paramTypes, sFunctionCallNode->lineNumber);
+        Function f(sFunctionCallNode->identifier->identifier, paramTypes, sFunctionCallNode->lineNumber);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
             if(scope->find(f)->first == f.identifier) return;
@@ -215,7 +215,7 @@ namespace visitor{
 
     void SemanticAnalyser::visit(parser::ASTDeclarationNode *declarationNode) {
         // Generate Variable
-        Variable v(declarationNode->type, declarationNode->identifier, declarationNode->lineNumber);
+        Variable v(declarationNode->type, declarationNode->identifier->identifier, declarationNode->lineNumber);
         // Check current scope
         auto scope = scopes.back();
         // Try to insert v
@@ -251,7 +251,7 @@ namespace visitor{
          * type = currentType
          */
         // Generate Variable
-        Variable v(currentType, assignmentNode->identifier, assignmentNode->lineNumber);
+        Variable v(currentType, assignmentNode->identifier->identifier, assignmentNode->lineNumber);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
             auto result = scope->find(v);
@@ -337,7 +337,7 @@ namespace visitor{
         // If current scope is not global then do not allow declaration
         auto scope = scopes.back();
         if (!scope->isGlobal()){
-            throw std::runtime_error("Tried declaring function with identifier " + functionDeclarationNode->identifier
+            throw std::runtime_error("Tried declaring function with identifier " + functionDeclarationNode->identifier->identifier
                                      + " in a non-global scope.");
         }
         // Generate Function
@@ -347,7 +347,7 @@ namespace visitor{
             paramTypes.emplace_back(param.first);
         }
         // now generate the function object
-        Function f(functionDeclarationNode->identifier, functionDeclarationNode->type,paramTypes, functionDeclarationNode->lineNumber);
+        Function f(functionDeclarationNode->identifier->identifier, functionDeclarationNode->type, paramTypes, functionDeclarationNode->lineNumber);
         // Try to insert f
         auto search = scope->find(f);
         // compare the found key and the actual key

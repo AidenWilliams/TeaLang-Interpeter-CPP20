@@ -58,14 +58,14 @@ namespace parser {
 
     class ASTFunctionCallNode : public ASTExprNode {
     public:
-        ASTFunctionCallNode(std::string identifier, std::vector<std::shared_ptr<ASTExprNode>> parameters, unsigned int lineNumber) :
+        ASTFunctionCallNode(std::shared_ptr<ASTIdentifierNode> identifier, std::vector<std::shared_ptr<ASTExprNode>> parameters, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 parameters(std::move(parameters)),
                 lineNumber(lineNumber)
         {};
         ~ASTFunctionCallNode() = default;
 
-        std::string identifier;
+        std::shared_ptr<ASTIdentifierNode> identifier;
         std::vector<std::shared_ptr<ASTExprNode>> parameters;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
@@ -126,7 +126,7 @@ namespace parser {
     class ASTSFunctionCallNode : public ASTStatementNode {
         // Identical to the expression node but is a statement
     public:
-        ASTSFunctionCallNode(std::string identifier, std::vector<std::shared_ptr<ASTExprNode>> parameters, unsigned int lineNumber) :
+        ASTSFunctionCallNode(std::shared_ptr<ASTIdentifierNode> identifier, std::vector<std::shared_ptr<ASTExprNode>> parameters, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 parameters(std::move(parameters)),
                 lineNumber(lineNumber)
@@ -140,7 +140,7 @@ namespace parser {
 
         ~ASTSFunctionCallNode() = default;
 
-        std::string identifier;
+        std::shared_ptr<ASTIdentifierNode> identifier;
         std::vector<std::shared_ptr<ASTExprNode>> parameters;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
@@ -148,7 +148,7 @@ namespace parser {
 
     class ASTDeclarationNode : public ASTStatementNode {
     public:
-        ASTDeclarationNode(std::string type, std::string identifier, std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
+        ASTDeclarationNode(std::string type, std::shared_ptr<ASTIdentifierNode> identifier, std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
                 exprNode(std::move(exprNode)),
@@ -157,7 +157,7 @@ namespace parser {
         ~ASTDeclarationNode() = default;
 
         std::string type;
-        std::string identifier;
+        std::shared_ptr<ASTIdentifierNode> identifier;
         std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
@@ -165,14 +165,14 @@ namespace parser {
 
     class ASTAssignmentNode : public ASTStatementNode {
     public:
-        ASTAssignmentNode(std::string identifier, std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
+        ASTAssignmentNode(std::shared_ptr<ASTIdentifierNode> identifier, std::shared_ptr<ASTExprNode> exprNode, unsigned int lineNumber) :
                 identifier(std::move(identifier)),
                 exprNode(std::move(exprNode)),
                 lineNumber(lineNumber)
         {};
         ~ASTAssignmentNode() = default;
 
-        std::string identifier;
+        std::shared_ptr<ASTIdentifierNode> identifier;
         std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
@@ -186,7 +186,7 @@ namespace parser {
         {};
         ~ASTPrintNode() = default;
 
-        std::string identifier;
+        std::shared_ptr<ASTIdentifierNode> identifier;
         std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
@@ -265,7 +265,7 @@ namespace parser {
 
     class ASTFunctionDeclarationNode : public ASTStatementNode {
     public:
-        ASTFunctionDeclarationNode(std::string type, std::string identifier, std::vector<std::pair<std::string, std::string>> parameters,
+        ASTFunctionDeclarationNode(std::string type, std::shared_ptr<ASTIdentifierNode> identifier, std::vector<std::pair<std::string, std::string>> parameters,
                                    std::shared_ptr<ASTBlockNode> functionBlock, unsigned int lineNumber) :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
@@ -276,7 +276,7 @@ namespace parser {
         ~ASTFunctionDeclarationNode() = default;
 
         std::string type;
-        std::string identifier;
+        std::shared_ptr<ASTIdentifierNode> identifier;
         std::vector<std::pair<std::string, std::string>> parameters;
         std::shared_ptr<ASTBlockNode> functionBlock;
         unsigned int lineNumber;

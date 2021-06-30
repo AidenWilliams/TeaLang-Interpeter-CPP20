@@ -125,7 +125,7 @@ namespace visitor {
         // Add indentation level
         indentationLevel++;
         // Function identifier
-        xmlfile << indentation() << "<id>" + functionCallNode->identifier + "</id>" << std::endl;
+        xmlfile << indentation() << "<id>" + functionCallNode->identifier->identifier + "</id>" << std::endl;
         // For each parameter
         for (auto &param : functionCallNode->parameters) {
             xmlfile << indentation() << "<param>" << std::endl;
@@ -149,7 +149,7 @@ namespace visitor {
         // Add indentation level
         indentationLevel++;
         // Function identifier
-        xmlfile << indentation() << "<id>" + sFunctionCallNode->identifier + "</id>" << std::endl;
+        xmlfile << indentation() << "<id>" + sFunctionCallNode->identifier->identifier + "</id>" << std::endl;
         // For each parameter
         for (auto &param : sFunctionCallNode->parameters) {
             xmlfile << indentation() << "<param>" << std::endl;
@@ -174,7 +174,7 @@ namespace visitor {
         indentationLevel++;
         // Add identifier
         xmlfile << indentation() << "<id type = \"" + declarationNode->type + "\">"
-                << declarationNode->identifier << "</id>" << std::endl;
+                << declarationNode->identifier->identifier << "</id>" << std::endl;
         // Expression tags
         declarationNode->exprNode->accept(this);
         // Remove indentation level
@@ -189,7 +189,7 @@ namespace visitor {
         // Add indentation level
         indentationLevel++;
         // Add identifier
-        xmlfile << indentation() << "<id>" << assignmentNode->identifier << "</id>" << std::endl;
+        xmlfile << indentation() << "<id>" << assignmentNode->identifier->identifier << "</id>" << std::endl;
         // Expression tags
         assignmentNode->exprNode->accept(this);
         // Remove indentation level
@@ -342,7 +342,7 @@ namespace visitor {
         // Add indentation level
         indentationLevel++;
         // Function identifier
-        xmlfile << indentation() << "<id>" + functionDeclarationNode->identifier + "</id>" << std::endl;
+        xmlfile << indentation() << "<id>" + functionDeclarationNode->identifier->identifier + "</id>" << std::endl;
         // For each parameter
         for (auto &param : functionDeclarationNode->parameters) {
             xmlfile << indentation() << "<param type = \"" + param.second +

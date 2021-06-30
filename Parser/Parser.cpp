@@ -182,10 +182,10 @@ namespace parser {
     }
 
     std::shared_ptr<ASTFunctionCallNode> Parser::parseFunctionCall(bool semicolon) {
-        // current token is the Function identifier
-        std::string identifier = currentToken.value;
         auto parameters = std::vector<std::shared_ptr<ASTExprNode>>();
-        unsigned int line_number = currentToken.lineNumber;
+        unsigned int lineNumber = currentToken.lineNumber;
+        // current token is the Function identifier
+        auto identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax
@@ -210,7 +210,7 @@ namespace parser {
                 throw std::runtime_error("Expected ';' after ')' on line "
                                          + std::to_string(currentToken.lineNumber) + ".");
         }
-        return std::make_shared<ASTFunctionCallNode>(identifier, parameters, line_number);
+        return std::make_shared<ASTFunctionCallNode>(identifier, parameters, lineNumber);
     }
 
     std::shared_ptr<ASTExprNode> Parser::parseSubExpression() {
@@ -302,12 +302,12 @@ namespace parser {
             throw std::runtime_error("Expected Variable name after 'let' on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Get identifier for new Variable
-        std::string identifier = currentToken.value;
+        auto identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         // Get next token
         moveTokenWindow();
         // Ensure proper syntax
         if (currentToken.type != lexer::TOK_COLON)
-            throw std::runtime_error("Expected ':' after " + identifier + " on line "
+            throw std::runtime_error("Expected ':' after " + identifier->identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Get next token
         moveTokenWindow();
@@ -317,7 +317,7 @@ namespace parser {
         moveTokenWindow();
         // Ensure proper syntax
         if (currentToken.type != lexer::TOK_EQUALS)
-            throw std::runtime_error("Expected assignment operator '=' for " + identifier + " on line "
+            throw std::runtime_error("Expected assignment operator '=' for " + identifier->identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Get next token
         moveTokenWindow();
@@ -327,7 +327,7 @@ namespace parser {
         moveTokenWindow();
         // Ensure proper syntax
         if (currentToken.type != lexer::TOK_SEMICOLON)
-            throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
+            throw std::runtime_error("Expected ';' after assignment of " + identifier->identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Create ASTExpressionNode to return
         return std::make_shared<ASTDeclarationNode>(type, identifier, expr, lineNumber);
@@ -337,13 +337,13 @@ namespace parser {
         // Determine line number
         unsigned int lineNumber = currentToken.lineNumber;
         // Current token is an IDENTIFIER
-        std::string identifier = currentToken.value;
+        auto identifier = std::make_shared<ASTIdentifierNode>(currentToken.value, lineNumber);
         // Get next token
         moveTokenWindow();
         // Token must be =
         // Ensure proper syntax
         if (currentToken.type != lexer::TOK_EQUALS)
-            throw std::runtime_error("Expected assignment operator '=' for " + identifier + " on line "
+            throw std::runtime_error("Expected assignment operator '=' for " + identifier->identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Get next token
         moveTokenWindow();
@@ -353,7 +353,7 @@ namespace parser {
         moveTokenWindow();
         // Ensure proper; syntax
         if (!_for && currentToken.type != lexer::TOK_SEMICOLON)
-            throw std::runtime_error("Expected ';' after assignment of " + identifier + " on line "
+            throw std::runtime_error("Expected ';' after assignment of " + identifier->identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
         // Create ASTAssignmentNode to return
         return std::make_shared<ASTAssignmentNode>(identifier, expr, lineNumber);
@@ -634,6 +634,6 @@ namespace parser {
         // get loop Block
         auto functionBlock = parseBlock();
         // Create ASTFunctionDeclarationNode to return
-        return std::make_shared<ASTFunctionDeclarationNode>(type, identifier->identifier, parameters, functionBlock, lineNumber);
+        return std::make_shared<ASTFunctionDeclarationNode>(type, identifier, parameters, functionBlock, lineNumber);
     }
 }

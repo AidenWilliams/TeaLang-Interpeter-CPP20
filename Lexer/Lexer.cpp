@@ -298,7 +298,7 @@ namespace lexer {
             // Do DFSA transition
             previous_state = current_state;
             current_state = delta(previous_state, c);
-            // Is the current state TODO: What is state 24?
+            // Is the current state
             if (current_state == 24) {
                 // Confirm previous state was a final state
                 if (!finalStates[previous_state])
