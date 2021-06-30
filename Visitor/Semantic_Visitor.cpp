@@ -140,6 +140,13 @@ namespace visitor{
         // Check that a variable with this identifier exists
         for(const auto& scope : scopes) {
             auto result = scope->find(v);
+            if(result->first == v.identifier) {
+                // if identifier has been found
+                // change current Type
+                currentType = result->second.type;
+                // Then return
+                return;
+            }
         }
         // Variable hasn't been found in any scope
         throw std::runtime_error("Variable with identifier " + v.identifier + " called on line "
@@ -340,12 +347,18 @@ namespace visitor{
             throw std::runtime_error("Tried declaring function with identifier " + functionDeclarationNode->identifier->identifier
                                      + " in a non-global scope.");
         }
+        // Create new scope for function params
+        // This allows the creation of a new variables when they are params
+        scopes.emplace_back(std::make_shared<SemanticScope>());
         // Generate Function
         // First get the param types vector
         std::vector<std::string> paramTypes;
         for (const auto& param : functionDeclarationNode->parameters){
-            paramTypes.emplace_back(param.first);
+            paramTypes.emplace_back(param.second);
+            // While going over the types add these to the new scope
+            scopes.back()->insert(Variable(param.second, param.first, functionDeclarationNode->lineNumber));
         }
+        // NOTE: The scope variable is still viewing the global scope
         // now generate the function object
         Function f(functionDeclarationNode->identifier->identifier, functionDeclarationNode->type, paramTypes, functionDeclarationNode->lineNumber);
         // Try to insert f
@@ -379,6 +392,9 @@ namespace visitor{
                                      + std::to_string(f.lineNumber) + " but has been assigned invalid value of type"
                                      + currentType + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
         }
+        // Close function scope
+        // This discards any declared variable in the foo() section
+        scopes.pop_back();
     }
 
     void SemanticAnalyser::visit(parser::ASTReturnNode *returnNode) {

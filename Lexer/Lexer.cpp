@@ -304,9 +304,12 @@ namespace lexer {
                 if (!finalStates[previous_state])
                     throw std::runtime_error("Lexical error on line " + std::to_string(lineNumber) + ".");
                 // Create a token for value with given its final state
-                Token t(value, previous_state, lineNumber);
-                // Store this token t
-                ret.emplace_back(t);
+                // Do not add an empty token
+                if (!value.empty()){
+                    Token t(value, previous_state, lineNumber);
+                    // Store this token t
+                    ret.emplace_back(t);
+                }
                 //reset
                 current_state = delta(0, c);
                 value = "";
