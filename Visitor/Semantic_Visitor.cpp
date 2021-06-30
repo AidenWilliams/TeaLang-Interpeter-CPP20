@@ -23,12 +23,22 @@ namespace visitor{
 
     std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
     SemanticScope::find(const Variable& v) {
-        return variableTable.find(v.identifier); //->first == v.identifier;
+        return variableTable.find(v.identifier);
     }
 
     std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
     SemanticScope::find(const Function& f) {
-        return functionTable.find(f.identifier); //->first == f.identifier;
+        return functionTable.find(f.identifier);
+    }
+
+    bool SemanticScope::found(
+            std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>> result) {
+        return result != variableTable.end();
+    }
+
+    bool SemanticScope::found(
+            std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result) {
+        return result != functionTable.end();;
     }
 
     void erase(const Variable& v);
@@ -84,26 +94,34 @@ namespace visitor{
         }
 
         // check op type
-        if (leftType == "string") {
+        if (currentType == "string") {
             switch (lexer::determineOperatorType(binaryNode->op)) {
                 // string accepted operators
-                case lexer::TOK_PLUS:
                 case lexer::TOK_NOT_EQAUL_TO:
                 case lexer::TOK_EQAUL_TO:
+                    // change current type to bool as a condition has been found
+                    currentType = "bool";
+                case lexer::TOK_PLUS:
                     // Valid tokens
                     break;
                 default:
                     throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
                                                 + " has incorrect operator " + binaryNode->op
-                                                + " acting between expressions of type " + leftType);
+                                                + " acting between expressions of type " + currentType);
             }
-        }else if (leftType == "int" || leftType == "float") {
+        }else if (currentType == "int" || currentType == "float") {
             switch (lexer::determineOperatorType(binaryNode->op)) {
                 // string accepted operators
-                case lexer::TOK_PLUS:
                 case lexer::TOK_NOT_EQAUL_TO:
                 case lexer::TOK_EQAUL_TO:
+                case lexer::TOK_MORE_THAN:
+                case lexer::TOK_LESS_THAN:
+                case lexer::TOK_MORE_THAN_EQUAL_TO:
+                case lexer::TOK_LESS_THAN_EQUAL_TO:
+                    // change current type to bool as a condition has been found
+                    currentType = "bool";
                 // int and float accepted operators
+                case lexer::TOK_PLUS:
                 case lexer::TOK_ASTERISK:
                 case lexer::TOK_DIVIDE:
                 case lexer::TOK_MINUS:
@@ -112,9 +130,9 @@ namespace visitor{
                 default:
                     throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
                                              + " has incorrect operator " + binaryNode->op
-                                             + " acting between expressions of type " + leftType);
+                                             + " acting between expressions of type " + currentType);
             }
-        }else if (leftType == "bool"){
+        }else if (currentType == "bool"){
             switch (lexer::determineOperatorType(binaryNode->op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                 case lexer::TOK_EQAUL_TO:
@@ -124,23 +142,24 @@ namespace visitor{
                 case lexer::TOK_LESS_THAN:
                 case lexer::TOK_MORE_THAN_EQUAL_TO:
                 case lexer::TOK_LESS_THAN_EQUAL_TO:
+                    // current type is already bool
                     // Valid tokens
                     break;
                 default:
                     throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
                                              + " has incorrect operator " + binaryNode->op
-                                             + " acting between expressions of type " + leftType);
+                                             + " acting between expressions of type " + currentType);
             }
         }
     }
-    //TODO: Check why ASTIdentifierNode exists
+
     void SemanticAnalyser::visit(parser::ASTIdentifierNode *identifierNode) {
         // Build variable shell
         Variable v(identifierNode->identifier, identifierNode->lineNumber);
         // Check that a variable with this identifier exists
         for(const auto& scope : scopes) {
             auto result = scope->find(v);
-            if(result->first == v.identifier) {
+            if(scope->found(result)) {
                 // if identifier has been found
                 // change current Type
                 currentType = result->second.type;
@@ -262,7 +281,7 @@ namespace visitor{
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
             auto result = scope->find(v);
-            if(result->first == v.identifier){
+            if(scope->found(result)){
                 // if identifier has been found
                 // check that the types match
                 if(result->second.type != v.type){

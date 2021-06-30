@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
             "}\n"
             "float AverageOfThree (x : float , y : float , z : float) {\n"
             "\tlet total : float = x + y + z ;\n"
-            "\treturn total / 3;\n"
+            "\treturn total / 3.0;\n"
             "}\n"
             "\n"
             "string JoinStr (s1 : string , s2 : string) {\n"
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
             "print XGreaterThanY (x , 2.3 ) ; // t r u e\n"
             "print XGreaterThanYv2 (Square ( 1.5 ) , y ) ; // f a l s e\n"
             "print AverageOfThree (x , y , 1.2 ) ; //3.28\n"
-            "print JoinStr(”Hello” , ” World ” ) ; // H e l l o World\n";
+            "print JoinStr(\"Hello\" , \"World\" ) ; // H e l l o World\n";
 
 
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 //        std::cout << "TESTING XML Generator" << std::endl;
 
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(argv[2]);
+        lexer.extraxtLexemes(_program_);
 
         parser::Parser parser(lexer.tokens);
         auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
