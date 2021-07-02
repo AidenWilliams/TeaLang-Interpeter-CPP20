@@ -638,30 +638,27 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTUnaryNode *unaryNode) {
-//        // visit the expression to get the type and id
-//        unaryNode->exprNode->accept(this);
-//        // now we check the type
-//        if(currentType == "int"){
-//            insert(interpreter::Variable<int>("int", "0CurrentVariable",
-//                    -1 * find(interpreter::Variable<int>(currentID))->second.values.back(),
-//                    unaryNode->lineNumber),
-//                    -1 * find(interpreter::Variable<int>(currentID))->second.values.back());
-//        }else if(currentType == "float"){
-//            insert(interpreter::Variable<float>("float", "0CurrentVariable",
-//                                              -1 * find(interpreter::Variable<float>(currentID))->second.values.back(),
-//                                              unaryNode->lineNumber),
-//                   -1 * find(interpreter::Variable<float>(currentID))->second.values.back());
-//        }else if(currentType == "bool"){
-//            insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-//                                                ! find(interpreter::Variable<bool>(currentID))->second.values.back(),
-//                                                unaryNode->lineNumber),
-//                   ! find(interpreter::Variable<bool>(currentID))->second.values.back());
-//        }else{
-//            // should get here
-//            throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
-//                                     + " has incorrect operator " + unaryNode->op
-//                                     + " acting for expression of type " + currentType);
-//        }
+        // visit the expression to get the type and id
+        unaryNode->exprNode->accept(this);
+        // now we check the type
+        if(currentType == "int"){
+            insert(interpreter::Variable<int>("int", "0CurrentVariable",
+                                               pop<int>() * -1,
+                                              unaryNode->lineNumber));
+        }else if(currentType == "float"){
+            insert(interpreter::Variable<float>("float", "0CurrentVariable",
+                                              pop<float>() * -1,
+                                              unaryNode->lineNumber));
+        }else if(currentType == "bool"){
+            insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
+                                                ! pop<bool>(),
+                                                unaryNode->lineNumber));
+        }else{
+            // should get here
+            throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
+                                     + " has incorrect operator " + unaryNode->op
+                                     + " acting for expression of type " + currentType);
+        }
     }
 
     void Interpreter::visit(parser::ASTFunctionCallNode *functionCallNode) {
