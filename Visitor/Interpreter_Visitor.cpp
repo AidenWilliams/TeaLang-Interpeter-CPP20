@@ -969,10 +969,70 @@ namespace visitor {
         }else if(currentType == "float"){
             std::cout << get<float>(currentID) << std::endl;
         }else if(currentType == "bool"){
-            std::cout << get<bool>(currentID) << std::endl;
+            std::cout << (get<bool>(currentID) ? "true" : "false") << std::endl;
         }else if(currentType == "string"){
             std::cout << get<std::string>(currentID) << std::endl;
         }
+    }
+
+    void Interpreter::visit(parser::ASTBlockNode *blockNode) {
+        // Visit each statement in the block
+        for(auto &statement : blockNode -> statements)
+            statement -> accept(this);
+    }
+
+    void Interpreter::visit(parser::ASTIfNode *ifNode) {
+        // Get the condition
+        ifNode -> condition -> accept(this);
+        // follow the if structure
+        if (get<bool>(currentID)){
+            // do the if block
+            ifNode -> ifBlock -> accept(this);
+        }else{
+            // If there is an else block, do it too
+            if(ifNode -> elseBlock)
+                ifNode -> elseBlock -> accept(this);
+        }
+    }
+
+    void Interpreter::visit(parser::ASTForNode *forNode) {
+        // Get the declaration
+        if(forNode -> declaration)
+            forNode -> declaration -> accept(this);
+        // Get the condition
+        forNode -> condition -> accept(this);
+
+        while(get<bool>(currentID)){
+            // do the loop block
+            forNode -> loopBlock -> accept(this);
+
+            // Now go over the assignment
+            if(forNode -> assignment)
+                forNode -> assignment -> accept(this);
+            // Get the condition again
+            forNode -> condition -> accept(this);
+        }
+    }
+
+    void Interpreter::visit(parser::ASTWhileNode *whileNode) {
+        // Get the condition
+        whileNode -> condition -> accept(this);
+
+        while(get<bool>(currentID)){
+            // do the loop block
+            whileNode -> loopBlock -> accept(this);
+
+            // Get the condition again
+            whileNode -> condition -> accept(this);
+        }
+    }
+
+    void Interpreter::visit(parser::ASTFunctionDeclarationNode *functionDeclarationNode) {
+
+    }
+
+    void Interpreter::visit(parser::ASTReturnNode *returnNode) {
+
     }
     // Statements
 }

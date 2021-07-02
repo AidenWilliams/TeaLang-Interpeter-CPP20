@@ -72,10 +72,15 @@ namespace visitor {
         std::string currentID;
     public:
         Interpreter(){
+            // insert the interpreter variables these being the literal and 0CurrentVariable for each type
             insert(interpreter::Variable<int>("int", "0CurrentVariable", 0, 0));
+            insert(interpreter::Variable<int> ("int", "literal", 0, 0));
             insert(interpreter::Variable<float>("float", "0CurrentVariable", 0.0, 0));
+            insert(interpreter::Variable<float> ("float", "literal", 0.0, 0));
             insert(interpreter::Variable<bool>("bool", "0CurrentVariable", false, 0));
+            insert(interpreter::Variable<bool> ("bool", "literal", false, 0));
             insert(interpreter::Variable<std::string>("string", "0CurrentVariable", "", 0));
+            insert(interpreter::Variable<std::string> ("string", "literal", "", 0));
         };
         ~Interpreter() = default;
 
@@ -122,12 +127,12 @@ namespace visitor {
         void visit(parser::ASTDeclarationNode* declarationNode) override;
         void visit(parser::ASTAssignmentNode* assignmentNode) override;
         void visit(parser::ASTPrintNode* printNode) override;
-//        void visit(parser::ASTBlockNode* blockNode) override;
-//        void visit(parser::ASTIfNode* ifNode) override;
-//        void visit(parser::ASTForNode* forNode) override;
-//        void visit(parser::ASTWhileNode* whileNode) override;
-//        void visit(parser::ASTFunctionDeclarationNode* functionDeclarationNode) override;
-//        void visit(parser::ASTReturnNode* returnNode) override;
+        void visit(parser::ASTBlockNode* blockNode) override;
+        void visit(parser::ASTIfNode* ifNode) override;
+        void visit(parser::ASTForNode* forNode) override;
+        void visit(parser::ASTWhileNode* whileNode) override;
+        void visit(parser::ASTFunctionDeclarationNode* functionDeclarationNode) override;
+        void visit(parser::ASTReturnNode* returnNode) override;
     };
 }
 

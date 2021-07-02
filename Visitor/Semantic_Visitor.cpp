@@ -364,7 +364,8 @@ namespace visitor{
         // This allows the creation of a new variable only used by the loop
         scopes.emplace_back(std::make_shared<Scope>());
         // First go over the declaration
-        forNode -> declaration -> accept(this);
+        if(forNode -> declaration)
+            forNode -> declaration -> accept(this);
         // Get the condition type
         forNode -> condition -> accept(this);
         // Make sure it is boolean
@@ -372,7 +373,8 @@ namespace visitor{
             throw std::runtime_error("Invalid for-condition on line " + std::to_string(forNode->lineNumber)
                                      + ", expected boolean expression.");
         // Now go over the assignment
-        forNode -> assignment -> accept(this);
+        if(forNode -> assignment)
+            forNode -> assignment -> accept(this);
         // Now go over the loop block
         forNode -> loopBlock ->accept(this);
         // Close loop scope
