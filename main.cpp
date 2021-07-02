@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
 //        std::cout << "TESTING Semantic Analyzer" << std::endl;
 
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(_program_); //argv[2]
+        lexer.extraxtLexemes(argv[2]); //_program_
 
         parser::Parser parser(lexer.tokens);
         auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());

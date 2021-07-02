@@ -17,16 +17,18 @@ namespace interpreter {
     class Variable : public visitor::Variable{
     public:
         Variable(const std::string& type, const std::string& identifier, T value, unsigned int lineNumber) :
-                visitor::Variable(type, identifier, lineNumber)
+                visitor::Variable(type, identifier, lineNumber),
+                latestValue(value)
                 {
                     values.emplace_back(value);
                 };
 
-        Variable(const std::string& identifier) :
+        explicit Variable(const std::string& identifier) :
                 visitor::Variable(identifier)
         {};
 
         ~Variable() = default;
+        T latestValue;
         std::vector<T> values;
     };
 
@@ -63,17 +65,17 @@ namespace visitor {
         std::string currentID;
     public:
         Interpreter(){
-            insert(interpreter::Variable<int>("int", "0CurrentVariable", 0, 0), 0);
-            insert(interpreter::Variable<float>("float", "0CurrentVariable", 0.0, 0), 0.0);
-            insert(interpreter::Variable<bool>("bool", "0CurrentVariable", false, 0), false);
-            insert(interpreter::Variable<std::string>("string", "0CurrentVariable", "", 0), "");
+            insert(interpreter::Variable<int>("int", "0CurrentVariable", 0, 0));
+            insert(interpreter::Variable<float>("float", "0CurrentVariable", 0.0, 0));
+            insert(interpreter::Variable<bool>("bool", "0CurrentVariable", false, 0));
+            insert(interpreter::Variable<std::string>("string", "0CurrentVariable", "", 0));
         };
         ~Interpreter() = default;
 
-        bool insert(const interpreter::Variable<int>& v, int value);
-        bool insert(const interpreter::Variable<float>& v, float value);
-        bool insert(const interpreter::Variable<bool>& v, bool value);
-        bool insert(const interpreter::Variable<std::string>& v, const std::string& value);
+        bool insert(const interpreter::Variable<int>& v);
+        bool insert(const interpreter::Variable<float>& v);
+        bool insert(const interpreter::Variable<bool>& v);
+        bool insert(const interpreter::Variable<std::string>& v);
         bool insert(const interpreter::Function& f);
 
         std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Variable<int>>>
@@ -93,7 +95,8 @@ namespace visitor {
         bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Variable<std::string>>> result);
         bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Function>> result);
 
-
+        template<typename T>
+        T pop(const std::string& identifier = "0CurrentVariable");
         void visit(parser::ASTProgramNode* programNode) override;
 
         void visit(parser::ASTLiteralNode<int>* literalNode) override;
@@ -102,9 +105,9 @@ namespace visitor {
         void visit(parser::ASTLiteralNode<std::string>* literalNode) override;
         void visit(parser::ASTBinaryNode* binaryNode) override;
         void visit(parser::ASTIdentifierNode* identifierNode) override;
-//        void visit(parser::ASTUnaryNode* unaryNode) override;
-//        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
-//
+        void visit(parser::ASTUnaryNode* unaryNode) override;
+        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
+
 //        void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
 //        void visit(parser::ASTDeclarationNode* declarationNode) override;
 //        void visit(parser::ASTAssignmentNode* assignmentNode) override;

@@ -183,7 +183,7 @@ namespace visitor{
                                      + " has incorrect operator " + unaryNode->op
                                      + " acting for expression of type " + currentType);
         }else if (currentType == "int" || currentType == "float") {
-            if(unaryNode -> op != "+" && unaryNode -> op != "-")
+            if(unaryNode -> op != "-")
                 throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
                                          + " has incorrect operator " + unaryNode->op
                                          + " acting for expression of type " + currentType);
