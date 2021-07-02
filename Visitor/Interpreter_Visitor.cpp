@@ -123,17 +123,23 @@ namespace visitor {
     // Expressions
     // Literal visits add a new literal variable to the 'literalTYPE' variable in the variableTable
     void Interpreter::visit(parser::ASTLiteralNode<int> *literalNode) {
-        interpreter::Variable<int> v("int", "literalINT", literalNode->val, literalNode->lineNumber);
+        interpreter::Variable<int> v("int", "literal", literalNode->val, literalNode->lineNumber);
         insert(v);
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<float> *literalNode) {
+        interpreter::Variable<float> v("float", "literal", literalNode->val, literalNode->lineNumber);
+        insert(v);
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<bool> *literalNode) {
+        interpreter::Variable<bool> v("bool", "literal", literalNode->val, literalNode->lineNumber);
+        insert(v);
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<std::string> *literalNode) {
+        interpreter::Variable<std::string> v("string", "literal", literalNode->val, literalNode->lineNumber);
+        insert(v);
     }
 
 }
