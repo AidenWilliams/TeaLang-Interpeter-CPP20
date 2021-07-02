@@ -35,9 +35,11 @@ namespace interpreter {
     class Function : public visitor::Function{
     public:
         Function(const std::string& type, const std::string& identifier, const std::vector<std::string>& paramTypes,
+                 std::vector<std::string>  paramIDs,
                  std::shared_ptr<parser::ASTBlockNode> blockNode, unsigned int lineNumber)
                  :
                  visitor::Function(type, identifier, paramTypes, lineNumber),
+                 paramIDs(std::move(paramIDs)),
                  blockNode(std::move(blockNode))
                  {};
 
@@ -46,7 +48,7 @@ namespace interpreter {
         {};
 
         ~Function() = default;
-
+        std::vector<std::string> paramIDs;
         std::shared_ptr<parser::ASTBlockNode> blockNode;
     };
 }
@@ -112,9 +114,9 @@ namespace visitor {
         void visit(parser::ASTUnaryNode* unaryNode) override;
         void visit(parser::ASTFunctionCallNode* functionCallNode) override;
 
-//        void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
-//        void visit(parser::ASTDeclarationNode* declarationNode) override;
-//        void visit(parser::ASTAssignmentNode* assignmentNode) override;
+        void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
+        void visit(parser::ASTDeclarationNode* declarationNode) override;
+        void visit(parser::ASTAssignmentNode* assignmentNode) override;
 //        void visit(parser::ASTPrintNode* printNode) override;
 //        void visit(parser::ASTBlockNode* blockNode) override;
 //        void visit(parser::ASTIfNode* ifNode) override;

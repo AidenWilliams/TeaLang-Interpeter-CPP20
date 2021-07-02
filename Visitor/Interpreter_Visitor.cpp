@@ -21,6 +21,7 @@ namespace visitor {
             interpreter::Variable<int> cpy(result->second);
             // pop the value from the copy
             cpy.values.emplace_back(v.latestValue);
+            cpy.latestValue = v.latestValue;
             // remove the result
             intTable.erase(result);
             // insert the copy
@@ -45,8 +46,9 @@ namespace visitor {
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
             interpreter::Variable<float> cpy(result->second);
-            // pop the value from the copy
+            // add the new value
             cpy.values.emplace_back(v.latestValue);
+            cpy.latestValue = v.latestValue;
             // remove the result
             floatTable.erase(result);
             // insert the copy
@@ -71,8 +73,9 @@ namespace visitor {
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
             interpreter::Variable<bool> cpy(result->second);
-            // pop the value from the copy
+            // add the new value
             cpy.values.emplace_back(v.latestValue);
+            cpy.latestValue = v.latestValue;
             // remove the result
             boolTable.erase(result);
             // insert the copy
@@ -97,8 +100,9 @@ namespace visitor {
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
             interpreter::Variable<std::string> cpy(result->second);
-            // pop the value from the copy
+            // add the new value
             cpy.values.emplace_back(v.latestValue);
+            cpy.latestValue = v.latestValue;
             // remove the result
             stringTable.erase(result);
             // insert the copy
@@ -255,6 +259,7 @@ namespace visitor {
     // Literal visits add a new literal variable to the 'literalTYPE' variable in the variableTable
     void Interpreter::visit(parser::ASTLiteralNode<int> *literalNode) {
         interpreter::Variable<int> v("int", "literal", literalNode->val, literalNode->lineNumber);
+        // remove previous literal
 //        pop<int>("literal");
         insert(v);
         currentType = "int";
@@ -263,6 +268,7 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTLiteralNode<float> *literalNode) {
         interpreter::Variable<float> v("float", "literal", literalNode->val, literalNode->lineNumber);
+        // remove previous literal
 //        pop<float>("literal");
         insert(v);
         currentType = "float";
@@ -271,6 +277,7 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTLiteralNode<bool> *literalNode) {
         interpreter::Variable<bool> v("bool", "literal", literalNode->val, literalNode->lineNumber);
+        // remove previous literal
 //        pop<bool>("literal");
         insert(v);
         currentType = "bool";
@@ -279,6 +286,7 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTLiteralNode<std::string> *literalNode) {
         interpreter::Variable<std::string> v("string", "literal", literalNode->val, literalNode->lineNumber);
+        // remove previous literal
 //        pop<std::string>("literal");
         insert(v);
         currentType = "string";
@@ -291,11 +299,7 @@ namespace visitor {
         // Accept left expression
         binaryNode->left->accept(this);
         // Push left node into 0CurrentVariable
-        if (currentType == "string"){
-            insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
-                                                find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                binaryNode->lineNumber));
-        }else if (currentType == "int"){
+        if (currentType == "int"){
             insert(interpreter::Variable<int>("int", "0CurrentVariable",
                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
                                                       binaryNode->lineNumber));
@@ -307,6 +311,10 @@ namespace visitor {
             insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
                                                       binaryNode->lineNumber));
+        }else if (currentType == "string"){
+            insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
+                                                      find(interpreter::Variable<std::string>(currentID))->second.values.back(),
+                                                      binaryNode->lineNumber));
         }
 
         // Accept right expression
@@ -314,7 +322,7 @@ namespace visitor {
         // We know both variables have the same type
         // So we check the currentType's type to see which operations we can do
         // check op type
-        if (currentType == "string") {
+        if (currentType == "int"){
             switch (lexer::determineOperatorType(binaryNode->op)) {
                 /*
                  * The following code will follow this structure
@@ -331,35 +339,6 @@ namespace visitor {
                  * ...albeit very long and repetitive
                  *
                  */
-                case lexer::TOK_NOT_EQAUL_TO:
-                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                            pop<std::string>()
-                                                            !=
-                                                            find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                            binaryNode->lineNumber));
-                    break;
-                case lexer::TOK_EQAUL_TO:
-                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                                pop<std::string>()
-                                                                ==
-                                                                find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                                binaryNode->lineNumber));
-                    break;
-                case lexer::TOK_PLUS:
-                    insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
-                                                                pop<std::string>()
-                                                                +
-                                                                find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                                binaryNode->lineNumber));
-                    break;
-                default:
-                    // Should never get here because of the semantic pass but still included because of the default case
-                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
-                                             + " has incorrect operator " + binaryNode->op
-                                             + " acting between expressions of type " + currentType);
-            }
-        }else if (currentType == "int"){
-            switch (lexer::determineOperatorType(binaryNode->op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<int>()
@@ -582,6 +561,35 @@ namespace visitor {
                                              + " has incorrect operator " + binaryNode->op
                                              + " acting between expressions of type " + currentType);
             }
+        }else if (currentType == "string") {
+            switch (lexer::determineOperatorType(binaryNode->op)) {
+                case lexer::TOK_NOT_EQAUL_TO:
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
+                                                       pop<std::string>()
+                                                       !=
+                                                       find(interpreter::Variable<std::string>(currentID))->second.values.back(),
+                                                       binaryNode->lineNumber));
+                    break;
+                case lexer::TOK_EQAUL_TO:
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
+                                                       pop<std::string>()
+                                                       ==
+                                                       find(interpreter::Variable<std::string>(currentID))->second.values.back(),
+                                                       binaryNode->lineNumber));
+                    break;
+                case lexer::TOK_PLUS:
+                    insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
+                                                              pop<std::string>()
+                                                              +
+                                                              find(interpreter::Variable<std::string>(currentID))->second.values.back(),
+                                                              binaryNode->lineNumber));
+                    break;
+                default:
+                    // Should never get here because of the semantic pass but still included because of the default case
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
+                                             + " has incorrect operator " + binaryNode->op
+                                             + " acting between expressions of type " + currentType);
+            }
         }
     }
 
@@ -662,16 +670,72 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTFunctionCallNode *functionCallNode) {
-        // First get the param types vector
-        // Get the parameters
-        std::vector<std::pair<std::string, std::string>> params;
-        for (const auto& param : functionCallNode->parameters){
-            param->accept(this);
-            // we know these parameters are good because of the semantic pass
-            params.emplace_back(std::make_pair(currentType, currentID));
+        // Generate Function
+        interpreter::Function f(functionCallNode->identifier->identifier);
+        // find actual function
+        auto result = find(f);
+        if(! found(result)) {
+            // Should never get here
+            throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
+                                     + std::to_string(f.lineNumber) + " has not been declared.");
         }
-
+        // go over the function parameters
+        // and make sure to update these variables according to the parameters passed
+        std::vector<std::pair<std::string, std::string>> type_and_id;
+        for (int i = 0; i < functionCallNode->parameters.size(); ++i){
+            // this visit will check if the variables exist
+            functionCallNode->parameters.at(i)->accept(this);
+            // This visit updates the currentID and currentType
+            // store current ID so that we dont need to visit the parameters again to pop their values
+            type_and_id.emplace_back(std::make_pair(currentType, currentID));
+            if (currentType == "int"){
+                /* Update the currentID variable by emplacing back
+                 * to f.paramIDs.at(i) variable
+                 * what is found inside the variable with identifier currentID
+                 * which we got from visiting the parameter expression
+                 * this temporarily overwrites any global variable
+                 * Once the block is function block is visited we pop back these variables to clear memory
+                */
+                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), find(interpreter::Variable<int>(currentID))->second.latestValue, functionCallNode->lineNumber));
+            }else if (currentType == "float"){
+                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), find(interpreter::Variable<float>(currentID))->second.latestValue, functionCallNode->lineNumber));
+            }else if (currentType == "bool"){
+                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), find(interpreter::Variable<bool>(currentID))->second.latestValue, functionCallNode->lineNumber));
+            }else if (currentType == "string"){
+                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), find(interpreter::Variable<std::string>(currentID))->second.latestValue, functionCallNode->lineNumber));
+            }
+        }
+        // Ok so now we have updated the arguments, so we can call the actual function to run
+        f.blockNode->accept(this);
+        // the function has completed its run now we pop back the variables we added
+        for (const auto& pair : type_and_id){
+            if (pair.first == "int"){
+                /*
+                 * Now we pop the variables
+                */
+                pop<int>(pair.second);
+            }else if (pair.first == "float"){
+                pop<float>(pair.second);
+            }else if (pair.first == "bool"){
+                pop<bool>(pair.second);
+            }else if (pair.first == "string"){
+                pop<std::string>(pair.second);
+            }
+        }
     }
     // Expressions
 
+    // Statemtents
+
+    void Interpreter::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
+
+    }
+
+    void Interpreter::visit(parser::ASTDeclarationNode *declarationNode) {
+
+    }
+
+    void Interpreter::visit(parser::ASTAssignmentNode *assignmentNode) {
+
+    }
 }
