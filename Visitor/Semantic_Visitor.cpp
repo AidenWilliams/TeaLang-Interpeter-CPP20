@@ -277,14 +277,14 @@ namespace visitor{
         // Check current scope
         auto scope = scopes.back();
         // Try to insert v
-        auto search = scope->find(v);
+        auto result = scope->find(v);
         // compare the found key and the actual key
         // if identical than the variable is already declared
-        if(search->first == v.identifier){
+        if(scope->found(result)){
             // The variable has already been declared in the current scope
             throw std::runtime_error("Variable with identifier " + v.identifier + " declared on line "
                                      + std::to_string(v.lineNumber) + " already declared on line "
-                                     + std::to_string(search->second.lineNumber));
+                                     + std::to_string(result->second.lineNumber));
         }
         // Go check the expression node
         // This will change the current type
@@ -355,7 +355,7 @@ namespace visitor{
         // Check the if block
         ifNode -> ifBlock -> accept(this);
         // If there is an else block, check it too
-        if(ifNode -> elseBlock)
+        if(ifNode -> elseBlock != nullptr)
             ifNode -> elseBlock -> accept(this);
     }
 
@@ -364,7 +364,7 @@ namespace visitor{
         // This allows the creation of a new variable only used by the loop
         scopes.emplace_back(std::make_shared<Scope>());
         // First go over the declaration
-        if(forNode -> declaration)
+        if(forNode -> declaration != nullptr )
             forNode -> declaration -> accept(this);
         // Get the condition type
         forNode -> condition -> accept(this);
@@ -373,7 +373,7 @@ namespace visitor{
             throw std::runtime_error("Invalid for-condition on line " + std::to_string(forNode->lineNumber)
                                      + ", expected boolean expression.");
         // Now go over the assignment
-        if(forNode -> assignment)
+        if(forNode -> assignment != nullptr)
             forNode -> assignment -> accept(this);
         // Now go over the loop block
         forNode -> loopBlock ->accept(this);

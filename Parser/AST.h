@@ -277,6 +277,7 @@ namespace parser {
 
         std::string type;
         std::shared_ptr<ASTIdentifierNode> identifier;
+        //                  Type Identifier
         std::vector<std::pair<std::string, std::string>> parameters;
         std::shared_ptr<ASTBlockNode> functionBlock;
         unsigned int lineNumber;

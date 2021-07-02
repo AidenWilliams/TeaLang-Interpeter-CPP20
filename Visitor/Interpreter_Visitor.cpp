@@ -892,7 +892,7 @@ namespace visitor {
         // We dont visit the identifier as this would produce an error as the interpreter expects
         // a variable with identifier as provided to exist
         // instead we directly assign the variable when the interpreter::Variable is created
-        declarationNode -> identifier -> accept(this);
+//        declarationNode -> identifier -> accept(this);
 
         // Visit the expression to get the current Type and Current Id
         declarationNode -> exprNode -> accept(this);
@@ -990,14 +990,14 @@ namespace visitor {
             ifNode -> ifBlock -> accept(this);
         }else{
             // If there is an else block, do it too
-            if(ifNode -> elseBlock)
+            if(ifNode -> elseBlock != nullptr)
                 ifNode -> elseBlock -> accept(this);
         }
     }
 
     void Interpreter::visit(parser::ASTForNode *forNode) {
         // Get the declaration
-        if(forNode -> declaration)
+        if(forNode -> declaration != nullptr)
             forNode -> declaration -> accept(this);
         // Get the condition
         forNode -> condition -> accept(this);
@@ -1007,7 +1007,7 @@ namespace visitor {
             forNode -> loopBlock -> accept(this);
 
             // Now go over the assignment
-            if(forNode -> assignment)
+            if(forNode -> assignment != nullptr)
                 forNode -> assignment -> accept(this);
             // Get the condition again
             forNode -> condition -> accept(this);
@@ -1028,11 +1028,32 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTFunctionDeclarationNode *functionDeclarationNode) {
+        // We dont visit the identifier as this would produce an error as the interpreter expects
+        // a variable with identifier as provided to exist
+        // instead we directly assign the variable when the interpreter::Variable is created
+        // functionDeclarationNode -> identifier -> accept(this);
+        // Split the params into two vectors
 
+        std::vector<std::string> paramTypes;
+        std::vector<std::string> paramIDs;
+        for (auto & parameter : functionDeclarationNode->parameters){
+            paramTypes.emplace_back(parameter.first);
+            paramIDs.emplace_back(parameter.second);
+        }
+
+
+        // Insert the new function
+        insert (
+                interpreter::Function(functionDeclarationNode->type,
+                                      functionDeclarationNode -> identifier -> identifier,
+                                      paramTypes, paramIDs,functionDeclarationNode->functionBlock,
+                                      functionDeclarationNode -> lineNumber)
+        );
     }
 
     void Interpreter::visit(parser::ASTReturnNode *returnNode) {
-
+        // Update current expression
+        returnNode -> exprNode -> accept(this);
     }
     // Statements
 }
