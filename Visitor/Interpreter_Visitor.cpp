@@ -33,6 +33,7 @@ namespace visitor {
             return ret.second;
         }
     }
+
     bool Interpreter::insert(const interpreter::Variable<float>& v){
         if (v.type.empty()){
             throw VariableTypeException();
@@ -60,6 +61,7 @@ namespace visitor {
             return ret.second;
         }
     }
+
     bool Interpreter::insert(const interpreter::Variable<bool>& v){
         if (v.type.empty()){
             throw VariableTypeException();
@@ -87,6 +89,7 @@ namespace visitor {
             return ret.second;
         }
     }
+
     bool Interpreter::insert(const interpreter::Variable<std::string>& v){
         if (v.type.empty()){
             throw VariableTypeException();
@@ -174,14 +177,25 @@ namespace visitor {
         }
         // unfortunately intTable[identifier] kills the cpp compiler
         // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Check if the result has no values variable
+        // If the vector is empty we get a sigsev
+        if(result->second.values.empty()){
+            result->second.values.emplace_back(0);
+        }
         // Copy the result variable
         interpreter::Variable<int> cpy(result -> second);
         // pop the value from the copy
         cpy.values.pop_back();
+        if(!cpy.values.empty()) {
+            cpy.latestValue = cpy.values.back();
+        }else{
+            cpy.latestValue = 0;
+        }
         // remove the result=
         intTable.erase(result);
         // insert the copy
         insert(cpy);
+        // make sure to also remove variable from block variables
         return 1;
     }
 
@@ -192,10 +206,20 @@ namespace visitor {
         }
         // unfortunately floatTable[identifier] kills the cpp compiler
         // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Check if the result has no values variable
+        // If the vector is empty we get a sigsev
+        if(result->second.values.empty()){
+            result->second.values.emplace_back(0);
+        }
         // Copy the result variable
-        interpreter::Variable<float> cpy(result -> second);
+        interpreter::Variable<float> cpy (result -> second);
         // pop the value from the copy
         cpy.values.pop_back();
+        if(!cpy.values.empty()) {
+            cpy.latestValue = cpy.values.back();
+        }else{
+            cpy.latestValue = 0;
+        }
         // remove the result=
         floatTable.erase(result);
         // insert the copy
@@ -210,10 +234,20 @@ namespace visitor {
         }
         // unfortunately boolTable[identifier] kills the cpp compiler
         // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Check if the result has no values variable
+        // If the vector is empty we get a sigsev
         // Copy the result variable
+        if(result->second.values.empty()){
+            result->second.values.emplace_back(0);
+        }
         interpreter::Variable<bool> cpy(result -> second);
         // pop the value from the copy
         cpy.values.pop_back();
+        if(!cpy.values.empty()) {
+            cpy.latestValue = cpy.values.back();
+        }else{
+            cpy.latestValue = false;
+        }
         // remove the result=
         boolTable.erase(result);
         // insert the copy
@@ -228,10 +262,20 @@ namespace visitor {
         }
         // unfortunately stringTable[identifier] kills the cpp compiler
         // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Check if the result has no values variable
+        // If the vector is empty we get a sigsev
+        if(result->second.values.empty()){
+            result->second.values.emplace_back("0");
+        }
         // Copy the result variable
         interpreter::Variable<std::string> cpy(result -> second);
         // pop the value from the copy
         cpy.values.pop_back();
+        if(!cpy.values.empty()) {
+            cpy.latestValue = cpy.values.back();
+        }else{
+            cpy.latestValue = "";
+        }
         // remove the result
         stringTable.erase(result);
         // insert the copy
@@ -794,7 +838,7 @@ namespace visitor {
             functionCallNode -> parameters.at(i) -> accept(this);
             // This visit updates the currentID and currentType
             // store current ID so that we dont need to visit the parameters again to pop their values
-            type_and_id.emplace_back(std::make_pair(currentType, currentID));
+            type_and_id.emplace_back(std::make_pair(currentType, f.paramIDs.at(i)));
             if (currentType == "int"){
                 /* Update the currentID variable by emplacing back
                  * to f.paramIDs.at(i) variable
@@ -1039,8 +1083,8 @@ namespace visitor {
         std::vector<std::string> paramTypes;
         std::vector<std::string> paramIDs;
         for (auto & parameter : functionDeclarationNode->parameters){
-            paramTypes.emplace_back(parameter.first);
-            paramIDs.emplace_back(parameter.second);
+            paramTypes.emplace_back(parameter.second);
+            paramIDs.emplace_back(parameter.first);
         }
 
 

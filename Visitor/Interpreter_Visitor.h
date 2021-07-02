@@ -28,6 +28,12 @@ namespace interpreter {
                 visitor::Variable(identifier)
         {};
 
+        Variable(Variable const &v) :
+                visitor::Variable(v.type, v.identifier, v.lineNumber),
+                latestValue(v.latestValue),
+                values(v.values)
+        {};
+
         ~Variable() = default;
         T latestValue;
         std::vector<T> values;
@@ -46,6 +52,12 @@ namespace interpreter {
 
         explicit Function(const std::string& identifier) :
                 visitor::Function(identifier)
+        {};
+
+        Function(Function const &f) :
+                visitor::Function(f.type, f.identifier, f.paramTypes, f.lineNumber),
+                paramIDs(f.paramIDs),
+                blockNode(f.blockNode)
         {};
 
         ~Function() = default;
@@ -70,6 +82,7 @@ namespace visitor {
         // type, identifier
         std::string currentType;
         std::string currentID;
+
     public:
         Interpreter(){
             // insert the interpreter variables these being the literal and 0CurrentVariable for each type

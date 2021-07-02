@@ -288,7 +288,7 @@ namespace lexer {
         return current_state;
     }
 
-    std::vector <Token> Lexer::extraxtLexemes(const std::string &text) {
+    std::vector <Token> Lexer::extractLexemes(const std::string &text) {
         std::vector <Token> ret;
         std::string value;
         unsigned int previous_state, current_state = 0;

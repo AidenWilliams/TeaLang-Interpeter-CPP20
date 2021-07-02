@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     if (std::string("-l") == argv[1]){
 //        std::cout << "TESTING LEXER" << std::endl;
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(_program_);
+        lexer.extractLexemes(_program_);
         std::cout << "value: type" << std::endl;
         int j = 0;
         for (const auto& i: lexer.tokens){
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
     }else if (std::string("-p") == argv[1]){
 //        std::cout << "TESTING PARSER" << std::endl;
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(argv[2]);
+        lexer.extractLexemes(argv[2]);
 
         parser::Parser parser(lexer.tokens);
         auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 //        std::cout << "TESTING XML Generator" << std::endl;
 
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(_program_);
+        lexer.extractLexemes(_program_);
 
         parser::Parser parser(lexer.tokens);
         auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 //        std::cout << "TESTING Semantic Analyzer" << std::endl;
 
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(argv[2]); //_program_
+        lexer.extractLexemes(argv[2]); //_program_
 
         parser::Parser parser(lexer.tokens);
         auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());
@@ -84,10 +84,10 @@ int main(int argc, char **argv) {
 
         delete programNode1;
     }else if (std::string("-i") == argv[1]){
-//        std::cout << "TESTING Interpeter" << std::endl;
+//        std::cout << "TESTING Interpreter" << std::endl;
 
         lexer::Lexer lexer;
-        lexer.extraxtLexemes(_program_); //_program_
+        lexer.extractLexemes(_program_); //argv[2]
 
         parser::Parser parser(lexer.tokens);
         auto programNode = std::shared_ptr<parser::ASTProgramNode>(parser.parseProgram());

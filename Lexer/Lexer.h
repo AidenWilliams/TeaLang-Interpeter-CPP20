@@ -97,8 +97,8 @@ namespace lexer {
                                             false, false, true, true, true, true, true, true, false, true, true, true,
                                             true, true
                                         };
-        // Function to exract program lexemes into tokens
-        std::vector<Token> extraxtLexemes(const std::string& text);
+        // Function to extract program lexemes into tokens
+        std::vector<Token> extractLexemes(const std::string& text);
 
     };
 };
