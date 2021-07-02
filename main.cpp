@@ -31,15 +31,13 @@ int main(int argc, char **argv) {
             "\tlet s3 : string = s1 + s2 ;\n"
             "\treturn s3 ;\n"
             "}\n"
-            "let x: float = 2.4;\n"
+            "let x : float = 2.4;\n"
             "let y : float = Square (2.5);\n"
             "print y ; //6.25\n"
             "print XGreaterThanY (x , 2.3 ) ; // t r u e\n"
             "print XGreaterThanYv2 (Square ( 1.5 ) , y ) ; // f a l s e\n"
             "print AverageOfThree (x , y , 1.2 ) ; //3.28\n"
             "print JoinStr(\"Hello\" , \"World\" ) ; // H e l l o World\n";
-
-
 
     if (std::string("-l") == argv[1]){
 //        std::cout << "TESTING LEXER" << std::endl;

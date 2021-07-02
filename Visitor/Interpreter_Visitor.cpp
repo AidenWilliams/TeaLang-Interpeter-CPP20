@@ -780,11 +780,12 @@ namespace visitor {
         interpreter::Function f(functionCallNode -> identifier -> identifier);
         // find actual function
         auto result = find(f);
-        if(! found(result)) {
+        if(!found(result)) {
             // Should never get here
             throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
                                      + std::to_string(f.lineNumber) + " has not been declared.");
         }
+        f = result->second;
         // go over the function parameters
         // and make sure to update these variables according to the parameters passed
         std::vector<std::pair<std::string, std::string>> type_and_id;
@@ -843,6 +844,7 @@ namespace visitor {
             throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
                                      + std::to_string(f.lineNumber) + " has not been declared.");
         }
+        f = result->second;
         // go over the function parameters
         // and make sure to update these variables according to the parameters passed
         std::vector<std::pair<std::string, std::string>> type_and_id;
