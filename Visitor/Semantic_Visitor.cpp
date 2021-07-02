@@ -139,7 +139,7 @@ namespace visitor{
                 case lexer::TOK_NOT_EQAUL_TO:
                 case lexer::TOK_EQAUL_TO:
                 case lexer::TOK_AND:
-                case lexer::TOK_NOT:
+                case lexer::TOK_OR:
                 case lexer::TOK_MORE_THAN:
                 case lexer::TOK_LESS_THAN:
                 case lexer::TOK_MORE_THAN_EQUAL_TO:

@@ -176,7 +176,7 @@ namespace visitor {
         // check op type
         bool boolV;
         int intV;
-        float flaotV;
+        float  floatV;
         std::string stringV;
         if (currentType == "string") {
             switch (lexer::determineOperatorType(binaryNode->op)) {
@@ -206,29 +206,205 @@ namespace visitor {
                                                        binaryNode->lineNumber), stringV);
                     break;
                 default:
+                    // Should never get here because of the semantic pass but still included because of the default case
                     throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
                                              + " has incorrect operator " + binaryNode->op
                                              + " acting between expressions of type " + currentType);
             }
-        }else if (currentType == "int" || currentType == "float") {
+        }else if (currentType == "int"){
             switch (lexer::determineOperatorType(binaryNode->op)) {
-                // string accepted operators
                 case lexer::TOK_NOT_EQAUL_TO:
+                    /*
+                     * The following code will follow this structure
+                     *
+                     * typeV = find(leftID)->second.values.back() op find(rightID)->second.values.back()
+                     *
+                     * find(Variable) will give us an iterator from the variable table of the respective type to the found variable
+                     * here I do not check with found() because we already know this variable exists as either the
+                     * literal variable or any other variable as it is changed by the visits to the literal or identifier nodes.
+                     *
+                     * typeV now holds the value of the binary expressions operation
+                     *
+                     * this is inserted into 0CurrentVariable of the type
+                     *
+                     * I am sure that there is a cleaner way of doing this but I still think this is pretty clean
+                     *
+                     * ...albeit very long and repetitive
+                     *
+                     */
+                    boolV  =    find(interpreter::Variable<int>(leftID))->second.values.back()
+                                !=
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_EQAUL_TO:
+                    boolV  =    find(interpreter::Variable<int>(leftID))->second.values.back()
+                                ==
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_MORE_THAN:
+                    boolV  =    find(interpreter::Variable<int>(leftID))->second.values.back()
+                                >
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_LESS_THAN:
+                    boolV  =    find(interpreter::Variable<int>(leftID))->second.values.back()
+                                <
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_MORE_THAN_EQUAL_TO:
+                    boolV  =    find(interpreter::Variable<int>(leftID))->second.values.back()
+                                >=
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_LESS_THAN_EQUAL_TO:
-                    // change current type to bool as a condition has been found
-                    currentType = "bool";
-                    // int and float accepted operators
+                    boolV  =    find(interpreter::Variable<int>(leftID))->second.values.back()
+                                <=
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                // int and float accepted operators
                 case lexer::TOK_PLUS:
+                    intV  =     find(interpreter::Variable<int>(leftID))->second.values.back()
+                                +
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<int>("int", "0CurrentVariable", intV,
+                                                       binaryNode->lineNumber), intV);
+                    break;
                 case lexer::TOK_ASTERISK:
+                    intV  =     find(interpreter::Variable<int>(leftID))->second.values.back()
+                                *
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<int>("int", "0CurrentVariable", intV,
+                                                      binaryNode->lineNumber), intV);
+                    break;
                 case lexer::TOK_DIVIDE:
+                    // if divide by 0 happens, gcc will raise its own error, no need to change the structure to accomodate for this
+                    intV  =     find(interpreter::Variable<int>(leftID))->second.values.back()
+                                /
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<int>("int", "0CurrentVariable", intV,
+                                                      binaryNode->lineNumber), intV);
+                    break;
                 case lexer::TOK_MINUS:
-                    // Valid tokens
+                    intV  =     find(interpreter::Variable<int>(leftID))->second.values.back()
+                                -
+                                find(interpreter::Variable<int>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<int>("int", "0CurrentVariable", intV,
+                                                      binaryNode->lineNumber), intV);
                     break;
                 default:
+                    // Should never get here because of the semantic pass but still included because of the default case
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
+                                             + " has incorrect operator " + binaryNode->op
+                                             + " acting between expressions of type " + currentType);
+            }
+        }else if (currentType == "float") {
+            switch (lexer::determineOperatorType(binaryNode->op)) {
+                case lexer::TOK_NOT_EQAUL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                !=
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                case lexer::TOK_EQAUL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                ==
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                case lexer::TOK_MORE_THAN:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                >
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                case lexer::TOK_LESS_THAN:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                <
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                case lexer::TOK_MORE_THAN_EQUAL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                >=
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                case lexer::TOK_LESS_THAN_EQUAL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                <=
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                    // int and float accepted operators
+                case lexer::TOK_PLUS:
+                    floatV  =   find(interpreter::Variable<float>(leftID))->second.values.back()
+                                +
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<float>("float", "0CurrentVariable", floatV,
+                                                      binaryNode->lineNumber), floatV);
+                    break;
+                case lexer::TOK_ASTERISK:
+                    floatV  =   find(interpreter::Variable<float>(leftID))->second.values.back()
+                                *
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<float>("float", "0CurrentVariable", floatV,
+                                                        binaryNode->lineNumber), floatV);
+                    break;
+                case lexer::TOK_DIVIDE:
+                    // if divide by 0 happens, gcc will raise its own error, no need to change the structure to accomodate for this
+                    floatV  =   find(interpreter::Variable<float>(leftID))->second.values.back()
+                                /
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<float>("float", "0CurrentVariable", floatV,
+                                                        binaryNode->lineNumber), floatV);
+                    break;
+                case lexer::TOK_MINUS:
+                    floatV  =   find(interpreter::Variable<float>(leftID))->second.values.back()
+                                -
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<float>("float", "0CurrentVariable", floatV,
+                                                        binaryNode->lineNumber), floatV);
+                    break;
+                default:
+                    // Should never get here because of the semantic pass but still included because of the default case
                     throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
                                              + " has incorrect operator " + binaryNode->op
                                              + " acting between expressions of type " + currentType);
@@ -236,17 +412,71 @@ namespace visitor {
         }else if (currentType == "bool"){
             switch (lexer::determineOperatorType(binaryNode->op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                !=
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_EQAUL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                ==
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_AND:
-                case lexer::TOK_NOT:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                &&
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
+                case lexer::TOK_OR:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                ||
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_MORE_THAN:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                >
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_LESS_THAN:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                <
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_MORE_THAN_EQUAL_TO:
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                >=
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
+                    break;
                 case lexer::TOK_LESS_THAN_EQUAL_TO:
-                    // current type is already bool
-                    // Valid tokens
+                    boolV  =    find(interpreter::Variable<float>(leftID))->second.values.back()
+                                <=
+                                find(interpreter::Variable<float>(rightID))->second.values.back();
+
+                    insert(interpreter::Variable<bool>("bool", "0CurrentVariable", boolV,
+                                                       binaryNode->lineNumber), boolV);
                     break;
                 default:
+                    // Should never get here because of the semantic pass but still included because of the default case
                     throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
                                              + " has incorrect operator " + binaryNode->op
                                              + " acting between expressions of type " + currentType);
@@ -256,6 +486,60 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTIdentifierNode *identifierNode) {
 
+//        interpreter::Variable<bool> v("bool", "literal", literalNode->val, literalNode->lineNumber);
+//        insert(v, literalNode->val);
+//        currentType = "bool";
+//        currentID = "literal";
+
+        // Build variable shells
+        interpreter::Variable<int> i(identifierNode->identifier);
+        interpreter::Variable<float> f(identifierNode->identifier);
+        interpreter::Variable<bool> b(identifierNode->identifier);
+        interpreter::Variable<std::string> s(identifierNode->identifier);
+        // Check that a variable with this identifier exists
+        auto resultI = find(i);
+        if(found(resultI)) {
+            // if identifier has been found
+            // change current Type
+            currentType = resultI->second.type;
+            // change current ID
+            currentID = resultI->second.identifier;
+            // Then return
+            return;
+        }
+        auto resultF = find(f);
+        if(found(resultF)) {
+            // if identifier has been found
+            // change current Type
+            currentType = resultF->second.type;
+            // change current ID
+            currentID = resultF->second.identifier;
+            // Then return
+            return;
+        }
+        auto resultB = find(b);
+        if(found(resultB)) {
+            // if identifier has been found
+            // change current Type
+            currentType = resultB->second.type;
+            // change current ID
+            currentID = resultB->second.identifier;
+            // Then return
+            return;
+        }
+        auto resultS = find(s);
+        if(found(resultS)) {
+            // if identifier has been found
+            // change current Type
+            currentType = resultS->second.type;
+            // change current ID
+            currentID = resultS->second.identifier;
+            // Then return
+            return;
+        }
+        // Variable hasn't been found (should never get here)
+        throw std::runtime_error("Variable with identifier " + i.identifier + " called on line "
+                                 + std::to_string(i.lineNumber) + " has not been declared.");
     }
 
 }
