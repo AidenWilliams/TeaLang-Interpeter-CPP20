@@ -18,7 +18,7 @@ namespace visitor {
             // unfortunately intTable[identifier] kills the cpp compiler
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
-            interpreter::Variable<int> cpy(result->second);
+            interpreter::Variable<int> cpy(result -> second);
             // pop the value from the copy
             cpy.values.emplace_back(v.latestValue);
             cpy.latestValue = v.latestValue;
@@ -45,7 +45,7 @@ namespace visitor {
             // unfortunately intTable[identifier] kills the cpp compiler
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
-            interpreter::Variable<float> cpy(result->second);
+            interpreter::Variable<float> cpy(result -> second);
             // add the new value
             cpy.values.emplace_back(v.latestValue);
             cpy.latestValue = v.latestValue;
@@ -72,7 +72,7 @@ namespace visitor {
             // unfortunately intTable[identifier] kills the cpp compiler
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
-            interpreter::Variable<bool> cpy(result->second);
+            interpreter::Variable<bool> cpy(result -> second);
             // add the new value
             cpy.values.emplace_back(v.latestValue);
             cpy.latestValue = v.latestValue;
@@ -99,7 +99,7 @@ namespace visitor {
             // unfortunately intTable[identifier] kills the cpp compiler
             // so in order to pop_back a value from the values vector we have to completely replace the object
             // Copy the result variable
-            interpreter::Variable<std::string> cpy(result->second);
+            interpreter::Variable<std::string> cpy(result -> second);
             // add the new value
             cpy.values.emplace_back(v.latestValue);
             cpy.latestValue = v.latestValue;
@@ -172,17 +172,11 @@ namespace visitor {
         if(!found(result)){
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        int ret = result->second.values.back();
-        // unfortunately intTable[identifier] kills the cpp compiler
-        // so in order to pop_back a value from the values vector we have to completely replace the object
-        // Copy the result variable
-        interpreter::Variable<int> cpy(result->second);
-        // pop the value from the copy
-        cpy.values.pop_back();
-        // remove the result
-        intTable.erase(result);
-        // insert the copy
-        insert(cpy);
+        int ret = result -> second.values.back();
+        // pop_back case
+        if (identifier == "0CurrentVariable") {
+            pop_back<int>("0CurrentVariable");
+        }
         // return the popped value
         return ret;
     }
@@ -192,17 +186,11 @@ namespace visitor {
         if(!found(result)){
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        float ret = result->second.values.back();
-        // unfortunately intTable[identifier] kills the cpp compiler
-        // so in order to pop_back a value from the values vector we have to completely replace the object
-        // Copy the result variable
-        interpreter::Variable<float> cpy(result->second);
-        // pop the value from the copy
-        cpy.values.pop_back();
-        // remove the result
-        floatTable.erase(result);
-        // insert the copy
-        insert(cpy);
+        float ret = result -> second.values.back();
+        // pop_back case
+        if (identifier == "0CurrentVariable") {
+            pop_back<float>("0CurrentVariable");
+        }
         // return the popped value
         return ret;
     }
@@ -212,39 +200,45 @@ namespace visitor {
         if(!found(result)){
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        bool ret = result->second.values.back();
-        // unfortunately intTable[identifier] kills the cpp compiler
-        // so in order to pop_back a value from the values vector we have to completely replace the object
-        // Copy the result variable
-        interpreter::Variable<bool> cpy(result->second);
-        // pop the value from the copy
-        cpy.values.pop_back();
-        // remove the result
-        boolTable.erase(result);
-        // insert the copy
-        insert(cpy);
+        bool ret = result -> second.values.back();
+        // pop_back case
+        if (identifier == "0CurrentVariable") {
+            pop_back<bool>("0CurrentVariable");
+        }
         // return the popped value
         return ret;
     }
 
     template<> std::string Interpreter::pop<std::string>(const std::string& identifier) {
         auto result = find(interpreter::Variable<std::string>(identifier));
-        if(!found(result)){
+        if (!found(result)) {
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
         std::string ret = result->second.values.back();
+        // pop_back case
+        if (identifier == "0CurrentVariable"){
+            pop_back<std::string>("0CurrentVariable");
+        }
+        // return the popped value
+        return ret;
+    }
+    template<typename T>
+    void Interpreter::pop_back(const std::string &identifier) {
+        auto result = find(interpreter::Variable<T>(identifier));
+        if(!found(result)){
+            throw std::runtime_error("Failed to find variable with identifier " + identifier);
+        }
         // unfortunately intTable[identifier] kills the cpp compiler
         // so in order to pop_back a value from the values vector we have to completely replace the object
         // Copy the result variable
-        interpreter::Variable<std::string> cpy(result->second);
+        interpreter::Variable<T> cpy(result -> second);
         // pop the value from the copy
         cpy.values.pop_back();
         // remove the result
-        stringTable.erase(result);
+        if(T ==)
+        intTable.erase(result);
         // insert the copy
         insert(cpy);
-        // return the popped value
-        return ret;
     }
 
     // Tools
@@ -258,7 +252,7 @@ namespace visitor {
     // Expressions
     // Literal visits add a new literal variable to the 'literalTYPE' variable in the variableTable
     void Interpreter::visit(parser::ASTLiteralNode<int> *literalNode) {
-        interpreter::Variable<int> v("int", "literal", literalNode->val, literalNode->lineNumber);
+        interpreter::Variable<int> v("int", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
 //        pop<int>("literal");
         insert(v);
@@ -267,7 +261,7 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<float> *literalNode) {
-        interpreter::Variable<float> v("float", "literal", literalNode->val, literalNode->lineNumber);
+        interpreter::Variable<float> v("float", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
 //        pop<float>("literal");
         insert(v);
@@ -276,7 +270,7 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<bool> *literalNode) {
-        interpreter::Variable<bool> v("bool", "literal", literalNode->val, literalNode->lineNumber);
+        interpreter::Variable<bool> v("bool", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
 //        pop<bool>("literal");
         insert(v);
@@ -285,7 +279,7 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<std::string> *literalNode) {
-        interpreter::Variable<std::string> v("string", "literal", literalNode->val, literalNode->lineNumber);
+        interpreter::Variable<std::string> v("string", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
 //        pop<std::string>("literal");
         insert(v);
@@ -297,33 +291,33 @@ namespace visitor {
         // First get the operator
         std::string op = binaryNode -> op;
         // Accept left expression
-        binaryNode->left->accept(this);
+        binaryNode -> left -> accept(this);
         // Push left node into 0CurrentVariable
         if (currentType == "int"){
             insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                                      find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      find(interpreter::Variable<int>(currentID)) -> second.values.back(),
+                                                      binaryNode -> lineNumber));
         }else if (currentType == "float"){
             insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                                      find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      find(interpreter::Variable<float>(currentID)) -> second.values.back(),
+                                                      binaryNode -> lineNumber));
         }else if (currentType == "bool"){
             insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                      find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      find(interpreter::Variable<bool>(currentID)) -> second.values.back(),
+                                                      binaryNode -> lineNumber));
         }else if (currentType == "string"){
             insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
-                                                      find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      find(interpreter::Variable<std::string>(currentID)) -> second.values.back(),
+                                                      binaryNode -> lineNumber));
         }
 
         // Accept right expression
-        binaryNode->right->accept(this);
+        binaryNode -> right -> accept(this);
         // We know both variables have the same type
         // So we check the currentType's type to see which operations we can do
         // check op type
         if (currentType == "int"){
-            switch (lexer::determineOperatorType(binaryNode->op)) {
+            switch (lexer::determineOperatorType(binaryNode -> op)) {
                 /*
                  * The following code will follow this structure
                  *
@@ -343,8 +337,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<int>()
                                                        !=
-                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<int>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -352,8 +346,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<int>()
                                                        ==
-                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<int>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -361,8 +355,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<int>()
                                                        >
-                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<int>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -370,8 +364,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<int>()
                                                        <
-                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<int>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -379,8 +373,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<int>()
                                                        >=
-                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<int>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -388,8 +382,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                       pop<int>()
                                                       <=
-                                                      find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      pop<int>(currentID),
+                                                      binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -398,8 +392,8 @@ namespace visitor {
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
                                                        pop<int>()
                                                        +
-                                                       find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<int>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
                     break;
@@ -407,8 +401,8 @@ namespace visitor {
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
                                                       pop<int>()
                                                       *
-                                                      find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      pop<int>(currentID),
+                                                      binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
                     break;
@@ -417,8 +411,8 @@ namespace visitor {
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
                                                       pop<int>()
                                                       /
-                                                      find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      pop<int>(currentID),
+                                                      binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
                     break;
@@ -426,25 +420,25 @@ namespace visitor {
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
                                                       pop<int>()
                                                       -
-                                                      find(interpreter::Variable<int>(currentID))->second.values.back(),
-                                                      binaryNode->lineNumber));
+                                                      pop<int>(currentID),
+                                                      binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
                     break;
                 default:
                     // Should never get here because of the semantic pass but still included because of the default case
-                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
-                                             + " has incorrect operator " + binaryNode->op
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode -> lineNumber)
+                                             + " has incorrect operator " + binaryNode -> op
                                              + " acting between expressions of type " + currentType);
             }
         }else if (currentType == "float") {
-            switch (lexer::determineOperatorType(binaryNode->op)) {
+            switch (lexer::determineOperatorType(binaryNode -> op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<float>()
                                                        !=
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -452,8 +446,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<float>()
                                                        ==
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -461,8 +455,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<float>()
                                                        >
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -470,8 +464,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<float>()
                                                        <
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -479,8 +473,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<float>()
                                                        >=
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -488,8 +482,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<float>()
                                                        <=
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -498,8 +492,8 @@ namespace visitor {
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
                                                        pop<float>()
                                                        +
-                                                       find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<float>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
                     break;
@@ -507,8 +501,8 @@ namespace visitor {
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
                                                         pop<float>()
                                                         *
-                                                        find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                        binaryNode->lineNumber));
+                                                        pop<float>(currentID),
+                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
                     break;
@@ -517,8 +511,8 @@ namespace visitor {
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
                                                         pop<float>()
                                                         /
-                                                        find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                        binaryNode->lineNumber));
+                                                        pop<float>(currentID),
+                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
                     break;
@@ -526,25 +520,25 @@ namespace visitor {
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
                                                         pop<float>()
                                                         -
-                                                        find(interpreter::Variable<float>(currentID))->second.values.back(),
-                                                        binaryNode->lineNumber));
+                                                        pop<float>(currentID),
+                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
                     break;
                 default:
                     // Should never get here because of the semantic pass but still included because of the default case
-                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
-                                             + " has incorrect operator " + binaryNode->op
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode -> lineNumber)
+                                             + " has incorrect operator " + binaryNode -> op
                                              + " acting between expressions of type " + currentType);
             }
         }else if (currentType == "bool"){
-            switch (lexer::determineOperatorType(binaryNode->op)) {
+            switch (lexer::determineOperatorType(binaryNode -> op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                         pop<bool>()
                                                         !=
-                                                        find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                        binaryNode->lineNumber));
+                                                        pop<bool>(currentID),
+                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -552,8 +546,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        ==
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -561,8 +555,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        &&
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "0CurrentVariable";
                     break;
@@ -570,8 +564,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        ||
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -579,8 +573,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        >
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -588,8 +582,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        <
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -597,8 +591,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        >=
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "0CurrentVariable";
                     break;
@@ -606,25 +600,25 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<bool>()
                                                        <=
-                                                       find(interpreter::Variable<bool>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<bool>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 default:
                     // Should never get here because of the semantic pass but still included because of the default case
-                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
-                                             + " has incorrect operator " + binaryNode->op
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode -> lineNumber)
+                                             + " has incorrect operator " + binaryNode -> op
                                              + " acting between expressions of type " + currentType);
             }
         }else if (currentType == "string") {
-            switch (lexer::determineOperatorType(binaryNode->op)) {
+            switch (lexer::determineOperatorType(binaryNode -> op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<std::string>()
                                                        !=
-                                                       find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<std::string>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -632,8 +626,8 @@ namespace visitor {
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
                                                        pop<std::string>()
                                                        ==
-                                                       find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                       binaryNode->lineNumber));
+                                                       pop<std::string>(currentID),
+                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
@@ -641,15 +635,15 @@ namespace visitor {
                     insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
                                                               pop<std::string>()
                                                               +
-                                                              find(interpreter::Variable<std::string>(currentID))->second.values.back(),
-                                                              binaryNode->lineNumber));
+                                                              pop<std::string>(currentID),
+                                                              binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "string";
                     break;
                 default:
                     // Should never get here because of the semantic pass but still included because of the default case
-                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode->lineNumber)
-                                             + " has incorrect operator " + binaryNode->op
+                    throw std::runtime_error("Expression on line " + std::to_string(binaryNode -> lineNumber)
+                                             + " has incorrect operator " + binaryNode -> op
                                              + " acting between expressions of type " + currentType);
             }
         }
@@ -659,18 +653,18 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTIdentifierNode *identifierNode) {
         // Build variable shells
-        interpreter::Variable<int> i(identifierNode->identifier);
-        interpreter::Variable<float> f(identifierNode->identifier);
-        interpreter::Variable<bool> b(identifierNode->identifier);
-        interpreter::Variable<std::string> s(identifierNode->identifier);
+        interpreter::Variable<int> i(identifierNode -> identifier);
+        interpreter::Variable<float> f(identifierNode -> identifier);
+        interpreter::Variable<bool> b(identifierNode -> identifier);
+        interpreter::Variable<std::string> s(identifierNode -> identifier);
         // Check that a variable with this identifier exists
         auto resultI = find(i);
         if(found(resultI)) {
             // if identifier has been found
             // change current Type
-            currentType = resultI->second.type;
+            currentType = resultI -> second.type;
             // change current ID
-            currentID = resultI->second.identifier;
+            currentID = resultI -> second.identifier;
             // Then return
             return;
         }
@@ -678,9 +672,9 @@ namespace visitor {
         if(found(resultF)) {
             // if identifier has been found
             // change current Type
-            currentType = resultF->second.type;
+            currentType = resultF -> second.type;
             // change current ID
-            currentID = resultF->second.identifier;
+            currentID = resultF -> second.identifier;
             // Then return
             return;
         }
@@ -688,9 +682,9 @@ namespace visitor {
         if(found(resultB)) {
             // if identifier has been found
             // change current Type
-            currentType = resultB->second.type;
+            currentType = resultB -> second.type;
             // change current ID
-            currentID = resultB->second.identifier;
+            currentID = resultB -> second.identifier;
             // Then return
             return;
         }
@@ -698,9 +692,9 @@ namespace visitor {
         if(found(resultS)) {
             // if identifier has been found
             // change current Type
-            currentType = resultS->second.type;
+            currentType = resultS -> second.type;
             // change current ID
-            currentID = resultS->second.identifier;
+            currentID = resultS -> second.identifier;
             // Then return
             return;
         }
@@ -711,31 +705,25 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTUnaryNode *unaryNode) {
         // visit the expression to get the type and id
-        unaryNode->exprNode->accept(this);
+        unaryNode -> exprNode -> accept(this);
         // now we check the type
         if(currentType == "int"){
-            insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                               pop<int>() * -1,
-                                              unaryNode->lineNumber));
+            insert(interpreter::Variable<int>("int", "string", pop<int>(currentID) * -1, unaryNode -> lineNumber));
         }else if(currentType == "float"){
-            insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                              pop<float>() * -1,
-                                              unaryNode->lineNumber));
+            insert(interpreter::Variable<float>("float", "0CurrentVariable", pop<float>(currentID) * -1, unaryNode -> lineNumber));
         }else if(currentType == "bool"){
-            insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                ! pop<bool>(),
-                                                unaryNode->lineNumber));
+            insert(interpreter::Variable<bool>("bool", "0CurrentVariable", ! pop<bool>(currentID), unaryNode -> lineNumber));
         }else{
             // should get here
-            throw std::runtime_error("Expression on line " + std::to_string(unaryNode->lineNumber)
-                                     + " has incorrect operator " + unaryNode->op
+            throw std::runtime_error("Expression on line " + std::to_string(unaryNode -> lineNumber)
+                                     + " has incorrect operator " + unaryNode -> op
                                      + " acting for expression of type " + currentType);
         }
     }
 
     void Interpreter::visit(parser::ASTFunctionCallNode *functionCallNode) {
         // Generate Function
-        interpreter::Function f(functionCallNode->identifier->identifier);
+        interpreter::Function f(functionCallNode -> identifier -> identifier);
         // find actual function
         auto result = find(f);
         if(! found(result)) {
@@ -746,9 +734,9 @@ namespace visitor {
         // go over the function parameters
         // and make sure to update these variables according to the parameters passed
         std::vector<std::pair<std::string, std::string>> type_and_id;
-        for (int i = 0; i < functionCallNode->parameters.size(); ++i){
+        for (int i = 0; i < functionCallNode -> parameters.size(); ++i){
             // this visit will check if the variables exist
-            functionCallNode->parameters.at(i)->accept(this);
+            functionCallNode -> parameters.at(i) -> accept(this);
             // This visit updates the currentID and currentType
             // store current ID so that we dont need to visit the parameters again to pop their values
             type_and_id.emplace_back(std::make_pair(currentType, currentID));
@@ -760,30 +748,30 @@ namespace visitor {
                  * this temporarily overwrites any global variable
                  * Once the block is function block is visited we pop back these variables to clear memory
                 */
-                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), find(interpreter::Variable<int>(currentID))->second.latestValue, functionCallNode->lineNumber));
+                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), pop<int>(currentID), functionCallNode -> lineNumber));
             }else if (currentType == "float"){
-                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), find(interpreter::Variable<float>(currentID))->second.latestValue, functionCallNode->lineNumber));
+                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), pop<float>(currentID), functionCallNode -> lineNumber));
             }else if (currentType == "bool"){
-                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), find(interpreter::Variable<bool>(currentID))->second.latestValue, functionCallNode->lineNumber));
+                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), pop<bool>(currentID), functionCallNode -> lineNumber));
             }else if (currentType == "string"){
-                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), find(interpreter::Variable<std::string>(currentID))->second.latestValue, functionCallNode->lineNumber));
+                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), pop<std::string>(currentID), functionCallNode -> lineNumber));
             }
         }
         // Ok so now we have updated the arguments, so we can call the actual function to run
-        f.blockNode->accept(this);
+        f.blockNode -> accept(this);
         // the function has completed its run now we pop back the variables we added
         for (const auto& pair : type_and_id){
             if (pair.first == "int"){
                 /*
                  * Now we pop the variables
                 */
-                pop<int>(pair.second);
+                pop_back<int>(pair.second);
             }else if (pair.first == "float"){
-                pop<float>(pair.second);
+                pop_back<float>(pair.second);
             }else if (pair.first == "bool"){
-                pop<bool>(pair.second);
+                pop_back<bool>(pair.second);
             }else if (pair.first == "string"){
-                pop<std::string>(pair.second);
+                pop_back<std::string>(pair.second);
             }
         }
     }
@@ -793,7 +781,7 @@ namespace visitor {
 
     void Interpreter::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
         // Generate Function
-        interpreter::Function f(sFunctionCallNode->identifier->identifier);
+        interpreter::Function f(sFunctionCallNode -> identifier -> identifier);
         // find actual function
         auto result = find(f);
         if(! found(result)) {
@@ -804,9 +792,9 @@ namespace visitor {
         // go over the function parameters
         // and make sure to update these variables according to the parameters passed
         std::vector<std::pair<std::string, std::string>> type_and_id;
-        for (int i = 0; i < sFunctionCallNode->parameters.size(); ++i){
+        for (int i = 0; i < sFunctionCallNode -> parameters.size(); ++i){
             // this visit will check if the variables exist
-            sFunctionCallNode->parameters.at(i)->accept(this);
+            sFunctionCallNode -> parameters.at(i) -> accept(this);
             // This visit updates the currentID and currentType
             // store current ID so that we dont need to visit the parameters again to pop their values
             type_and_id.emplace_back(std::make_pair(currentType, currentID));
@@ -818,30 +806,30 @@ namespace visitor {
                  * this temporarily overwrites any global variable
                  * Once the block is function block is visited we pop back these variables to clear memory
                 */
-                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), find(interpreter::Variable<int>(currentID))->second.latestValue, sFunctionCallNode->lineNumber));
+                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), pop<int>(currentID), sFunctionCallNode -> lineNumber));
             }else if (currentType == "float"){
-                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), find(interpreter::Variable<float>(currentID))->second.latestValue, sFunctionCallNode->lineNumber));
+                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), pop<float>(currentID), sFunctionCallNode -> lineNumber));
             }else if (currentType == "bool"){
-                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), find(interpreter::Variable<bool>(currentID))->second.latestValue, sFunctionCallNode->lineNumber));
+                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), pop<bool>(currentID), sFunctionCallNode -> lineNumber));
             }else if (currentType == "string"){
-                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), find(interpreter::Variable<std::string>(currentID))->second.latestValue, sFunctionCallNode->lineNumber));
+                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), pop<std::string>(currentID), sFunctionCallNode -> lineNumber));
             }
         }
         // Ok so now we have updated the arguments, so we can call the actual function to run
-        f.blockNode->accept(this);
+        f.blockNode -> accept(this);
         // the function has completed its run now we pop back the variables we added
         for (const auto& pair : type_and_id){
             if (pair.first == "int"){
                 /*
                  * Now we pop the variables
                 */
-                pop<int>(pair.second);
+                pop_back<int>(pair.second);
             }else if (pair.first == "float"){
-                pop<float>(pair.second);
+                pop_back<float>(pair.second);
             }else if (pair.first == "bool"){
-                pop<bool>(pair.second);
+                pop_back<bool>(pair.second);
             }else if (pair.first == "string"){
-                pop<std::string>(pair.second);
+                pop_back<std::string>(pair.second);
             }
         }
     }
@@ -850,47 +838,47 @@ namespace visitor {
         // We dont visit the identifier as this would produce an error as the interpreter expects
         // a variable with identifier as provided to exist
         // instead we directly assign the variable when the interpreter::Variable is created
-        declarationNode->identifier->accept(this);
+        declarationNode -> identifier -> accept(this);
 
         // Visit the expression to get the current Type and Current Id
-        declarationNode->exprNode->accept(this);
+        declarationNode -> exprNode -> accept(this);
         // Now we have an updated current type and id
         // Create a variable with this information
 
         // Ensure interpreter/semantic is working as intended by comparing the type in the AST and the current TYPE
-        if(declarationNode->type != currentType){
+        if(declarationNode -> type != currentType){
             throw std::runtime_error("Types don't match between declaration and expression on line "
-                                     + std::to_string(declarationNode->lineNumber) + ".");
+                                     + std::to_string(declarationNode -> lineNumber) + ".");
         }
         // Insert the new variable
         if(currentType == "int"){
             insert (
-                    interpreter::Variable<int>(currentType, declarationNode->identifier->identifier, pop<int>(currentID), declarationNode->lineNumber)
+                    interpreter::Variable<int>(currentType, declarationNode -> identifier -> identifier, pop<int>(currentID), declarationNode -> lineNumber)
             );
         }else if(currentType == "float"){
             insert (
-                    interpreter::Variable<float>(currentType, declarationNode->identifier->identifier, pop<float>(currentID), declarationNode->lineNumber)
+                    interpreter::Variable<float>(currentType, declarationNode -> identifier -> identifier, pop<float>(currentID), declarationNode -> lineNumber)
             );
         }else if(currentType == "bool"){
             insert (
-                    interpreter::Variable<bool>(currentType, declarationNode->identifier->identifier, pop<bool>(currentID), declarationNode->lineNumber)
+                    interpreter::Variable<bool>(currentType, declarationNode -> identifier -> identifier, pop<bool>(currentID), declarationNode -> lineNumber)
             );
         }else if(currentType == "string"){
             insert (
-                    interpreter::Variable<std::string>(currentType, declarationNode->identifier->identifier, pop<std::string>(currentID), declarationNode->lineNumber)
+                    interpreter::Variable<std::string>(currentType, declarationNode -> identifier -> identifier, pop<std::string>(currentID), declarationNode -> lineNumber)
             );
         }
     }
 
     void Interpreter::visit(parser::ASTAssignmentNode *assignmentNode) {
         // We visit the identifier node now as we expect the variable to exist
-        assignmentNode->identifier->accept(this);
+        assignmentNode -> identifier -> accept(this);
         // We can update the type and identifier local variables
         // These two variables define the found variable
         std::string type = currentType;
         std::string id = currentID;
         // Visit the expression to get the current Type and Current Id
-        assignmentNode->exprNode->accept(this);
+        assignmentNode -> exprNode -> accept(this);
         // Now we have an updated current type and id
         // These two variables define what we will give id
         // Replace the variable value
@@ -898,23 +886,38 @@ namespace visitor {
         if(currentType == "int"){
             pop<int>(id);
             insert (
-                    interpreter::Variable<int>(type, id, pop<int>(currentID), assignmentNode->lineNumber)
+                    interpreter::Variable<int>(type, id, pop<int>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "float"){
             pop<float>(id);
             insert (
-                    interpreter::Variable<float>(type, id, pop<float>(currentID), assignmentNode->lineNumber)
+                    interpreter::Variable<float>(type, id, pop<float>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "bool"){
             pop<bool>(id);
             insert (
-                    interpreter::Variable<bool>(type, id, pop<bool>(currentID), assignmentNode->lineNumber)
+                    interpreter::Variable<bool>(type, id, pop<bool>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "string"){
             pop<std::string>(id);
             insert (
-                    interpreter::Variable<std::string>(type, id, pop<std::string>(currentID), assignmentNode->lineNumber)
+                    interpreter::Variable<std::string>(type, id, pop<std::string>(currentID), assignmentNode -> lineNumber)
             );
+        }
+    }
+
+    void Interpreter::visit(parser::ASTPrintNode *printNode) {
+        // Visit expression node to get current type
+        printNode -> exprNode -> accept(this);
+
+        if(currentType == "int"){
+            std::cout << pop<int>(currentID) << std::endl;
+        }else if(currentType == "float"){
+            std::cout << pop<float>(currentID) << std::endl;
+        }else if(currentType == "bool"){
+            std::cout << pop<bool>(currentID) << std::endl;
+        }else if(currentType == "string"){
+            std::cout << pop<std::string>(currentID) << std::endl;
         }
     }
     // Statements

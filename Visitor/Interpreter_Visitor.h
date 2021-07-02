@@ -11,6 +11,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <iostream>
 
 namespace interpreter {
     template <typename T>
@@ -103,6 +104,9 @@ namespace visitor {
 
         template<typename T>
         T pop(const std::string& identifier = "0CurrentVariable");
+        template<typename T>
+        void pop_back(const std::string& identifier);
+
         void visit(parser::ASTProgramNode* programNode) override;
 
         void visit(parser::ASTLiteralNode<int>* literalNode) override;
@@ -117,7 +121,7 @@ namespace visitor {
         void visit(parser::ASTSFunctionCallNode* sFunctionCallNode) override;
         void visit(parser::ASTDeclarationNode* declarationNode) override;
         void visit(parser::ASTAssignmentNode* assignmentNode) override;
-//        void visit(parser::ASTPrintNode* printNode) override;
+        void visit(parser::ASTPrintNode* printNode) override;
 //        void visit(parser::ASTBlockNode* blockNode) override;
 //        void visit(parser::ASTIfNode* ifNode) override;
 //        void visit(parser::ASTForNode* forNode) override;
