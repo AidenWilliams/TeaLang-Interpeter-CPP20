@@ -22,6 +22,10 @@ namespace interpreter {
                     values.emplace_back(value);
                 };
 
+        Variable(const std::string& identifier) :
+                visitor::Variable(identifier)
+        {};
+
         ~Variable() = default;
         std::vector<T> values;
     };

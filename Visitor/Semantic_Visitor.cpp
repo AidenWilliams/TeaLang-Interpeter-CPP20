@@ -157,7 +157,7 @@ namespace visitor{
 
     void SemanticAnalyser::visit(parser::ASTIdentifierNode *identifierNode) {
         // Build variable shell
-        Variable v(identifierNode->identifier, identifierNode->lineNumber);
+        Variable v(identifierNode->identifier);
         // Check that a variable with this identifier exists
         for(const auto& scope : scopes) {
             auto result = scope->find(v);
@@ -205,7 +205,7 @@ namespace visitor{
             paramTypes.emplace_back(currentType);
         }
         // now generate the function object
-        Function f(functionCallNode->identifier->identifier, paramTypes, functionCallNode->lineNumber);
+        Function f(functionCallNode->identifier->identifier, paramTypes);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
             if(scope->find(f)->first == f.identifier) {
@@ -231,7 +231,7 @@ namespace visitor{
             paramTypes.emplace_back(currentType);
         }
         // now generate the function object
-        Function f(sFunctionCallNode->identifier->identifier, paramTypes, sFunctionCallNode->lineNumber);
+        Function f(sFunctionCallNode->identifier->identifier, paramTypes);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
             if(scope->find(f)->first == f.identifier) return;
