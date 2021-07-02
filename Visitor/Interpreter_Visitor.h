@@ -6,70 +6,66 @@
 #define TEALANG_COMPILER_CPP20_INTERPRETER_VISITOR_H
 
 #include "Visitor.h"
-#include "../Parser/AST.h"
+#include "Semantic_Visitor.h"
 #include <utility>
 #include <vector>
 #include <map>
 #include <memory>
-#include "../Lexer/Token.h"
 
 namespace interpreter {
-    class Variable{
+    template <typename T>
+    class Variable : public visitor::Variable{
     public:
-        Variable(std::string type, std::string identifier, std::string val, unsigned int lineNumber) :
-                type(std::move(type)),
-                identifier(std::move(identifier)),
-                val(std::move(val)),
-                lineNumber(lineNumber)
-        {};
-        ~Variable() = default;
+        Variable(const std::string& type, const std::string& identifier, T value, unsigned int lineNumber) :
+                visitor::Variable(type, identifier, lineNumber)
+                {
+                    values.emplace_back(value);
+                };
 
-        std::string type;
-        std::string identifier;
-        std::string val;
-        unsigned int lineNumber;
+        ~Variable() = default;
+        std::vector<T> values;
     };
 
-    class Function{
+    class Function : public visitor::Function{
     public:
-        Function(std::string identifier,std::string type, std::vector<std::string> paramTypes, unsigned int lineNumber) :
-                identifier(std::move(identifier)),
-                type(std::move(type)),
-                paramTypes(std::move(paramTypes)),
-                lineNumber(lineNumber)
-        {};
+        Function(const std::string& type, const std::string& identifier, const std::vector<std::string>& paramTypes,
+                 std::shared_ptr<parser::ASTBlockNode> blockNode, unsigned int lineNumber)
+                 :
+                 visitor::Function(type, identifier, paramTypes, lineNumber),
+                 blockNode(std::move(blockNode))
+                 {};
+
         ~Function() = default;
 
-        std::string identifier;
-        std::string type;
-        std::vector<std::string> paramTypes;
-        unsigned int lineNumber;
+        std::shared_ptr<parser::ASTBlockNode> blockNode;
     };
+}
 
-    class Interpreter : public visitor::Visitor {
+namespace visitor {
+    class Interpreter : public Visitor {
     private:
         // Python equivalent of:
         // variableTable = {identifier: {TYPE, identifier, val, lineNumber}}
-        std::map<std::string, Variable> variableTable;
+        std::map<std::string, visitor::Variable> variableTable;
         // Python equivalent of:
         // functionTable = {identifier: { identifier, [ARGUMENT_TYPES,], lineNumber}}
-        std::map<std::string, Function> functionTable;
+        std::map<std::string, interpreter::Function> functionTable;
     public:
         Interpreter() = default;
         ~Interpreter() = default;
 
-        bool insert(const Variable& v);
-        bool insert(const Function& f);
+        bool insert(const visitor::Variable& v);
+        bool insert(const interpreter::Function& f);
 
-        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
-        find(const Variable& v);
-        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
-        find(const Function& f);
+        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, visitor::Variable>>
+        find(const visitor::Variable& v);
+        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Function>>
+        find(const interpreter::Function& f);
 
-        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result);
-        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>> result);
+        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, visitor::Variable>> result);
+        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Function>> result);
 
-//        void visit(parser::ASTProgramNode* programNode) override;
+        void visit(parser::ASTProgramNode* programNode) override;
 
 //        void visit(parser::ASTLiteralNode<int>* literalNode) override;
 //        void visit(parser::ASTLiteralNode<float>* literalNode) override;

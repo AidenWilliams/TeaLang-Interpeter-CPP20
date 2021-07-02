@@ -19,10 +19,21 @@ namespace visitor {
             return "Returns Design Exception";
         }
     };
+    class VariableTypeException : public std::exception{
+        [[nodiscard]] const char* what() const noexcept override{
+            return "Variable Has No Type Design Exception";
+        }
+    };
+    class FunctionTypeException : public std::exception{
+        [[nodiscard]] const char* what() const noexcept override{
+            return "Function Has No Type Design Exception";
+        }
+    };
 
     class Variable{
     public:
         Variable(std::string identifier, unsigned int lineNumber) :
+                type(""),
                 identifier(std::move(identifier)),
                 lineNumber(lineNumber)
         {};
@@ -41,22 +52,23 @@ namespace visitor {
     class Function{
     public:
         Function(std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
+                type(""),
                 identifier(std::move(identifier)),
                 paramTypes(std::move(paramTypes)),
                 lineNumber(lineNumber)
         {};
-        Function(std::string identifier,std::string type, std::vector<std::string> paramTypes, unsigned int lineNumber) :
-                identifier(std::move(identifier)),
+        Function(std::string type, std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
                 type(std::move(type)),
+                identifier(std::move(identifier)),
                 paramTypes(std::move(paramTypes)),
                 lineNumber(lineNumber)
         {};
         ~Function() = default;
 
         std::string identifier;
-        std::string type;
         std::vector<std::string> paramTypes;
         unsigned int lineNumber;
+        std::string type;
     };
 
     class Scope {
@@ -65,7 +77,7 @@ namespace visitor {
         // variableTable = {identifier: {TYPE, identifier, lineNumber}}
         std::map<std::string, Variable> variableTable;
         // Python equivalent of:
-        // functionTable = {identifier: { identifier, [ARGUMENT_TYPES,], lineNumber}}
+        // functionTable = {identifier: {TYPE, identifier, [ARGUMENT_TYPES,], lineNumber}}
         std::map<std::string, Function> functionTable;
         bool global;
     public:
@@ -82,8 +94,8 @@ namespace visitor {
         std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
         find(const Function& f);
 
-        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result);
         bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>> result);
+        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result);
     };
 
 

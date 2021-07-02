@@ -12,11 +12,17 @@ namespace visitor{
     // Semantic Scope
     //TODO: Definitely needs to be tested out
     bool Scope::insert(const Variable& v){
+        if (v.type.empty()){
+            throw VariableTypeException();
+        }
         auto ret = variableTable.insert(std::pair<std::string, Variable>(v.identifier, v) );
         return ret.second;
     }
 
     bool Scope::insert(const Function& f){
+        if (f.type.empty()){
+            throw FunctionTypeException();
+        }
         auto ret = functionTable.insert(std::pair<std::string, Function>(f.identifier, f) );
         return ret.second;
     }
@@ -40,10 +46,6 @@ namespace visitor{
             std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result) {
         return result != functionTable.end();;
     }
-
-    void erase(const Variable& v);
-    void erase(const Function& f);
-
     // Semantic Scope
 
     // Semantic Analyses
@@ -379,7 +381,7 @@ namespace visitor{
         }
         // NOTE: The scope variable is still viewing the global scope
         // now generate the function object
-        Function f(functionDeclarationNode->identifier->identifier, functionDeclarationNode->type, paramTypes, functionDeclarationNode->lineNumber);
+        Function f(functionDeclarationNode->type, functionDeclarationNode->identifier->identifier, paramTypes, functionDeclarationNode->lineNumber);
         // Try to insert f
         auto search = scope->find(f);
         // compare the found key and the actual key
