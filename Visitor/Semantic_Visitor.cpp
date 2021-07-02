@@ -197,20 +197,33 @@ namespace visitor{
     }
 
     void SemanticAnalyser::visit(parser::ASTFunctionCallNode *functionCallNode) {
-        // Generate Function
-        // Get the param types vector
+        // Check parameters
         std::vector<std::string> paramTypes;
         for (const auto& param : functionCallNode->parameters){
+            // this visit will check if the variables exist
             param->accept(this);
+            // store the types (in order) so than we can confirm that the types are good
+            // when the function is found
             paramTypes.emplace_back(currentType);
         }
-        // now generate the function object
-        Function f(functionCallNode->identifier->identifier, paramTypes);
+        // Generate Function
+        Function f(functionCallNode->identifier->identifier);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
-            if(scope->find(f)->first == f.identifier) {
+            auto result = scope->find(f);
+            if(scope->found(result)) {
                 // change current type to the function return type
-                currentType = scope->find(f)->second.type;
+                currentType = result->second.type;
+                // start going over the parameters in the function
+                for (int i = 0; i < result->second.paramTypes.size(); ++i){
+                    if (result->second.paramTypes.at(i) != paramTypes.at(i)){
+                        throw std::runtime_error("The " + std::to_string(i) + "th argument's type on line "
+                                                + std::to_string(f.lineNumber) +" does not match "
+                                                + f.identifier + "'s argument signature. The type should be "
+                                                + result->second.paramTypes.at(i));
+                    }
+                }
+                // all params match
                 return;
             }
         }
@@ -223,18 +236,35 @@ namespace visitor{
 
     // Statements
     void SemanticAnalyser::visit(parser::ASTSFunctionCallNode *sFunctionCallNode) {
-        // Generate Function
-        // First get the param types vector
+        // Check parameters
         std::vector<std::string> paramTypes;
         for (const auto& param : sFunctionCallNode->parameters){
+            // this visit will check if the variables exist
             param->accept(this);
+            // store the types (in order) so than we can confirm that the types are good
+            // when the function is found
             paramTypes.emplace_back(currentType);
         }
         // now generate the function object
-        Function f(sFunctionCallNode->identifier->identifier, paramTypes);
+        Function f(sFunctionCallNode->identifier->identifier);
         // Now confirm this exists in the function table for any scope
         for(const auto& scope : scopes){
-            if(scope->find(f)->first == f.identifier) return;
+            auto result = scope->find(f);
+            if(scope->found(result)) {
+                // change current type to the function return type
+                currentType = result->second.type;
+                // start going over the parameters in the function
+                for (int i = 0; i < result->second.paramTypes.size(); ++i){
+                    if (result->second.paramTypes.at(i) != paramTypes.at(i)){
+                        throw std::runtime_error("The " + std::to_string(i) + "th argument's type on line "
+                                                 + std::to_string(f.lineNumber) +" does not match "
+                                                 + f.identifier + "'s argument signature. The type should be "
+                                                 + result->second.paramTypes.at(i));
+                    }
+                }
+                // all params match
+                return;
+            }
         }
         // Function hasn't been found in any scope
         throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
@@ -383,16 +413,16 @@ namespace visitor{
         // now generate the function object
         Function f(functionDeclarationNode->type, functionDeclarationNode->identifier->identifier, paramTypes, functionDeclarationNode->lineNumber);
         // Try to insert f
-        auto search = scope->find(f);
+        auto result = scope->find(f);
         // compare the found key and the actual key
         // if identical than the function is already declared
         // Overloading is a problem for task 2 so we do not care if the params area actually different
-        if(search->first == f.identifier){
+        if(scope->found(result)){
             // The variable has already been declared in the current scope
             // Overloading is a problem for task 2
             throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
                                      + std::to_string(f.lineNumber) + " already declared on line "
-                                     + std::to_string(search->second.lineNumber));
+                                     + std::to_string(result->second.lineNumber));
         }
         // Go check the block node
         returns = false;

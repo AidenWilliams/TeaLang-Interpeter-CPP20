@@ -32,7 +32,7 @@ namespace visitor {
 
     class Variable{
     public:
-        Variable(std::string identifier) :
+        explicit Variable(std::string identifier) :
                 type(""),
                 identifier(std::move(identifier)),
                 lineNumber(0)
@@ -51,10 +51,10 @@ namespace visitor {
 
     class Function{
     public:
-        Function(std::string identifier, std::vector<std::string> paramTypes) :
+        explicit Function(std::string identifier) :
                 type(""),
                 identifier(std::move(identifier)),
-                paramTypes(std::move(paramTypes)),
+                paramTypes(),
                 lineNumber(0)
         {};
         Function(std::string type, std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :

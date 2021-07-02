@@ -41,6 +41,10 @@ namespace interpreter {
                  blockNode(std::move(blockNode))
                  {};
 
+        explicit Function(const std::string& identifier) :
+                visitor::Function(identifier)
+        {};
+
         ~Function() = default;
 
         std::shared_ptr<parser::ASTBlockNode> blockNode;

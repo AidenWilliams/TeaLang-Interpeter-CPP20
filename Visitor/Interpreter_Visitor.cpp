@@ -662,6 +662,14 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTFunctionCallNode *functionCallNode) {
+        // First get the param types vector
+        // Get the parameters
+        std::vector<std::pair<std::string, std::string>> params;
+        for (const auto& param : functionCallNode->parameters){
+            param->accept(this);
+            // we know these parameters are good because of the semantic pass
+            params.emplace_back(std::make_pair(currentType, currentID));
+        }
 
     }
     // Expressions
