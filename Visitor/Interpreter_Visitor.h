@@ -53,8 +53,17 @@ namespace visitor {
         // Python equivalent of:
         // functionTable = {identifier: { identifier, [ARGUMENT_TYPES,], lineNumber}}
         std::map<std::string, interpreter::Function> functionTable;
+
+        // type, identifier
+        std::string currentType;
+        std::string currentID;
     public:
-        Interpreter() = default;
+        Interpreter(){
+            insert(interpreter::Variable<int>("int", "0CurrentVariable", 0, 0), 0);
+            insert(interpreter::Variable<float>("float", "0CurrentVariable", 0.0, 0), 0.0);
+            insert(interpreter::Variable<bool>("bool", "0CurrentVariable", false, 0), false);
+            insert(interpreter::Variable<std::string>("string", "0CurrentVariable", "", 0), "");
+        };
         ~Interpreter() = default;
 
         bool insert(const interpreter::Variable<int>& v, int value);
@@ -80,14 +89,15 @@ namespace visitor {
         bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Variable<std::string>>> result);
         bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Function>> result);
 
+
         void visit(parser::ASTProgramNode* programNode) override;
 
         void visit(parser::ASTLiteralNode<int>* literalNode) override;
         void visit(parser::ASTLiteralNode<float>* literalNode) override;
         void visit(parser::ASTLiteralNode<bool>* literalNode) override;
         void visit(parser::ASTLiteralNode<std::string>* literalNode) override;
-//        void visit(parser::ASTBinaryNode* binaryNode) override;
-//        void visit(parser::ASTIdentifierNode* identifierNode) override;
+        void visit(parser::ASTBinaryNode* binaryNode) override;
+        void visit(parser::ASTIdentifierNode* identifierNode) override;
 //        void visit(parser::ASTUnaryNode* unaryNode) override;
 //        void visit(parser::ASTFunctionCallNode* functionCallNode) override;
 //

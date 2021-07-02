@@ -9,7 +9,6 @@
 #include "Visitor/Semantic_Visitor.h"
 
 int main(int argc, char **argv) {
-
     std::string _program_ =
             "float Square (x : float) {\n"
             "\treturn x*x;\n"
