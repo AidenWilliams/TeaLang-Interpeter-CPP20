@@ -167,12 +167,84 @@ namespace visitor {
         return result != functionTable.end();
     }
 
-    template<> int Interpreter::pop<int>(const std::string& identifier) {
+    template<> int Interpreter::pop_back<int>(const std::string &identifier) {
         auto result = find(interpreter::Variable<int>(identifier));
         if(!found(result)){
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        int ret = result -> second.values.back();
+        // unfortunately intTable[identifier] kills the cpp compiler
+        // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Copy the result variable
+        interpreter::Variable<int> cpy(result -> second);
+        // pop the value from the copy
+        cpy.values.pop_back();
+        // remove the result=
+        intTable.erase(result);
+        // insert the copy
+        insert(cpy);
+        return 1;
+    }
+
+    template<> float Interpreter::pop_back<float>(const std::string &identifier) {
+        auto result = find(interpreter::Variable<float>(identifier));
+        if(!found(result)){
+            throw std::runtime_error("Failed to find variable with identifier " + identifier);
+        }
+        // unfortunately floatTable[identifier] kills the cpp compiler
+        // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Copy the result variable
+        interpreter::Variable<float> cpy(result -> second);
+        // pop the value from the copy
+        cpy.values.pop_back();
+        // remove the result=
+        floatTable.erase(result);
+        // insert the copy
+        insert(cpy);
+        return 1;
+    }
+
+    template<> bool Interpreter::pop_back<bool>(const std::string &identifier) {
+        auto result = find(interpreter::Variable<bool>(identifier));
+        if(!found(result)){
+            throw std::runtime_error("Failed to find variable with identifier " + identifier);
+        }
+        // unfortunately boolTable[identifier] kills the cpp compiler
+        // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Copy the result variable
+        interpreter::Variable<bool> cpy(result -> second);
+        // pop the value from the copy
+        cpy.values.pop_back();
+        // remove the result=
+        boolTable.erase(result);
+        // insert the copy
+        insert(cpy);
+        return true;
+    }
+
+    template<> std::string Interpreter::pop_back<std::string>(const std::string &identifier) {
+        auto result = find(interpreter::Variable<std::string>(identifier));
+        if(!found(result)){
+            throw std::runtime_error("Failed to find variable with identifier " + identifier);
+        }
+        // unfortunately stringTable[identifier] kills the cpp compiler
+        // so in order to pop_back a value from the values vector we have to completely replace the object
+        // Copy the result variable
+        interpreter::Variable<std::string> cpy(result -> second);
+        // pop the value from the copy
+        cpy.values.pop_back();
+        // remove the result
+        stringTable.erase(result);
+        // insert the copy
+        insert(cpy);
+        return "1";
+    }
+
+    template<> int Interpreter::get<int>(const std::string& identifier) {
+        auto result = find(interpreter::Variable<int>(identifier));
+        if(!found(result)){
+            throw std::runtime_error("Failed to find variable with identifier " + identifier);
+        }
+        int ret = result -> second.latestValue;
         // pop_back case
         if (identifier == "0CurrentVariable") {
             pop_back<int>("0CurrentVariable");
@@ -181,12 +253,12 @@ namespace visitor {
         return ret;
     }
 
-    template<> float Interpreter::pop<float>(const std::string& identifier) {
+    template<> float Interpreter::get<float>(const std::string& identifier) {
         auto result = find(interpreter::Variable<float>(identifier));
         if(!found(result)){
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        float ret = result -> second.values.back();
+        float ret = result -> second.latestValue;
         // pop_back case
         if (identifier == "0CurrentVariable") {
             pop_back<float>("0CurrentVariable");
@@ -195,12 +267,12 @@ namespace visitor {
         return ret;
     }
 
-    template<> bool Interpreter::pop<bool>(const std::string& identifier) {
+    template<> bool Interpreter::get<bool>(const std::string& identifier) {
         auto result = find(interpreter::Variable<bool>(identifier));
         if(!found(result)){
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        bool ret = result -> second.values.back();
+        bool ret = result -> second.latestValue;
         // pop_back case
         if (identifier == "0CurrentVariable") {
             pop_back<bool>("0CurrentVariable");
@@ -209,36 +281,18 @@ namespace visitor {
         return ret;
     }
 
-    template<> std::string Interpreter::pop<std::string>(const std::string& identifier) {
+    template<> std::string Interpreter::get<std::string>(const std::string& identifier) {
         auto result = find(interpreter::Variable<std::string>(identifier));
         if (!found(result)) {
             throw std::runtime_error("Failed to find variable with identifier " + identifier);
         }
-        std::string ret = result->second.values.back();
+        std::string ret = result->second.latestValue;
         // pop_back case
         if (identifier == "0CurrentVariable"){
             pop_back<std::string>("0CurrentVariable");
         }
         // return the popped value
         return ret;
-    }
-    template<typename T>
-    void Interpreter::pop_back(const std::string &identifier) {
-        auto result = find(interpreter::Variable<T>(identifier));
-        if(!found(result)){
-            throw std::runtime_error("Failed to find variable with identifier " + identifier);
-        }
-        // unfortunately intTable[identifier] kills the cpp compiler
-        // so in order to pop_back a value from the values vector we have to completely replace the object
-        // Copy the result variable
-        interpreter::Variable<T> cpy(result -> second);
-        // pop the value from the copy
-        cpy.values.pop_back();
-        // remove the result
-        if(T ==)
-        intTable.erase(result);
-        // insert the copy
-        insert(cpy);
     }
 
     // Tools
@@ -254,7 +308,7 @@ namespace visitor {
     void Interpreter::visit(parser::ASTLiteralNode<int> *literalNode) {
         interpreter::Variable<int> v("int", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-//        pop<int>("literal");
+        pop_back<int>("literal");
         insert(v);
         currentType = "int";
         currentID = "literal";
@@ -263,7 +317,7 @@ namespace visitor {
     void Interpreter::visit(parser::ASTLiteralNode<float> *literalNode) {
         interpreter::Variable<float> v("float", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-//        pop<float>("literal");
+        pop_back<float>("literal");
         insert(v);
         currentType = "float";
         currentID = "literal";
@@ -272,7 +326,7 @@ namespace visitor {
     void Interpreter::visit(parser::ASTLiteralNode<bool> *literalNode) {
         interpreter::Variable<bool> v("bool", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-//        pop<bool>("literal");
+        pop_back<bool>("literal");
         insert(v);
         currentType = "bool";
         currentID = "literal";
@@ -281,7 +335,7 @@ namespace visitor {
     void Interpreter::visit(parser::ASTLiteralNode<std::string> *literalNode) {
         interpreter::Variable<std::string> v("string", "literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-//        pop<std::string>("literal");
+        pop_back<std::string>("literal");
         insert(v);
         currentType = "string";
         currentID = "literal";
@@ -295,19 +349,19 @@ namespace visitor {
         // Push left node into 0CurrentVariable
         if (currentType == "int"){
             insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                                      find(interpreter::Variable<int>(currentID)) -> second.values.back(),
+                                                      get<int>(currentID),
                                                       binaryNode -> lineNumber));
         }else if (currentType == "float"){
             insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                                      find(interpreter::Variable<float>(currentID)) -> second.values.back(),
+                                                get<float>(currentID),
                                                       binaryNode -> lineNumber));
         }else if (currentType == "bool"){
             insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                      find(interpreter::Variable<bool>(currentID)) -> second.values.back(),
+                                               get<bool>(currentID),
                                                       binaryNode -> lineNumber));
         }else if (currentType == "string"){
             insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
-                                                      find(interpreter::Variable<std::string>(currentID)) -> second.values.back(),
+                                                      get<std::string>(currentID),
                                                       binaryNode -> lineNumber));
         }
 
@@ -335,54 +389,54 @@ namespace visitor {
                  */
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<int>()
+                                                       get<int>()
                                                        !=
-                                                       pop<int>(currentID),
+                                                       get<int>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<int>()
+                                                       get<int>()
                                                        ==
-                                                       pop<int>(currentID),
+                                                       get<int>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_MORE_THAN:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<int>()
+                                                       get<int>()
                                                        >
-                                                       pop<int>(currentID),
+                                                       get<int>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_LESS_THAN:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<int>()
+                                                       get<int>()
                                                        <
-                                                       pop<int>(currentID),
+                                                       get<int>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_MORE_THAN_EQUAL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<int>()
+                                                       get<int>()
                                                        >=
-                                                       pop<int>(currentID),
+                                                       get<int>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_LESS_THAN_EQUAL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                      pop<int>()
+                                                      get<int>()
                                                       <=
-                                                      pop<int>(currentID),
+                                                      get<int>(currentID),
                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
@@ -390,18 +444,18 @@ namespace visitor {
                 // int and float accepted operators
                 case lexer::TOK_PLUS:
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                                       pop<int>()
+                                                       get<int>()
                                                        +
-                                                       pop<int>(currentID),
+                                                       get<int>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
                     break;
                 case lexer::TOK_ASTERISK:
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                                      pop<int>()
+                                                      get<int>()
                                                       *
-                                                      pop<int>(currentID),
+                                                      get<int>(currentID),
                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
@@ -409,18 +463,18 @@ namespace visitor {
                 case lexer::TOK_DIVIDE:
                     // if divide by 0 happens, gcc will raise its own error, no need to change the structure to accomodate for this
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                                      pop<int>()
+                                                      get<int>()
                                                       /
-                                                      pop<int>(currentID),
+                                                      get<int>(currentID),
                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
                     break;
                 case lexer::TOK_MINUS:
                     insert(interpreter::Variable<int>("int", "0CurrentVariable",
-                                                      pop<int>()
+                                                      get<int>()
                                                       -
-                                                      pop<int>(currentID),
+                                                      get<int>(currentID),
                                                       binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "int";
@@ -435,54 +489,54 @@ namespace visitor {
             switch (lexer::determineOperatorType(binaryNode -> op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        !=
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        ==
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_MORE_THAN:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        >
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_LESS_THAN:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        <
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_MORE_THAN_EQUAL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        >=
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_LESS_THAN_EQUAL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        <=
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
@@ -490,18 +544,18 @@ namespace visitor {
                     // int and float accepted operators
                 case lexer::TOK_PLUS:
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                                       pop<float>()
+                                                       get<float>()
                                                        +
-                                                       pop<float>(currentID),
+                                                       get<float>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
                     break;
                 case lexer::TOK_ASTERISK:
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                                        pop<float>()
+                                                        get<float>()
                                                         *
-                                                        pop<float>(currentID),
+                                                        get<float>(currentID),
                                                         binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
@@ -509,18 +563,18 @@ namespace visitor {
                 case lexer::TOK_DIVIDE:
                     // if divide by 0 happens, gcc will raise its own error, no need to change the structure to accomodate for this
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                                        pop<float>()
+                                                        get<float>()
                                                         /
-                                                        pop<float>(currentID),
+                                                        get<float>(currentID),
                                                         binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
                     break;
                 case lexer::TOK_MINUS:
                     insert(interpreter::Variable<float>("float", "0CurrentVariable",
-                                                        pop<float>()
+                                                        get<float>()
                                                         -
-                                                        pop<float>(currentID),
+                                                        get<float>(currentID),
                                                         binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "float";
@@ -535,72 +589,72 @@ namespace visitor {
             switch (lexer::determineOperatorType(binaryNode -> op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                        pop<bool>()
+                                                        get<bool>()
                                                         !=
-                                                        pop<bool>(currentID),
+                                                        get<bool>(currentID),
                                                         binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        ==
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_AND:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        &&
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "0CurrentVariable";
                     break;
                 case lexer::TOK_OR:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        ||
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_MORE_THAN:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        >
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_LESS_THAN:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        <
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_MORE_THAN_EQUAL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        >=
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "0CurrentVariable";
                     break;
                 case lexer::TOK_LESS_THAN_EQUAL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<bool>()
+                                                       get<bool>()
                                                        <=
-                                                       pop<bool>(currentID),
+                                                       get<bool>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
@@ -615,27 +669,27 @@ namespace visitor {
             switch (lexer::determineOperatorType(binaryNode -> op)) {
                 case lexer::TOK_NOT_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<std::string>()
+                                                       get<std::string>()
                                                        !=
-                                                       pop<std::string>(currentID),
+                                                       get<std::string>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_EQAUL_TO:
                     insert(interpreter::Variable<bool>("bool", "0CurrentVariable",
-                                                       pop<std::string>()
+                                                       get<std::string>()
                                                        ==
-                                                       pop<std::string>(currentID),
+                                                       get<std::string>(currentID),
                                                        binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "bool";
                     break;
                 case lexer::TOK_PLUS:
                     insert(interpreter::Variable<std::string>("string", "0CurrentVariable",
-                                                              pop<std::string>()
+                                                              get<std::string>()
                                                               +
-                                                              pop<std::string>(currentID),
+                                                              get<std::string>(currentID),
                                                               binaryNode -> lineNumber));
                     // Update Current Type to the that of the type being inserted
                     currentType = "string";
@@ -708,11 +762,11 @@ namespace visitor {
         unaryNode -> exprNode -> accept(this);
         // now we check the type
         if(currentType == "int"){
-            insert(interpreter::Variable<int>("int", "string", pop<int>(currentID) * -1, unaryNode -> lineNumber));
+            insert(interpreter::Variable<int>("int", "string", get<int>(currentID) * -1, unaryNode -> lineNumber));
         }else if(currentType == "float"){
-            insert(interpreter::Variable<float>("float", "0CurrentVariable", pop<float>(currentID) * -1, unaryNode -> lineNumber));
+            insert(interpreter::Variable<float>("float", "0CurrentVariable", get<float>(currentID) * -1, unaryNode -> lineNumber));
         }else if(currentType == "bool"){
-            insert(interpreter::Variable<bool>("bool", "0CurrentVariable", ! pop<bool>(currentID), unaryNode -> lineNumber));
+            insert(interpreter::Variable<bool>("bool", "0CurrentVariable", ! get<bool>(currentID), unaryNode -> lineNumber));
         }else{
             // should get here
             throw std::runtime_error("Expression on line " + std::to_string(unaryNode -> lineNumber)
@@ -748,13 +802,13 @@ namespace visitor {
                  * this temporarily overwrites any global variable
                  * Once the block is function block is visited we pop back these variables to clear memory
                 */
-                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), pop<int>(currentID), functionCallNode -> lineNumber));
+                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), get<int>(currentID), functionCallNode -> lineNumber));
             }else if (currentType == "float"){
-                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), pop<float>(currentID), functionCallNode -> lineNumber));
+                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), get<float>(currentID), functionCallNode -> lineNumber));
             }else if (currentType == "bool"){
-                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), pop<bool>(currentID), functionCallNode -> lineNumber));
+                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), get<bool>(currentID), functionCallNode -> lineNumber));
             }else if (currentType == "string"){
-                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), pop<std::string>(currentID), functionCallNode -> lineNumber));
+                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), get<std::string>(currentID), functionCallNode -> lineNumber));
             }
         }
         // Ok so now we have updated the arguments, so we can call the actual function to run
@@ -806,13 +860,13 @@ namespace visitor {
                  * this temporarily overwrites any global variable
                  * Once the block is function block is visited we pop back these variables to clear memory
                 */
-                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), pop<int>(currentID), sFunctionCallNode -> lineNumber));
+                insert(interpreter::Variable<int>("int", f.paramIDs.at(i), get<int>(currentID), sFunctionCallNode -> lineNumber));
             }else if (currentType == "float"){
-                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), pop<float>(currentID), sFunctionCallNode -> lineNumber));
+                insert(interpreter::Variable<float>("float", f.paramIDs.at(i), get<float>(currentID), sFunctionCallNode -> lineNumber));
             }else if (currentType == "bool"){
-                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), pop<bool>(currentID), sFunctionCallNode -> lineNumber));
+                insert(interpreter::Variable<bool>("bool", f.paramIDs.at(i), get<bool>(currentID), sFunctionCallNode -> lineNumber));
             }else if (currentType == "string"){
-                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), pop<std::string>(currentID), sFunctionCallNode -> lineNumber));
+                insert(interpreter::Variable<std::string>("string", f.paramIDs.at(i), get<std::string>(currentID), sFunctionCallNode -> lineNumber));
             }
         }
         // Ok so now we have updated the arguments, so we can call the actual function to run
@@ -853,19 +907,19 @@ namespace visitor {
         // Insert the new variable
         if(currentType == "int"){
             insert (
-                    interpreter::Variable<int>(currentType, declarationNode -> identifier -> identifier, pop<int>(currentID), declarationNode -> lineNumber)
+                    interpreter::Variable<int>(currentType, declarationNode -> identifier -> identifier, get<int>(currentID), declarationNode -> lineNumber)
             );
         }else if(currentType == "float"){
             insert (
-                    interpreter::Variable<float>(currentType, declarationNode -> identifier -> identifier, pop<float>(currentID), declarationNode -> lineNumber)
+                    interpreter::Variable<float>(currentType, declarationNode -> identifier -> identifier, get<float>(currentID), declarationNode -> lineNumber)
             );
         }else if(currentType == "bool"){
             insert (
-                    interpreter::Variable<bool>(currentType, declarationNode -> identifier -> identifier, pop<bool>(currentID), declarationNode -> lineNumber)
+                    interpreter::Variable<bool>(currentType, declarationNode -> identifier -> identifier, get<bool>(currentID), declarationNode -> lineNumber)
             );
         }else if(currentType == "string"){
             insert (
-                    interpreter::Variable<std::string>(currentType, declarationNode -> identifier -> identifier, pop<std::string>(currentID), declarationNode -> lineNumber)
+                    interpreter::Variable<std::string>(currentType, declarationNode -> identifier -> identifier, get<std::string>(currentID), declarationNode -> lineNumber)
             );
         }
     }
@@ -884,24 +938,24 @@ namespace visitor {
         // Replace the variable value
         // Replacement can be done by popping then inserting
         if(currentType == "int"){
-            pop<int>(id);
+            get<int>(id);
             insert (
-                    interpreter::Variable<int>(type, id, pop<int>(currentID), assignmentNode -> lineNumber)
+                    interpreter::Variable<int>(type, id, get<int>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "float"){
-            pop<float>(id);
+            get<float>(id);
             insert (
-                    interpreter::Variable<float>(type, id, pop<float>(currentID), assignmentNode -> lineNumber)
+                    interpreter::Variable<float>(type, id, get<float>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "bool"){
-            pop<bool>(id);
+            get<bool>(id);
             insert (
-                    interpreter::Variable<bool>(type, id, pop<bool>(currentID), assignmentNode -> lineNumber)
+                    interpreter::Variable<bool>(type, id, get<bool>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "string"){
-            pop<std::string>(id);
+            get<std::string>(id);
             insert (
-                    interpreter::Variable<std::string>(type, id, pop<std::string>(currentID), assignmentNode -> lineNumber)
+                    interpreter::Variable<std::string>(type, id, get<std::string>(currentID), assignmentNode -> lineNumber)
             );
         }
     }
@@ -911,13 +965,13 @@ namespace visitor {
         printNode -> exprNode -> accept(this);
 
         if(currentType == "int"){
-            std::cout << pop<int>(currentID) << std::endl;
+            std::cout << get<int>(currentID) << std::endl;
         }else if(currentType == "float"){
-            std::cout << pop<float>(currentID) << std::endl;
+            std::cout << get<float>(currentID) << std::endl;
         }else if(currentType == "bool"){
-            std::cout << pop<bool>(currentID) << std::endl;
+            std::cout << get<bool>(currentID) << std::endl;
         }else if(currentType == "string"){
-            std::cout << pop<std::string>(currentID) << std::endl;
+            std::cout << get<std::string>(currentID) << std::endl;
         }
     }
     // Statements

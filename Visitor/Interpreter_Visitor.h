@@ -103,9 +103,9 @@ namespace visitor {
         bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Function>> result);
 
         template<typename T>
-        T pop(const std::string& identifier = "0CurrentVariable");
+        T get(const std::string& identifier = "0CurrentVariable");
         template<typename T>
-        void pop_back(const std::string& identifier);
+        T pop_back(const std::string& identifier);
 
         void visit(parser::ASTProgramNode* programNode) override;
 
