@@ -17,14 +17,12 @@ namespace interpreter {
     class Variable : public visitor::Variable{
     public:
         Variable(const std::string& type, const std::string& identifier, T value, unsigned int lineNumber) :
-                visitor::Variable(type, identifier, lineNumber),
-                value(value)
+                visitor::Variable(type, identifier, lineNumber)
                 {
                     values.emplace_back(value);
                 };
 
         ~Variable() = default;
-        T value;
         std::vector<T> values;
     };
 
@@ -59,10 +57,10 @@ namespace visitor {
         Interpreter() = default;
         ~Interpreter() = default;
 
-        bool insert(const interpreter::Variable<int>& v);
-        bool insert(const interpreter::Variable<float>& v);
-        bool insert(const interpreter::Variable<bool>& v);
-        bool insert(const interpreter::Variable<std::string>& v);
+        bool insert(const interpreter::Variable<int>& v, int value);
+        bool insert(const interpreter::Variable<float>& v, float value);
+        bool insert(const interpreter::Variable<bool>& v, bool value);
+        bool insert(const interpreter::Variable<std::string>& v, const std::string& value);
         bool insert(const interpreter::Function& f);
 
         std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, interpreter::Variable<int>>>

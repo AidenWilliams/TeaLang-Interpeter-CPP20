@@ -5,13 +5,13 @@
 #include "Interpreter_Visitor.h"
 
 namespace visitor {
-    bool Interpreter::insert(const interpreter::Variable<int>& v){
+    bool Interpreter::insert(const interpreter::Variable<int>& v, int value){
         auto result = find(v);
         if (found(result)){
             // found the variable already
             // add the value
             // since we know that the result exists, then we can use the [] without any 'side effect' of creating a new entry
-            intTable[v.identifier].values.emplace_back(v.value);
+            intTable[v.identifier].values.emplace_back(value);
             return false;
         }else{
             // The variable doesnt exist so we add a new one
@@ -19,13 +19,13 @@ namespace visitor {
             return ret.second;
         }
     }
-    bool Interpreter::insert(const interpreter::Variable<float>& v){
+    bool Interpreter::insert(const interpreter::Variable<float>& v, float value){
         auto result = find(v);
         if (found(result)){
             // found the variable already
             // add the value
             // since we know that the result exists, then we can use the [] without any 'side effect' of creating a new entry
-            floatTable[v.identifier].values.emplace_back(v.value);
+            floatTable[v.identifier].values.emplace_back(value);
             return false;
         }else{
             // The variable doesnt exist so we add a new one
@@ -33,13 +33,13 @@ namespace visitor {
             return ret.second;
         }
     }
-    bool Interpreter::insert(const interpreter::Variable<bool>& v){
+    bool Interpreter::insert(const interpreter::Variable<bool>& v, bool value){
         auto result = find(v);
         if (found(result)){
             // found the variable already
             // add the value
             // since we know that the result exists, then we can use the [] without any 'side effect' of creating a new entry
-            boolTable[v.identifier].values.emplace_back(v.value);
+            boolTable[v.identifier].values.emplace_back(value);
             return false;
         }else{
             // The variable doesnt exist so we add a new one
@@ -47,13 +47,13 @@ namespace visitor {
             return ret.second;
         }
     }
-    bool Interpreter::insert(const interpreter::Variable<std::string>& v){
+    bool Interpreter::insert(const interpreter::Variable<std::string>& v, const std::string& value){
         auto result = find(v);
         if (found(result)){
             // found the variable already
             // add the value
             // since we know that the result exists, then we can use the [] without any 'side effect' of creating a new entry
-            stringTable[v.identifier].values.emplace_back(v.value);
+            stringTable[v.identifier].values.emplace_back(value);
             return false;
         }else{
             // The variable doesnt exist so we add a new one
@@ -124,22 +124,22 @@ namespace visitor {
     // Literal visits add a new literal variable to the 'literalTYPE' variable in the variableTable
     void Interpreter::visit(parser::ASTLiteralNode<int> *literalNode) {
         interpreter::Variable<int> v("int", "literal", literalNode->val, literalNode->lineNumber);
-        insert(v);
+        insert(v, literalNode->val);
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<float> *literalNode) {
         interpreter::Variable<float> v("float", "literal", literalNode->val, literalNode->lineNumber);
-        insert(v);
+        insert(v, literalNode->val);
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<bool> *literalNode) {
         interpreter::Variable<bool> v("bool", "literal", literalNode->val, literalNode->lineNumber);
-        insert(v);
+        insert(v, literalNode->val);
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<std::string> *literalNode) {
         interpreter::Variable<std::string> v("string", "literal", literalNode->val, literalNode->lineNumber);
-        insert(v);
+        insert(v, literalNode->val);
     }
 
 }
