@@ -850,7 +850,7 @@ namespace visitor {
         // We dont visit the identifier as this would produce an error as the interpreter expects
         // a variable with identifier as provided to exist
         // instead we directly assign the variable when the interpreter::Variable is created
-//        declarationNode->identifier->accept(this);
+        declarationNode->identifier->accept(this);
 
         // Visit the expression to get the current Type and Current Id
         declarationNode->exprNode->accept(this);
@@ -883,7 +883,39 @@ namespace visitor {
     }
 
     void Interpreter::visit(parser::ASTAssignmentNode *assignmentNode) {
-
+        // We visit the identifier node now as we expect the variable to exist
+        assignmentNode->identifier->accept(this);
+        // We can update the type and identifier local variables
+        // These two variables define the found variable
+        std::string type = currentType;
+        std::string id = currentID;
+        // Visit the expression to get the current Type and Current Id
+        assignmentNode->exprNode->accept(this);
+        // Now we have an updated current type and id
+        // These two variables define what we will give id
+        // Replace the variable value
+        // Replacement can be done by popping then inserting
+        if(currentType == "int"){
+            pop<int>(id);
+            insert (
+                    interpreter::Variable<int>(type, id, pop<int>(currentID), assignmentNode->lineNumber)
+            );
+        }else if(currentType == "float"){
+            pop<float>(id);
+            insert (
+                    interpreter::Variable<float>(type, id, pop<float>(currentID), assignmentNode->lineNumber)
+            );
+        }else if(currentType == "bool"){
+            pop<bool>(id);
+            insert (
+                    interpreter::Variable<bool>(type, id, pop<bool>(currentID), assignmentNode->lineNumber)
+            );
+        }else if(currentType == "string"){
+            pop<std::string>(id);
+            insert (
+                    interpreter::Variable<std::string>(type, id, pop<std::string>(currentID), assignmentNode->lineNumber)
+            );
+        }
     }
     // Statements
 }
