@@ -186,7 +186,6 @@ namespace parser {
         {};
         ~ASTPrintNode() = default;
 
-        std::shared_ptr<ASTIdentifierNode> identifier;
         std::shared_ptr<ASTExprNode> exprNode;
         unsigned int lineNumber;
         void accept(visitor::Visitor* v) override;
