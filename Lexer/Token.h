@@ -175,7 +175,7 @@ namespace lexer {
     TOKEN_TYPE determineOperatorType(const std::string& op);
 
     // TOKEN_TYPE functions that provide possible token type building avenues from a particular state
-    // some states do not have a dedicated Function as they are completely final states
+    // some states do not have a dedicated Function as they are not final states
     TOKEN_TYPE fromState1(const std::string& s);
     TOKEN_TYPE fromState3(const std::string& s);
     TOKEN_TYPE fromState6(const std::string& s);
