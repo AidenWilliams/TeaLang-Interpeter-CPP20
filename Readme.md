@@ -96,7 +96,7 @@ The TeaLang language follows the following EBNF:
 
 The following is a syntactically and semantically correct TeaLang program:
 
-'''
+```
 float Square (x : float) {
     return x*x;
 }
@@ -132,6 +132,6 @@ while (ii < 10){
    print ii;
    ii = ii + 1;
 }
-'''
+```
 
 A full detailed report can be found in Report.pdf
