@@ -15,7 +15,7 @@ namespace parser {
     std::shared_ptr<ASTProgramNode> Parser::parseProgram(bool block) {
         auto statements = std::vector<std::shared_ptr<ASTStatementNode>>();
         // Loop over each token and stop with an END token
-        while (currentToken.type != lexer::TOK_END) {
+        while (currentToken.type != lexer::TOK_END && !(block && currentToken.type == lexer::TOK_CLOSING_CURLY)) {
             // Ignore comments and skip '}' if parsing a block
             if (currentToken.type != lexer::TOK_SINGLE_LINE_COMMENT
                 && currentToken.type != lexer::TOK_MULTI_LINE_COMMENT
@@ -25,9 +25,6 @@ namespace parser {
             // There is a case when a scope/block is empty where were need to check before moving the token window
             if (currentToken.type != lexer::TOK_END || nextLoc[0].type != lexer::TOK_END)
                 moveTokenWindow();
-            // TODO: FIX LOOP AND REMOVE IF
-            if (currentToken.type == lexer::TOK_END || block && currentToken.type == lexer::TOK_CLOSING_CURLY)
-                break;
         }
         return std::make_shared<ASTProgramNode>(statements);
     }
