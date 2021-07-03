@@ -8,92 +8,139 @@ The interpreter and sub processes were developed and written to follow the speci
 The TeaLang language follows the following EBNF:
 
 $$
-\begin{grammar}
-
 <Letter> ::= [A-Za-z]
+$$  
 
+$$
 <Digit> ::= [0-9]
+$$
 
+$$
 <Printable> ::= [\textbackslash x20-\textbackslash x7E]
+$$
 
+$$
 <Type> ::= `float' | `int' | `bool' | `string'
+$$
 
+$$
 <BooleanLiteral> ::= `true' | `false'
+$$
 
+$$ 
 <IntegerLiteral> ::= <Digit> \{ <Digit> \}
+$$
 
+$$
 <FloatLiteral> ::= <Digit> \{ <Digit> \} `.' <Digit> \{ <Digit> \}
+$$
 
-<StringLiteral> ::= `"' \{ <Printable> \} `"'
+$$
+<StringLiteral> ::= `"' \{ <Printable> \} "'`
+$$
 
-<Literal> ::= <BooleanLiteral>
-\alt <IntegerLiteral>
-\alt <FloatLiteral>
-\alt <StringLiteral>
+$$
+<Literal> ::= <BooleanLiteral> | <IntegerLiteral> | <FloatLiteral> | <StringLiteral>
+$$
 
+$$
 <Identifier> ::= ( `\_' | <Letter> )  \{ `\_' | <Letter> | <Digit> \}
+$$
 
+$$
 <MultiplicativeOp> ::= `*' | `/' | `and' 
+$$
 
+$$
 <AdditiveOp> ::= `+' | `-' | `or' 
+$$
 
+$$
 <RelationalOp> ::= `<' | `>' | `==' | `!=' | `<=' | `>=' 
+$$
 
+$$
 <ActualParams> ::= <Expression> \{ `,' <Expression> \}
+$$
 
+$$
 <FunctionCall> ::= <Identifier> `(' [ <ActualParams> ] `)' 
+$$
 
+$$
 <SubExpression> ::= `(' <Expression> `)' 
+$$
 
+$$
 <Unary> ::= ( `-' | `not' ) <Expression>
+$$
 
-<Factor> ::=  <Literal>
-\alt <Identifier>
-\alt <FunctionCall>
-\alt <SubExpression>
-\alt <Unary>
+$$
+<Factor> ::=  <Literal> | <Identifier> | <FunctionCall> | <SubExpression> | <Unary>
+$$
 
+$$
 <Term> ::= <Factor> \{ <MultiplicativeOp> <Factor> \}
+$$
 
+$$
 <SimpleExpression> ::= <Term> \{ <AdditiveOp> <Term> \}
+$$
 
+$$
 <Expression> ::= <SimpleExpression> \{ <RelationalOp> <SimpleExpression> \}
+$$
 
+$$
 <Assignment> ::= <Identifier> `=' <Expression>
+$$
 
+$$
 <VariableDecl> ::= `let' <Identifier> `:' <Type> `=' <Expression>
+$$
 
+$$
 <PrintStatement> ::= `print' <Expression>
+$$
 
+$$
 <RtrnStatement> ::= `return' <Expression>
+$$
 
+$$
 <IfStatement> ::= `if' `(' <Expression> `)' <Block> [ `else' <Block> ]
+$$
 
+$$
 <ForStatement> ::= `for' `(' [ <VariableDecl> ] ';' <Expression> ';' [ <Assignment> ] `)' <Block>
+$$
 
+$$
 <WhileStatement> ::= `while' `(' <Expression> `)' <Block> 
+$$
 
+$$
 <FormalParam> ::= <Identifier> `:' <Type>
+$$
 
+$$
 <FormalParams> ::= <FormalParam> \{ `,' <FormalParam> \}
+$$
 
+$$
 <FunctionDecl> ::= <type> <Identifier> `(' [ <FormalParams> ] `)' <Block>
+$$
 
-<Statement> ::=	<VariableDecl> `;'
-\alt <Assignment> `;'
-\alt <PrintStatement> `;'
-\alt <IfStatement>
-\alt <ForStatement>
-\alt <WhileStatement>
-\alt <RtrnStatement> `;'
-\alt <FunctionDecl>
-\alt <Block>
+$$
+<Statement> ::=	<VariableDecl> `;' | <Assignment> `;' | <PrintStatement> `;' | <IfStatement> | <ForStatement> | <WhileStatement> | <RtrnStatement> `;' | <FunctionDecl> | <Block>
+$$
 
+$$
 <Block> ::= `{' \{ <Statement> \} `}' 
+$$
 
+$$
 <Program> ::= \{ <Statement> \}
-
-\end{grammar}
 $$
 
 The following is a syntactically and semantically correct TeaLang program:
