@@ -135,5 +135,3 @@ while (ii < 10){
 '''
 
 A full detailed report can be found in Report.pdf
-
-The latex for the ebnf was rendered via the https://github.com/bo-ke/latex_render library.
