@@ -352,8 +352,14 @@ namespace visitor{
         if(currentType != "bool")
             throw std::runtime_error("Invalid if-condition on line " + std::to_string(ifNode->lineNumber)
                                      + ", expected boolean expression.");
+        // Store the returns as a return might be in the if
+        bool ret = returns;
         // Check the if block
         ifNode -> ifBlock -> accept(this);
+        if(ret != returns){
+            // reset returns if it changed
+            returns = ret;
+        }
         // If there is an else block, check it too
         if(ifNode -> elseBlock != nullptr)
             ifNode -> elseBlock -> accept(this);
@@ -426,6 +432,8 @@ namespace visitor{
                                      + std::to_string(f.lineNumber) + " already declared on line "
                                      + std::to_string(result->second.lineNumber));
         }
+        // insert function to the function table, this allows for recursion to happen
+        scope->insert(f);
         // Go check the block node
         returns = false;
         functionDeclarationNode->functionBlock->accept(this);
@@ -434,16 +442,14 @@ namespace visitor{
             throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
                                      + std::to_string(f.lineNumber) + " does not have a return statement.");
         }
-        // Now that the return is confirmed
-        // Check current type with the declaration type
-        // since the language does not perform any implicit/automatic typecast (as said in spec)
-        if(functionDeclarationNode->type == currentType){
-            scope->insert(f);
-        }else{
-            // throw an error since type casting is not supported
+        // Check that the return type matches with the function type
+        if(functionDeclarationNode->type != currentType) {
+            // Check current type with the declaration type
+            // since the language does not perform any implicit/automatic typecast (as said in spec)
             throw std::runtime_error("Function " + f.identifier + " was declared of type " + f.type + " on line "
                                      + std::to_string(f.lineNumber) + " but has been assigned invalid value of type"
-                                     + currentType + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
+                                     + currentType +
+                                     ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
         }
         // Close function scope
         // This discards any declared variable in the foo() section

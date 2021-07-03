@@ -37,8 +37,30 @@ int main(int argc, char **argv) {
             "print XGreaterThanY (x , 2.3 ) ; // t r u e\n"
             "print XGreaterThanYv2 (Square ( 1.5 ) , y ) ; // f a l s e\n"
             "print AverageOfThree (x , y , 1.2 ) ; //3.28\n"
-            "print JoinStr(\"Hello\" , \"World\" ) ; // H e l l o World\n";
-
+            "print JoinStr(\"Hello\" , \"World\" ) ; // H e l l o World\n"
+            "for(let ii : int = 0; ii < 10; ii = ii + 1){\n"
+            "   print ii;\n"
+            "}\n"
+            "let ii : int = 0;\n"
+            "while (ii < 10){\n"
+            "   print ii;\n"
+            "   ii = ii + 1;\n"
+            "}\n";
+//
+//    std::string _program_ = "int factorial(n : int){\n"
+//                            "\n"
+//                            "if(n == 1){\n"
+//                            "\n"
+//                            "return 1;\n"
+//                            "\n"
+//                            "}else{\n"
+//                            "\n"
+//                            "return n*factorial(n-1);\n"
+//                            "}\n"
+//                            "}\n"
+//                            "\n"
+//                            "\n"
+//                            "print factorial(6);";
     if (std::string("-l") == argv[1]){
 //        std::cout << "TESTING LEXER" << std::endl;
         lexer::Lexer lexer;
