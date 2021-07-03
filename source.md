@@ -20,11 +20,11 @@ $$
 $$
 
 $$
-<Type> ::= `float' | `int' | `bool' | `string'
+<Type> ::= 'float' | 'int' | 'bool' | 'string'
 $$
 
 $$
-<BooleanLiteral> ::= `true' | `false'
+<BooleanLiteral> ::= 'true' | 'false'
 $$
 
 $$ 
@@ -32,11 +32,11 @@ $$
 $$
 
 $$
-<FloatLiteral> ::= <Digit> \{ <Digit> \} `.' <Digit> \{ <Digit> \}
+<FloatLiteral> ::= <Digit> \{ <Digit> \} '.' <Digit> \{ <Digit> \}
 $$
 
 $$
-<StringLiteral> ::= `"' \{ <Printable> \} "'`
+<StringLiteral> ::= '"' \{ <Printable> \} '"'
 $$
 
 $$
@@ -44,35 +44,35 @@ $$
 $$
 
 $$
-<Identifier> ::= ( `\_' | <Letter> )  \{ `\_' | <Letter> | <Digit> \}
+<Identifier> ::= ( '\_' | <Letter> )  \{ '\_' | <Letter> | <Digit> \}
 $$
 
 $$
-<MultiplicativeOp> ::= `*' | `/' | `and' 
+<MultiplicativeOp> ::= '*' | '/' | 'and' 
 $$
 
 $$
-<AdditiveOp> ::= `+' | `-' | `or' 
+<AdditiveOp> ::= '+' | '-' | 'or' 
 $$
 
 $$
-<RelationalOp> ::= `<' | `>' | `==' | `!=' | `<=' | `>=' 
+<RelationalOp> ::= '<' | '>' | '==' | '!=' | '<=' | '>=' 
 $$
 
 $$
-<ActualParams> ::= <Expression> \{ `,' <Expression> \}
+<ActualParams> ::= <Expression> \{ ',' <Expression> \}
 $$
 
 $$
-<FunctionCall> ::= <Identifier> `(' [ <ActualParams> ] `)' 
+<FunctionCall> ::= <Identifier> '(' \[ <ActualParams> \] ')' 
 $$
 
 $$
-<SubExpression> ::= `(' <Expression> `)' 
+<SubExpression> ::= '(' <Expression> ')' 
 $$
 
 $$
-<Unary> ::= ( `-' | `not' ) <Expression>
+<Unary> ::= ( '-' | 'not' ) <Expression>
 $$
 
 $$
@@ -92,51 +92,51 @@ $$
 $$
 
 $$
-<Assignment> ::= <Identifier> `=' <Expression>
+<Assignment> ::= <Identifier> '=' <Expression>
 $$
 
 $$
-<VariableDecl> ::= `let' <Identifier> `:' <Type> `=' <Expression>
+<VariableDecl> ::= 'let' <Identifier> ':' <Type> '=' <Expression>
 $$
 
 $$
-<PrintStatement> ::= `print' <Expression>
+<PrintStatement> ::= 'print' <Expression>
 $$
 
 $$
-<RtrnStatement> ::= `return' <Expression>
+<RtrnStatement> ::= 'return' <Expression>
 $$
 
 $$
-<IfStatement> ::= `if' `(' <Expression> `)' <Block> [ `else' <Block> ]
+<IfStatement> ::= 'if' \( <Expression> \) <Block> \[ 'else' <Block> \]
 $$
 
 $$
-<ForStatement> ::= `for' `(' [ <VariableDecl> ] ';' <Expression> ';' [ <Assignment> ] `)' <Block>
+<ForStatement> ::= 'for' \( \[ <VariableDecl> \] ';' <Expression> ';' \[ <Assignment> \] \) <Block>
 $$
 
 $$
-<WhileStatement> ::= `while' `(' <Expression> `)' <Block> 
+<WhileStatement> ::= 'while' \( <Expression> \) <Block> 
 $$
 
 $$
-<FormalParam> ::= <Identifier> `:' <Type>
+<FormalParam> ::= <Identifier> ':' <Type>
 $$
 
 $$
-<FormalParams> ::= <FormalParam> \{ `,' <FormalParam> \}
+<FormalParams> ::= <FormalParam> \{ ',' <FormalParam> \}
 $$
 
 $$
-<FunctionDecl> ::= <type> <Identifier> `(' [ <FormalParams> ] `)' <Block>
+<FunctionDecl> ::= <type> <Identifier> '(' \[ <FormalParams> \] ')' <Block>
 $$
 
 $$
-<Statement> ::=	<VariableDecl> `;' | <Assignment> `;' | <PrintStatement> `;' | <IfStatement> | <ForStatement> | <WhileStatement> | <RtrnStatement> `;' | <FunctionDecl> | <Block>
+<Statement> ::=	<VariableDecl> ';' | <Assignment> ';' | <PrintStatement> ';' | <IfStatement> | <ForStatement> | <WhileStatement> | <RtrnStatement> ';' | <FunctionDecl> | <Block>
 $$
 
 $$
-<Block> ::= `{' \{ <Statement> \} `}' 
+<Block> ::= '{' \{ <Statement> \} '}' 
 $$
 
 $$
@@ -145,7 +145,7 @@ $$
 
 The following is a syntactically and semantically correct TeaLang program:
 
-```
+'''
 float Square (x : float) {
     return x*x;
 }
@@ -181,6 +181,8 @@ while (ii < 10){
    print ii;
    ii = ii + 1;
 }
-```
+'''
 
 A full detailed report can be found in Report.pdf
+
+The latex for the ebnf was rendered via the https://github.com/bo-ke/latex_render library.
