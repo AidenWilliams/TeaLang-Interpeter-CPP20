@@ -137,7 +137,7 @@ namespace parser {
                 // Identifier or Function call case
             case lexer::TOK_IDENTIFIER:
                 // If next token is '(' then we found a Function call
-                if (nextLoc->type == lexer::TOK_OPENING_CURVY)
+                if (nextLoc[0].type == lexer::TOK_OPENING_CURVY)
                     return parseFunctionCall();
                 else {
                     // if not, its just an identifier
@@ -167,7 +167,7 @@ namespace parser {
         // Add first param
         parameters.emplace_back(parseExpression());
         // If next token is a comma there are more
-        while (nextLoc->type == lexer::TOK_COMMA) {
+        while (nextLoc[0].type == lexer::TOK_COMMA) {
             // Move current token, to token after comma
             moveTokenWindow(2);
             // Add this token
@@ -249,7 +249,7 @@ namespace parser {
                 // An identifier can either be a Function call or an assignment
             case lexer::TOK_IDENTIFIER:
                 // If next token is '(' then we found a Function call
-                if (nextLoc->type == lexer::TOK_OPENING_CURVY)
+                if (nextLoc[0].type == lexer::TOK_OPENING_CURVY)
                     return std::make_shared<ASTSFunctionCallNode>(parseFunctionCall(true));
                 else {
                     // if not, its should be an Assignment
@@ -567,7 +567,7 @@ namespace parser {
         // Add first param
         parameters.emplace_back(std::pair < std::string, std::string > {identifier->identifier, type});
         // If next token is a comma there are more
-        while (nextLoc->type == lexer::TOK_COMMA) {
+        while (nextLoc[0].type == lexer::TOK_COMMA) {
             // Move current token, to token after comma
             moveTokenWindow(2);
             // repeat the above steps
