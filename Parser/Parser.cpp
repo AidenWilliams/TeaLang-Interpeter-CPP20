@@ -326,7 +326,7 @@ namespace parser {
         if (currentToken.type != lexer::TOK_SEMICOLON)
             throw std::runtime_error("Expected ';' after assignment of " + identifier->identifier + " on line "
                                      + std::to_string(currentToken.lineNumber) + ".");
-        // Create ASTExpressionNode to return
+        // Create ASTDeclarationNode to return
         return std::make_shared<ASTDeclarationNode>(type, identifier, expr, lineNumber);
     }
 
