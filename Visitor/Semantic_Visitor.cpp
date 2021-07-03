@@ -1,10 +1,6 @@
 //
 // Created by Aiden Williams on 26/06/2021.
 //
-/*
- *
-
- */
 
 #include "Semantic_Visitor.h"
 
@@ -23,7 +19,7 @@ namespace visitor{
         if (f.type.empty()){
             throw FunctionTypeException();
         }
-        auto ret = functionTable.insert(std::pair<std::string, Function>(f.identifier, f) );
+        auto ret = functionTable.insert(std::pair<std::string, Function>(f.identifier, f) );o
         return ret.second;
     }
 
