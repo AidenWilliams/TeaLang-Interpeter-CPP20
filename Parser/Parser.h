@@ -16,11 +16,13 @@
 
 namespace parser {
     class Parser {
+        std::vector<lexer::Token> tokens;
     public:
-        explicit Parser(std::vector<lexer::Token> tokens){
-            // Initialise the currentToken and pointer for the next token
+        explicit Parser(std::vector<lexer::Token> tokens) : tokens(tokens) {
+            // Initialise the currentToken and nextToken
             currentToken = tokens.front();
-            nextLoc = tokens.begin() + 1;
+            nextToken = tokens.at(1);
+            currentLoc = 0;
         }
 
         std::shared_ptr<ASTProgramNode> parseProgram(bool block=false);
@@ -47,7 +49,8 @@ namespace parser {
 
     private:
         lexer::Token currentToken;
-        std::vector<lexer::Token>::iterator nextLoc;
+        lexer::Token nextToken;
+        int currentLoc;
 
         void moveTokenWindow(int step = 1);
     };
