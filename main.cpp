@@ -1,10 +1,6 @@
 #include <iostream>
-#include <memory>
 #include "Lexer/Lexer.h"
-#include "Lexer/Token.h"
 #include "Parser/Parser.h"
-#include "Parser/AST.h"
-#include "Visitor/Visitor.h"
 #include "Visitor/XML_Visitor.h"
 #include "Visitor/Semantic_Visitor.h"
 #include "Visitor/Interpreter_Visitor.h"
