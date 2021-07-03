@@ -20,11 +20,11 @@ $$
 $$
 
 $$
-<Type> ::= 'float' | 'int' | 'bool' | 'string'
+<Type> ::= 'float' | \\ 'int' | \\ 'bool' | \\ 'string'
 $$
 
 $$
-<BooleanLiteral> ::= 'true' | 'false'
+<BooleanLiteral> ::= 'true' | \\ 'false'
 $$
 
 $$ 
@@ -40,23 +40,23 @@ $$
 $$
 
 $$
-<Literal> ::= <BooleanLiteral> | <IntegerLiteral> | <FloatLiteral> | <StringLiteral>
+<Literal> ::= <BooleanLiteral> | \\ <IntegerLiteral> | \\ <FloatLiteral> | \\ <StringLiteral>
 $$
 
 $$
-<Identifier> ::= ( '\_' | <Letter> )  \{ '\_' | <Letter> | <Digit> \}
+<Identifier> ::= ( '\_' | \\ <Letter> )  \{ '\_' | \\ <Letter> | \\ <Digit> \}
 $$
 
 $$
-<MultiplicativeOp> ::= '*' | '/' | 'and' 
+<MultiplicativeOp> ::= '*' | \\ '/' | \\ 'and' 
 $$
 
 $$
-<AdditiveOp> ::= '+' | '-' | 'or' 
+<AdditiveOp> ::= '+' | \\ '-' | \\ 'or' 
 $$
 
 $$
-<RelationalOp> ::= '<' | '>' | '==' | '!=' | '<=' | '>=' 
+<RelationalOp> ::= '<' | \\ '>' | \\ '==' | \\ '!=' | \\ '<=' | \\ '>=' 
 $$
 
 $$
@@ -72,11 +72,11 @@ $$
 $$
 
 $$
-<Unary> ::= ( '-' | 'not' ) <Expression>
+<Unary> ::= ( '-' | \\ 'not' ) <Expression>
 $$
 
 $$
-<Factor> ::=  <Literal> | <Identifier> | <FunctionCall> | <SubExpression> | <Unary>
+<Factor> ::=  <Literal> | \\ <Identifier> | \\ <FunctionCall> | \\ <SubExpression> | \\ <Unary>
 $$
 
 $$
@@ -132,7 +132,7 @@ $$
 $$
 
 $$
-<Statement> ::=	<VariableDecl> ';' | <Assignment> ';' | <PrintStatement> ';' | <IfStatement> | <ForStatement> | <WhileStatement> | <RtrnStatement> ';' | <FunctionDecl> | <Block>
+<Statement> ::=	<VariableDecl> ';' | \\ <Assignment> ';' | \\ <PrintStatement> ';' | \\ <IfStatement> | \\ <ForStatement> | \\ <WhileStatement> | \\ <RtrnStatement> ';' | \\ <FunctionDecl> | \\ <Block>
 $$
 
 $$

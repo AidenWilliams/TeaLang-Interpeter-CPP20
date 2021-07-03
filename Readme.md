@@ -20,11 +20,11 @@ The TeaLang language follows the following EBNF:
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CType%3E%20%3A%3A%3D%20%27float%27%20%7C%20%27int%27%20%7C%20%27bool%27%20%7C%20%27string%27" alt="<Type> ::= 'float' | 'int' | 'bool' | 'string'"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CType%3E%20%3A%3A%3D%20%27float%27%20%7C%20%5C%5C%20%27int%27%20%7C%20%5C%5C%20%27bool%27%20%7C%20%5C%5C%20%27string%27" alt="<Type> ::= 'float' | \\ 'int' | \\ 'bool' | \\ 'string'"/> </p>
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CBooleanLiteral%3E%20%3A%3A%3D%20%27true%27%20%7C%20%27false%27" alt="<BooleanLiteral> ::= 'true' | 'false'"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CBooleanLiteral%3E%20%3A%3A%3D%20%27true%27%20%7C%20%5C%5C%20%27false%27" alt="<BooleanLiteral> ::= 'true' | \\ 'false'"/> </p>
 
 
 
@@ -40,23 +40,23 @@ The TeaLang language follows the following EBNF:
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CLiteral%3E%20%3A%3A%3D%20%3CBooleanLiteral%3E%20%7C%20%3CIntegerLiteral%3E%20%7C%20%3CFloatLiteral%3E%20%7C%20%3CStringLiteral%3E" alt="<Literal> ::= <BooleanLiteral> | <IntegerLiteral> | <FloatLiteral> | <StringLiteral>"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CLiteral%3E%20%3A%3A%3D%20%3CBooleanLiteral%3E%20%7C%20%5C%5C%20%3CIntegerLiteral%3E%20%7C%20%5C%5C%20%3CFloatLiteral%3E%20%7C%20%5C%5C%20%3CStringLiteral%3E" alt="<Literal> ::= <BooleanLiteral> | \\ <IntegerLiteral> | \\ <FloatLiteral> | \\ <StringLiteral>"/> </p>
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CIdentifier%3E%20%3A%3A%3D%20%28%20%27%5C_%27%20%7C%20%3CLetter%3E%20%29%20%20%5C%7B%20%27%5C_%27%20%7C%20%3CLetter%3E%20%7C%20%3CDigit%3E%20%5C%7D" alt="<Identifier> ::= ( '\_' | <Letter> )  \{ '\_' | <Letter> | <Digit> \}"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CIdentifier%3E%20%3A%3A%3D%20%28%20%27%5C_%27%20%7C%20%5C%5C%20%3CLetter%3E%20%29%20%20%5C%7B%20%27%5C_%27%20%7C%20%5C%5C%20%3CLetter%3E%20%7C%20%5C%5C%20%3CDigit%3E%20%5C%7D" alt="<Identifier> ::= ( '\_' | \\ <Letter> )  \{ '\_' | \\ <Letter> | \\ <Digit> \}"/> </p>
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CMultiplicativeOp%3E%20%3A%3A%3D%20%27%2A%27%20%7C%20%27/%27%20%7C%20%27and%27" alt="<MultiplicativeOp> ::= '*' | '/' | 'and'"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CMultiplicativeOp%3E%20%3A%3A%3D%20%27%2A%27%20%7C%20%5C%5C%20%27/%27%20%7C%20%5C%5C%20%27and%27" alt="<MultiplicativeOp> ::= '*' | \\ '/' | \\ 'and'"/> </p>
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CAdditiveOp%3E%20%3A%3A%3D%20%27%2B%27%20%7C%20%27-%27%20%7C%20%27or%27" alt="<AdditiveOp> ::= '+' | '-' | 'or'"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CAdditiveOp%3E%20%3A%3A%3D%20%27%2B%27%20%7C%20%5C%5C%20%27-%27%20%7C%20%5C%5C%20%27or%27" alt="<AdditiveOp> ::= '+' | \\ '-' | \\ 'or'"/> </p>
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CRelationalOp%3E%20%3A%3A%3D%20%27%3C%27%20%7C%20%27%3E%27%20%7C%20%27%3D%3D%27%20%7C%20%27%21%3D%27%20%7C%20%27%3C%3D%27%20%7C%20%27%3E%3D%27" alt="<RelationalOp> ::= '<' | '>' | '==' | '!=' | '<=' | '>='"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CRelationalOp%3E%20%3A%3A%3D%20%27%3C%27%20%7C%20%5C%5C%20%27%3E%27%20%7C%20%5C%5C%20%27%3D%3D%27%20%7C%20%5C%5C%20%27%21%3D%27%20%7C%20%5C%5C%20%27%3C%3D%27%20%7C%20%5C%5C%20%27%3E%3D%27" alt="<RelationalOp> ::= '<' | \\ '>' | \\ '==' | \\ '!=' | \\ '<=' | \\ '>='"/> </p>
 
 
 
@@ -72,11 +72,11 @@ The TeaLang language follows the following EBNF:
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CUnary%3E%20%3A%3A%3D%20%28%20%27-%27%20%7C%20%27not%27%20%29%20%3CExpression%3E" alt="<Unary> ::= ( '-' | 'not' ) <Expression>"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CUnary%3E%20%3A%3A%3D%20%28%20%27-%27%20%7C%20%5C%5C%20%27not%27%20%29%20%3CExpression%3E" alt="<Unary> ::= ( '-' | \\ 'not' ) <Expression>"/> </p>
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CFactor%3E%20%3A%3A%3D%20%20%3CLiteral%3E%20%7C%20%3CIdentifier%3E%20%7C%20%3CFunctionCall%3E%20%7C%20%3CSubExpression%3E%20%7C%20%3CUnary%3E" alt="<Factor> ::=  <Literal> | <Identifier> | <FunctionCall> | <SubExpression> | <Unary>"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CFactor%3E%20%3A%3A%3D%20%20%3CLiteral%3E%20%7C%20%5C%5C%20%3CIdentifier%3E%20%7C%20%5C%5C%20%3CFunctionCall%3E%20%7C%20%5C%5C%20%3CSubExpression%3E%20%7C%20%5C%5C%20%3CUnary%3E" alt="<Factor> ::=  <Literal> | \\ <Identifier> | \\ <FunctionCall> | \\ <SubExpression> | \\ <Unary>"/> </p>
 
 
 
@@ -132,7 +132,7 @@ The TeaLang language follows the following EBNF:
 
 
 
-<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CStatement%3E%20%3A%3A%3D%09%3CVariableDecl%3E%20%27%3B%27%20%7C%20%3CAssignment%3E%20%27%3B%27%20%7C%20%3CPrintStatement%3E%20%27%3B%27%20%7C%20%3CIfStatement%3E%20%7C%20%3CForStatement%3E%20%7C%20%3CWhileStatement%3E%20%7C%20%3CRtrnStatement%3E%20%27%3B%27%20%7C%20%3CFunctionDecl%3E%20%7C%20%3CBlock%3E" alt="<Statement> ::=	<VariableDecl> ';' | <Assignment> ';' | <PrintStatement> ';' | <IfStatement> | <ForStatement> | <WhileStatement> | <RtrnStatement> ';' | <FunctionDecl> | <Block>"/> </p>
+<p align="center"> <img src="https://latex.codecogs.com/svg.latex?%3CStatement%3E%20%3A%3A%3D%09%3CVariableDecl%3E%20%27%3B%27%20%7C%20%5C%5C%20%3CAssignment%3E%20%27%3B%27%20%7C%20%5C%5C%20%3CPrintStatement%3E%20%27%3B%27%20%7C%20%5C%5C%20%3CIfStatement%3E%20%7C%20%5C%5C%20%3CForStatement%3E%20%7C%20%5C%5C%20%3CWhileStatement%3E%20%7C%20%5C%5C%20%3CRtrnStatement%3E%20%27%3B%27%20%7C%20%5C%5C%20%3CFunctionDecl%3E%20%7C%20%5C%5C%20%3CBlock%3E" alt="<Statement> ::=	<VariableDecl> ';' | \\ <Assignment> ';' | \\ <PrintStatement> ';' | \\ <IfStatement> | \\ <ForStatement> | \\ <WhileStatement> | \\ <RtrnStatement> ';' | \\ <FunctionDecl> | \\ <Block>"/> </p>
 
 
 
