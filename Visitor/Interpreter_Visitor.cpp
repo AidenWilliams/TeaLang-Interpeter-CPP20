@@ -949,11 +949,6 @@ namespace visitor {
         // Now we have an updated current type and id
         // Create a variable with this information
 
-        // Ensure interpreter/semantic is working as intended by comparing the type in the AST and the current TYPE
-        if(declarationNode -> type != currentType){
-            throw std::runtime_error("Types don't match between declaration and expression on line "
-                                     + std::to_string(declarationNode -> lineNumber) + ".");
-        }
         // Insert the new variable
         if(currentType == "int"){
             insert (
