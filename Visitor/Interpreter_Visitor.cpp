@@ -992,22 +992,22 @@ namespace visitor {
         // Replace the variable value
         // Replacement can be done by popping then inserting
         if(currentType == "int"){
-            get<int>(id);
+            pop_back<int>(id);
             insert (
                     interpreter::Variable<int>(type, id, get<int>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "float"){
-            get<float>(id);
+            pop_back<float>(id);
             insert (
                     interpreter::Variable<float>(type, id, get<float>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "bool"){
-            get<bool>(id);
+            pop_back<bool>(id);
             insert (
                     interpreter::Variable<bool>(type, id, get<bool>(currentID), assignmentNode -> lineNumber)
             );
         }else if(currentType == "string"){
-            get<std::string>(id);
+            pop_back<std::string>(id);
             insert (
                     interpreter::Variable<std::string>(type, id, get<std::string>(currentID), assignmentNode -> lineNumber)
             );
