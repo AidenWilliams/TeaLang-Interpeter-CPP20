@@ -166,8 +166,8 @@ namespace visitor{
             }
         }
         // Variable hasn't been found in any scope
-        throw std::runtime_error("Variable with identifier " + v.identifier + " called on line "
-                                 + std::to_string(v.lineNumber) + " has not been declared.");
+        throw std::runtime_error("Variable with identifier " + identifierNode->identifier + " called on line "
+                                 + std::to_string(identifierNode->lineNumber) + " has not been declared.");
     }
 
     void SemanticAnalyser::visit(parser::ASTUnaryNode *unaryNode) {
@@ -224,8 +224,8 @@ namespace visitor{
             }
         }
         // Function hasn't been found in any scope
-        throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
-                                 + std::to_string(f.lineNumber) + " has not been declared.");
+        throw std::runtime_error("Function with identifier " + functionCallNode->identifier->identifier + " called on line "
+                                 + std::to_string(functionCallNode->lineNumber) + " has not been declared.");
     }
 
     // Expressions
@@ -263,8 +263,8 @@ namespace visitor{
             }
         }
         // Function hasn't been found in any scope
-        throw std::runtime_error("Function with identifier " + f.identifier + " called on line "
-                                 + std::to_string(f.lineNumber) + " has not been declared.");
+        throw std::runtime_error("Function with identifier " + sFunctionCallNode->identifier->identifier + " called on line "
+                                 + std::to_string(sFunctionCallNode->lineNumber) + " has not been declared.");
     }
 
     void SemanticAnalyser::visit(parser::ASTDeclarationNode *declarationNode) {
@@ -277,9 +277,9 @@ namespace visitor{
         // compare the found key and the actual key
         // if identical than the variable is already declared
         if(scope->found(result)){
-            // The variable has already been declared in the current scope
-            throw std::runtime_error("Variable with identifier " + v.identifier + " declared on line "
-                                     + std::to_string(v.lineNumber) + " already declared on line "
+            // The variable has already been declared in the current scopek
+            throw std::runtime_error("Variable with identifier " + declarationNode->identifier->identifier + " declared on line "
+                                     + std::to_string(declarationNode->lineNumber) + " already declared on line "
                                      + std::to_string(result->second.lineNumber));
         }
         // Go check the expression node
@@ -424,8 +424,8 @@ namespace visitor{
         if(scope->found(result)){
             // The variable has already been declared in the current scope
             // Overloading is a problem for task 2
-            throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
-                                     + std::to_string(f.lineNumber) + " already declared on line "
+            throw std::runtime_error("Function with identifier " + functionDeclarationNode->identifier->identifier + " declared on line "
+                                     + std::to_string(functionDeclarationNode->lineNumber) + " already declared on line "
                                      + std::to_string(result->second.lineNumber));
         }
         // insert function to the function table, this allows for recursion to happen
@@ -435,8 +435,8 @@ namespace visitor{
         functionDeclarationNode->functionBlock->accept(this);
         // confirm function has a return and that the return type is as defined in the declaration node
         if(!returns){
-            throw std::runtime_error("Function with identifier " + f.identifier + " declared on line "
-                                     + std::to_string(f.lineNumber) + " does not have a return statement.");
+            throw std::runtime_error("Function with identifier " + functionDeclarationNode->identifier->identifier + " declared on line "
+                                     + std::to_string(functionDeclarationNode->lineNumber) + " does not have a return statement.");
         }
         // Check that the return type matches with the function type
         if(functionDeclarationNode->type != currentType) {
