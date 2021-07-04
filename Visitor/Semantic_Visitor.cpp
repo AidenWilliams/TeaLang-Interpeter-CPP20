@@ -19,7 +19,7 @@ namespace visitor{
         if (f.type.empty()){
             throw FunctionTypeException();
         }
-        auto ret = functionTable.insert(std::pair<std::string, Function>(f.identifier, f) );o
+        auto ret = functionTable.insert(std::pair<std::string, Function>(f.identifier, f) );
         return ret.second;
     }
 
@@ -304,26 +304,8 @@ namespace visitor{
          * identifier = assignmentNode.identifier
          * type = currentType
          */
-        // Generate Variable
-        Variable v(currentType, assignmentNode->identifier->identifier, assignmentNode->lineNumber);
-        // Now confirm this exists in the function table for any scope
-        for(const auto& scope : scopes){
-            auto result = scope->find(v);
-            if(scope->found(result)){
-                // if identifier has been found
-                // check that the types match
-                if(result->second.type != v.type){
-                    // throw an error since type casting is not supported
-                    throw std::runtime_error("Variable " + v.identifier + " declared on line " + std::to_string(result->second.lineNumber)
-                                                + " cannot be assigned a value of type " + v.type
-                                                + ".\nImplicit and Automatic Typecasting is not supported by TeaLang.");
-                }
-                return;
-            }
-        }
-        // Variable hasn't been found in any scope
-        throw std::runtime_error("Variable with identifier " + v.identifier + " called on line "
-                                 + std::to_string(v.lineNumber) + " has not been declared.");
+        // visit the identifier
+        assignmentNode->identifier->accept(this);
     }
 
     void SemanticAnalyser::visit(parser::ASTPrintNode *printNode) {
