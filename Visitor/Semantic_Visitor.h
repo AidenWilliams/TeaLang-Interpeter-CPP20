@@ -94,10 +94,10 @@ namespace semantic {
 
         bool insert(const Function &f);
 
-        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
+        auto
         find(const Variable &v);
 
-        std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
+        auto
         find(const Function &f);
 
         bool

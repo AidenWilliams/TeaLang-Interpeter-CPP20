@@ -22,12 +22,12 @@ namespace semantic{
         return ret.second;
     }
 
-    std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
+    auto
     Scope::find(const Variable& v) {
         return variableTable.find(v.identifier);
     }
 
-    std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
+    auto
     Scope::find(const Function& f) {
         return functionTable.find(f.identifier);
     }
