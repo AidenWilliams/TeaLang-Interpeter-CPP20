@@ -7,7 +7,7 @@
 namespace visitor {
     bool Interpreter::insert(const interpreter::Function& f){
         if(f.type.empty()){
-            throw FunctionTypeException();
+            throw semantic::FunctionTypeException();
         }
         auto ret = functionTable.insert(std::pair<std::string, interpreter::Function>(f.identifier, f) );
         return ret.second;

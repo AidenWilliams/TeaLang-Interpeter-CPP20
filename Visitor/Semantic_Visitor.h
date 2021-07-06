@@ -13,35 +13,37 @@
 #include <memory>
 #include "../Lexer/Token.h"
 
-namespace visitor {
-    class ReturnsException : public std::exception{
-        [[nodiscard]] const char* what() const noexcept override{
+namespace semantic {
+    class ReturnsException : public std::exception {
+        [[nodiscard]] const char *what() const noexcept override {
             return "Returns Design Exception";
         }
     };
-    class VariableTypeException : public std::exception{
-        [[nodiscard]] const char* what() const noexcept override{
+
+    class VariableTypeException : public std::exception {
+        [[nodiscard]] const char *what() const noexcept override {
             return "Variable Has No Type Design Exception";
         }
     };
-    class FunctionTypeException : public std::exception{
-        [[nodiscard]] const char* what() const noexcept override{
+
+    class FunctionTypeException : public std::exception {
+        [[nodiscard]] const char *what() const noexcept override {
             return "Function Has No Type Design Exception";
         }
     };
 
-    class Variable{
+    class Variable {
     public:
         explicit Variable(std::string identifier) :
                 type(""),
                 identifier(std::move(identifier)),
-                lineNumber(0)
-        {};
+                lineNumber(0) {};
+
         Variable(std::string type, std::string identifier, unsigned int lineNumber) :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
-                lineNumber(lineNumber)
-        {};
+                lineNumber(lineNumber) {};
+
         ~Variable() = default;
 
         std::string type;
@@ -49,20 +51,21 @@ namespace visitor {
         unsigned int lineNumber;
     };
 
-    class Function{
+    class Function {
     public:
         explicit Function(std::string identifier) :
                 type(""),
                 identifier(std::move(identifier)),
                 paramTypes(),
-                lineNumber(0)
-        {};
-        Function(std::string type, std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber) :
+                lineNumber(0) {};
+
+        Function(std::string type, std::string identifier, std::vector<std::string> paramTypes, unsigned int lineNumber)
+                :
                 type(std::move(type)),
                 identifier(std::move(identifier)),
                 paramTypes(std::move(paramTypes)),
-                lineNumber(lineNumber)
-        {};
+                lineNumber(lineNumber) {};
+
         ~Function() = default;
 
         std::string identifier;
@@ -81,35 +84,43 @@ namespace visitor {
         std::map<std::string, Function> functionTable;
         bool global;
     public:
-        explicit Scope(bool global=false) : global(global) {};
+        explicit Scope(bool global = false) : global(global) {};
+
         ~Scope() = default;
 
         [[nodiscard]] bool isGlobal() const { return global; }
 
-        bool insert(const Variable& v);
-        bool insert(const Function& f);
+        bool insert(const Variable &v);
+
+        bool insert(const Function &f);
 
         std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>>
-        find(const Variable& v);
+        find(const Variable &v);
+
         std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>>
-        find(const Function& f);
+        find(const Function &f);
 
-        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>> result);
-        bool found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result);
+        bool
+        found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Variable>> result);
+
+        bool
+        found(std::_Rb_tree_iterator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char>>, Function>> result);
     };
+}
 
 
+namespace visitor {
     class SemanticAnalyser : public Visitor {
     public:
         SemanticAnalyser()
         {
-            scopes.emplace_back(std::make_shared<Scope>());
+            scopes.emplace_back(std::make_shared<semantic::Scope>());
             currentType = std::string();
             returns = false;
         };
         ~SemanticAnalyser() = default;
 
-        std::vector<std::shared_ptr<Scope>> scopes;
+        std::vector<std::shared_ptr<semantic::Scope>> scopes;
         std::string currentType;
         bool returns;
 

@@ -4,9 +4,8 @@
 
 #include "Semantic_Visitor.h"
 
-namespace visitor{
+namespace semantic{
     // Semantic Scope
-    //TODO: Definitely needs to be tested out
     bool Scope::insert(const Variable& v){
         if (v.type.empty()){
             throw VariableTypeException();
@@ -43,12 +42,15 @@ namespace visitor{
         return result != functionTable.end();;
     }
     // Semantic Scope
+}
+
+namespace visitor{
 
     // Semantic Analyses
 
     // Program
     void SemanticAnalyser::visit(parser::ASTProgramNode *programNode) {
-        scopes.emplace_back(std::make_shared<Scope>(true));
+        scopes.emplace_back(std::make_shared<semantic::Scope>(true));
         // For each statement, accept
         for(auto &statement : programNode -> statements)
             statement -> accept(this);
@@ -155,7 +157,7 @@ namespace visitor{
         // Can be either variable or function
         // check variable first
         // Build variable shell
-        Variable v(identifierNode->identifier);
+        semantic::Variable v(identifierNode->identifier);
         // Check that a variable with this identifier exists
         for(const auto& scope : scopes) {
             auto result = scope->find(v);
@@ -169,7 +171,7 @@ namespace visitor{
         }
         // Ok we havent found a variable check the functions
         // Build variable shell
-        Function f(identifierNode->identifier);
+        semantic::Function f(identifierNode->identifier);
         // Check that a variable with this identifier exists
         for(const auto& scope : scopes) {
             auto result = scope->find(f);
@@ -242,7 +244,7 @@ namespace visitor{
 
     void SemanticAnalyser::visit(parser::ASTDeclarationNode *declarationNode) {
         // Generate Variable
-        Variable v(declarationNode->type, declarationNode->identifier->identifier, declarationNode->lineNumber);
+        semantic::Variable v(declarationNode->type, declarationNode->identifier->identifier, declarationNode->lineNumber);
         // Check current scope
         auto scope = scopes.back();
         // Try to insert v
@@ -288,7 +290,7 @@ namespace visitor{
 
     void SemanticAnalyser::visit(parser::ASTBlockNode *blockNode) {
         // Create new scope
-        scopes.emplace_back(std::make_shared<Scope>());
+        scopes.emplace_back(std::make_shared<semantic::Scope>());
         // Visit each statement in the block
         for(auto &statement : blockNode -> statements)
             statement -> accept(this);
@@ -319,7 +321,7 @@ namespace visitor{
     void SemanticAnalyser::visit(parser::ASTForNode *forNode) {
         // Create new scope for loop params
         // This allows the creation of a new variable only used by the loop
-        scopes.emplace_back(std::make_shared<Scope>());
+        scopes.emplace_back(std::make_shared<semantic::Scope>());
         // First go over the declaration
         if(forNode -> declaration != nullptr )
             forNode -> declaration -> accept(this);
@@ -359,18 +361,18 @@ namespace visitor{
         }
         // Create new scope for function params
         // This allows the creation of a new variables when they are params
-        scopes.emplace_back(std::make_shared<Scope>());
+        scopes.emplace_back(std::make_shared<semantic::Scope>());
         // Generate Function
         // First get the param types vector
         std::vector<std::string> paramTypes;
         for (const auto& param : functionDeclarationNode->parameters){
             paramTypes.emplace_back(param.second);
             // While going over the types add these to the new scope
-            scopes.back()->insert(Variable(param.second, param.first, functionDeclarationNode->lineNumber));
+            scopes.back()->insert(semantic::Variable(param.second, param.first, functionDeclarationNode->lineNumber));
         }
         // NOTE: The scope variable is still viewing the global scope
         // now generate the function object
-        Function f(functionDeclarationNode->type, functionDeclarationNode->identifier->identifier, paramTypes, functionDeclarationNode->lineNumber);
+        semantic::Function f(functionDeclarationNode->type, functionDeclarationNode->identifier->identifier, paramTypes, functionDeclarationNode->lineNumber);
         // Try to insert f
         auto result = scope->find(f);
         // compare the found key and the actual key
@@ -410,7 +412,7 @@ namespace visitor{
     void SemanticAnalyser::visit(parser::ASTReturnNode *returnNode) {
         // Ensure returns is false
         if(returns){
-            throw ReturnsException();
+            throw semantic::ReturnsException();
         }
         // Update current expression and update currentType
         returnNode -> exprNode -> accept(this);
