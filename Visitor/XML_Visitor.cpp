@@ -134,7 +134,7 @@ namespace visitor {
             // Parameter
             param->accept(this);
             // Remove indentation level
-            indentationLevel++;
+            indentationLevel--;
             xmlfile << indentation() << "</param>" << std::endl;
         }
         // Remove indentation level
@@ -158,7 +158,7 @@ namespace visitor {
             // Parameter
             param->accept(this);
             // Remove indentation level
-            indentationLevel++;
+            indentationLevel--;
             xmlfile << indentation() << "</param>" << std::endl;
         }
         // Remove indentation level

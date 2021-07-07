@@ -1,0 +1,10 @@
+// Declaration and Scope Handling
+
+let x : bool = true;
+
+if(x){
+    let y : float = 10.0;
+    print y;
+}
+
+print y;

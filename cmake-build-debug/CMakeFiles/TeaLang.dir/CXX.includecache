@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/AST.h
+string
+-
+utility
+-
+vector
+-
+memory
+-
+../Visitor/Visitor.h
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+string
+-
+
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/XML_Visitor.cpp
+XML_Visitor.h
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/XML_Visitor.h
+
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/XML_Visitor.h
+fstream
+-
+memory
+-
+Visitor.h
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+../Parser/AST.h
+C:/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/AST.h
+

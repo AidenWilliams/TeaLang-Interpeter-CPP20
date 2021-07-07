@@ -1,0 +1,8 @@
+// Declaration and if operation - Lexer Fail
+
+let 10 : bool = true;
+
+if(x){
+    let 11 : float = .xyz;
+    print 11;
+}

@@ -1,0 +1,118 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Lexer.h
+string
+-
+vector
+-
+regex
+-
+stdexcept
+-
+Token.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Token.h
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Token.h
+string
+-
+regex
+-
+utility
+-
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/AST.h
+string
+-
+utility
+-
+vector
+-
+memory
+-
+../Visitor/Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/Parser.h
+vector
+-
+string
+-
+stdexcept
+-
+memory
+-
+../Visitor/Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+../Lexer/Lexer.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Lexer.h
+../Lexer/Token.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Token.h
+AST.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/AST.h
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Interpreter_Visitor.h
+Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+Semantic_Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Semantic_Visitor.h
+utility
+-
+vector
+-
+map
+-
+memory
+-
+iostream
+-
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Semantic_Visitor.h
+Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+../Parser/AST.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/AST.h
+utility
+-
+vector
+-
+map
+-
+memory
+-
+../Lexer/Token.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Token.h
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+string
+-
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/XML_Visitor.h
+fstream
+-
+memory
+-
+Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Visitor.h
+../Parser/AST.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/AST.h
+
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/main.cpp
+iostream
+-
+Lexer/Lexer.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Lexer/Lexer.h
+Parser/Parser.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Parser/Parser.h
+Visitor/XML_Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/XML_Visitor.h
+Visitor/Semantic_Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Semantic_Visitor.h
+Visitor/Interpreter_Visitor.h
+/mnt/c/Users/Aiden Williams/CLionProjects/TeaLang Compiler CPP20/Visitor/Interpreter_Visitor.h
+

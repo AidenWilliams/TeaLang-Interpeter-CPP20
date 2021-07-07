@@ -1,0 +1,11 @@
+// Function declaration and call
+
+float Factorial( x : float) {
+    if (x >= 1.0){
+            return x * Factorial(x - 1.0);
+    }else{
+            return 1.0;
+    }
+}
+
+print Factorial(5.0);
