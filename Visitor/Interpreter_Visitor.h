@@ -188,13 +188,13 @@ namespace visitor {
         Interpreter(){
             // insert the interpreter variables these being the literal and 0CurrentVariable for each type
             intTable.insert(interpreter::Variable<int>("int", "0CurrentVariable", 0, 0));
-            intTable.insert(interpreter::Variable<int> ("int", "literal", 0, 0));
+            intTable.insert(interpreter::Variable<int> ("int", "0Literal", 0, 0));
             floatTable.insert(interpreter::Variable<float>("float", "0CurrentVariable", 0.0, 0));
-            floatTable.insert(interpreter::Variable<float> ("float", "literal", 0.0, 0));
+            floatTable.insert(interpreter::Variable<float> ("float", "0Literal", 0.0, 0));
             boolTable.insert(interpreter::Variable<bool>("bool", "0CurrentVariable", false, 0));
-            boolTable.insert(interpreter::Variable<bool> ("bool", "literal", false, 0));
+            boolTable.insert(interpreter::Variable<bool> ("bool", "0Literal", false, 0));
             stringTable.insert(interpreter::Variable<std::string>("string", "0CurrentVariable", "", 0));
-            stringTable.insert(interpreter::Variable<std::string> ("string", "literal", "", 0));
+            stringTable.insert(interpreter::Variable<std::string> ("string", "0Literal", "", 0));
             function = false;
         };
         ~Interpreter() = default;

@@ -32,39 +32,39 @@ namespace visitor {
     // Expressions
     // Literal visits add a new literal variable to the 'literalTYPE' variable in the variableTable
     void Interpreter::visit(parser::ASTLiteralNode<int> *literalNode) {
-        interpreter::Variable<int> v("int", "literal", literalNode -> val, literalNode -> lineNumber);
+        interpreter::Variable<int> v("int", "0Literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-        intTable.pop_back("literal");
+        intTable.pop_back("0Literal");
         intTable.insert(v);
         currentType = "int";
-        currentID = "literal";
+        currentID = "0Literal";
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<float> *literalNode) {
-        interpreter::Variable<float> v("float", "literal", literalNode -> val, literalNode -> lineNumber);
+        interpreter::Variable<float> v("float", "0Literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-        floatTable.pop_back("literal");
+        floatTable.pop_back("0Literal");
         floatTable.insert(v);
         currentType = "float";
-        currentID = "literal";
+        currentID = "0Literal";
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<bool> *literalNode) {
-        interpreter::Variable<bool> v("bool", "literal", literalNode -> val, literalNode -> lineNumber);
+        interpreter::Variable<bool> v("bool", "0Literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-        boolTable.pop_back("literal");
+        boolTable.pop_back("0Literal");
         boolTable.insert(v);
         currentType = "bool";
-        currentID = "literal";
+        currentID = "0Literal";
     }
 
     void Interpreter::visit(parser::ASTLiteralNode<std::string> *literalNode) {
-        interpreter::Variable<std::string> v("string", "literal", literalNode -> val, literalNode -> lineNumber);
+        interpreter::Variable<std::string> v("string", "0Literal", literalNode -> val, literalNode -> lineNumber);
         // remove previous literal
-        stringTable.pop_back("literal");
+        stringTable.pop_back("0Literal");
         stringTable.insert(v);
         currentType = "string";
-        currentID = "literal";
+        currentID = "0Literal";
     }
 
     void Interpreter::visit(parser::ASTBinaryNode *binaryNode) {
@@ -541,22 +541,6 @@ namespace visitor {
         function = true;
         f.blockNode -> accept(this);
         function = false;
-        // the function has completed its run now we pop back the variables we added
-        for (const auto& pair : toPop){
-            /*
-             * Now we pop the variables
-            */
-            if(pair.first == "int"){
-                intTable.pop_back(pair.second);
-            }else if(pair.first == "float"){
-                floatTable.pop_back(pair.second);
-            }else if(pair.first == "bool"){
-                boolTable.pop_back(pair.second);
-            }else if(pair.first == "string"){
-                stringTable.pop_back(pair.second);
-            }
-        }
-        toPop = std::vector<std::pair<std::string, std::string>>();
     }
     // Expressions
 
@@ -602,22 +586,6 @@ namespace visitor {
         function = true;
         f.blockNode -> accept(this);
         function = false;
-        // the function has completed its run now we pop back the variables we added
-        for (const auto& pair : toPop){
-            /*
-             * Now we pop the variables
-            */
-            if(pair.first == "int"){
-                intTable.pop_back(pair.second);
-            }else if(pair.first == "float"){
-                floatTable.pop_back(pair.second);
-            }else if(pair.first == "bool"){
-                boolTable.pop_back(pair.second);
-            }else if(pair.first == "string"){
-                stringTable.pop_back(pair.second);
-            }
-        }
-        toPop = std::vector<std::pair<std::string, std::string>>();
     }
 
     void Interpreter::visit(parser::ASTDeclarationNode *declarationNode) {
@@ -825,6 +793,7 @@ namespace visitor {
                 stringTable.pop_back(pair.second);
             }
         }
+        toPop = std::vector<std::pair<std::string, std::string>>();
     }
 
 
