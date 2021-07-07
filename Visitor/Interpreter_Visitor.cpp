@@ -785,14 +785,48 @@ namespace visitor {
         returnNode -> exprNode -> accept(this);
         // make sure to not pop_back the returns value
         auto save = std::make_pair(currentType, currentID);
-        // find the return
-        for (auto it = toPop.begin(); it != toPop.end(); ++it){
-            if(*it == save){
-                toPop.erase(it);
-                if(it == toPop.end()) break;
+        // Save the return
+        if(save.first == "int"){
+            auto returnVariable = intTable.get(save.second);
+            pop();
+            intTable.pop_back(save.second);
+            intTable.insert(returnVariable);
+        }else if(save.first == "float"){
+            auto returnVariable = floatTable.get(save.second);
+            pop();
+            floatTable.pop_back(save.second);
+            floatTable.insert(returnVariable);
+        }else if(save.first == "bool"){
+            auto returnVariable = boolTable.get(save.second);
+            pop();
+            boolTable.pop_back(save.second);
+            boolTable.insert(returnVariable);
+        }else {
+            auto returnVariable = stringTable.get(save.second);
+            pop();
+            stringTable.pop_back(save.second);
+            stringTable.insert(returnVariable);
+        }
+    }
+
+    void Interpreter::pop() {
+        // Pop the toPop variables
+        for (const auto& pair : toPop){
+            /*
+             * Now we pop the variables
+            */
+            if(pair.first == "int"){
+                intTable.pop_back(pair.second);
+            }else if(pair.first == "float"){
+                floatTable.pop_back(pair.second);
+            }else if(pair.first == "bool"){
+                boolTable.pop_back(pair.second);
+            }else if(pair.first == "string"){
+                stringTable.pop_back(pair.second);
             }
         }
-
     }
+
+
     // Statements
 }
